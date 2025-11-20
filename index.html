@@ -4,31 +4,76 @@
   <meta charset="UTF-8" />
   <title>Retirex – Simulador Inteligente</title>
   <style>
-    body { font-family: Montserrat, sans-serif; background: #f4f4f4; padding: 20px; }
-    .box { background: white; padding: 20px; border-radius: 15px; max-width: 400px; margin: auto;
-           box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    body { 
+      font-family: Montserrat, sans-serif; 
+      background: #f4f4f4; 
+      padding: 20px; 
+    }
+    .box { 
+      background: white; 
+      padding: 20px; 
+      border-radius: 15px; 
+      max-width: 400px; 
+      margin: auto;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #A0005A;
+      margin-bottom: 5px;
+    }
+    label {
+      margin-top: 10px;
+      font-weight: 600;
+      display: block;
+    }
+    input, select {
+      margin-top: 5px;
+      margin-bottom: 10px;
+      padding: 10px;
+      width: 100%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+    }
     button {
-      background: #A0005A; color: white; padding: 12px; border: none; border-radius: 8px;
-      width: 100%; cursor: pointer; font-size: 16px; margin-top: 10px;
+      background: #A0005A;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      width: 100%;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #C00064;
+    }
+    pre {
+      background: #fff;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
     }
   </style>
 </head>
+
 <body>
   <div class="box">
     <h2>Retirex</h2>
     <p>Simulá tu plan de retiro en segundos.</p>
 
     <label>Edad actual</label>
-    <input id="edad_actual" type="number" style="width:100%" />
+    <input id="edad_actual" type="number" />
 
     <label>Edad de retiro</label>
-    <input id="edad_retiro" type="number" style="width:100%" />
+    <input id="edad_retiro" type="number" />
 
     <label>Aporte mensual</label>
-    <input id="aporte" type="number" style="width:100%" />
+    <input id="aporte" type="number" />
 
     <label>Moneda</label>
-    <select id="moneda" style="width:100%">
+    <select id="moneda">
       <option value="pesos">Pesos</option>
       <option value="usd">USD</option>
     </select>
@@ -47,7 +92,7 @@ async function simular() {
     moneda: document.getElementById("moneda").value
   };
 
-  const res = await fetch("https://TU-API.com/cotizar", {
+  const res = await fetch("https://retirex.onrender.com/cotizar", {
     method: "POST",
     headers: {"Content-Type":"application/json"},
     body: JSON.stringify(body)
