@@ -352,3 +352,193 @@
             <div class="result-title">Escenario realista en pesos (35% anual)</div>
             <div class="result-number" id="val-real">$0</div>
             <div class="result-tag" id="tag-real">Tasa mensual: -</div>
+          </div>
+        </div>
+
+        <p id="summary" class="summary-text" style="display:none;"></p>
+
+        <!-- Gráfico -->
+        <div id="chart-container" class="chart-wrapper" style="display:none;">
+          <h4>Comparación de capital proyectado</h4>
+          <canvas id="capitalChart" height="180"></canvas>
+        </div>
+
+        <!-- Salida cruda para debug / transparencia -->
+        <pre id="resultado" class="raw-output" style="display:none;"></pre>
+
+        <p class="disclaimer">
+          Las cifras mostradas son simulaciones basadas en supuestos de
+          rendimiento y no constituyen garantía de resultados futuros.
+        </p>
+      </section>
+
+      <!-- Columna derecha: información + contacto -->
+      <section class="card info-card">
+        <h3>¿Qué estás viendo?</h3>
+        <p>
+          El simulador usa la lógica de Prevención Retiro para mostrarte un
+          escenario oficial y lo compara con una proyección más realista
+          considerando un rendimiento anual del 35% en pesos y 2% en dólares.
+        </p>
+        <ul class="bullet">
+          <li>Cuanto antes empezás, más se multiplica tu capital.</li>
+          <li>Podés ajustar el aporte cuando tu situación cambie.</li>
+          <li>No necesitás decidir hoy, el objetivo es que entiendas tus opciones.</li>
+        </ul>
+
+        <div class="contact-card">
+          <strong>Acompañamiento humano, siempre.</strong><br />
+          Esta herramienta es educativa. Si querés avanzar con una
+          contratación real, te asesoro personalmente como productor de
+          seguros autorizado en Argentina.<br /><br />
+          <em>Podés reemplazar este texto con tus datos de WhatsApp, mail y dirección.</em>
+        </div>
+
+        <p style="margin-top:10px;font-size:12px;color:#7a7a7a;">
+          Próximamente: simuladores de automotor, combinado familiar y más,
+          integrados al mismo entorno.
+        </p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    let chartInstance = null;
+
+    function formatoMoneda(valor, moneda) {
+      if (!isFinite(valor)) return "-";
+      const opts = {
+        style: "currency",
+        currency: moneda === "usd" ? "USD" : "ARS",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      };
+      return new Intl.NumberFormat("es-AR", opts).format(valor);
+    }
+
+    async function simular() {
+      const edad_actual = Number(document.getElementById("edad_actual").value);
+      const edad_retiro = Number(document.getElementById("edad_retiro").value);
+      const aporte_mensual = Number(document.getElementById("aporte").value);
+      const moneda = document.getElementById("moneda").value;
+
+      const salida = document.getElementById("resultado");
+      const cards = document.getElementById("resultados-cards");
+      const summary = document.getElementById("summary");
+      const chartContainer = document.getElementById("chart-container");
+
+      salida.style.display = "block";
+      salida.textContent = "Calculando...";
+
+      try {
+        const res = await fetch("https://retirex.onrender.com/cotizar", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            edad_actual,
+            edad_retiro,
+            aporte_mensual,
+            moneda
+          })
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          salida.textContent = "Error " + res.status + "\\n" + text;
+          cards.style.display = "none";
+          summary.style.display = "none";
+          chartContainer.style.display = "none";
+          return;
+        }
+
+        const data = await res.json();
+        salida.textContent = JSON.stringify(data, null, 2);
+
+        const oficial = data.oficial?.capital || 0;
+        const realPesos = data.real_pesos?.capital || 0;
+
+        // Mostrar tarjetas resumen
+        document.getElementById("val-oficial").textContent =
+          formatoMoneda(oficial, moneda);
+        document.getElementById("tag-oficial").textContent =
+          "Tasa mensual aprox.: " +
+          (data.oficial?.tasa_mensual * 100).toFixed(2) +
+          "%";
+
+        document.getElementById("val-real").textContent =
+          formatoMoneda(realPesos, moneda === "usd" ? "usd" : "ars");
+        document.getElementById("tag-real").textContent =
+          "Tasa mensual realista: " +
+          (data.real_pesos?.tasa_mensual * 100).toFixed(2) +
+          "%";
+
+        cards.style.display = "grid";
+
+        // Texto resumen sencillo
+        const años = edad_retiro - edad_actual;
+        summary.style.display = "block";
+        summary.innerHTML =
+          "Con un aporte mensual de <strong>" +
+          formatoMoneda(data.entrada.aporte_mensual, moneda) +
+          "</strong> durante " +
+          años +
+          " años, el capital estimado a los " +
+          edad_retiro +
+          " años sería de <strong>" +
+          formatoMoneda(oficial, moneda) +
+          "</strong> según la lógica oficial de Prevención Retiro, y de <strong>" +
+          formatoMoneda(realPesos, moneda) +
+          "</strong> en un escenario de rendimiento realista.";
+
+        // Gráfico
+        const ctx = document.getElementById("capitalChart").getContext("2d");
+        const labels = ["Oficial Prevención", "Escenario realista"];
+
+        const dataset = {
+          labels,
+          datasets: [
+            {
+              label: "Capital final",
+              data: [oficial, realPesos],
+              borderWidth: 1
+            }
+          ]
+        };
+
+        if (chartInstance) {
+          chartInstance.data = dataset;
+          chartInstance.update();
+        } else {
+          chartInstance = new Chart(ctx, {
+            type: "bar",
+            data: dataset,
+            options: {
+              plugins: {
+                legend: { display: false }
+              },
+              scales: {
+                y: {
+                  ticks: {
+                    callback: function (value) {
+                      return value >= 1000000
+                        ? (value / 1000000).toFixed(1) + "M"
+                        : value;
+                    }
+                  }
+                }
+              }
+            }
+          });
+        }
+
+        chartContainer.style.display = "block";
+      } catch (e) {
+        salida.textContent = "Error llamando a la API: " + e.message;
+        cards.style.display = "none";
+        summary.style.display = "none";
+        chartContainer.style.display = "none";
+      }
+    }
+  </script>
+</body>
+</html>
