@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Retirex – Simulador Inteligente</title>
+  <style>
+    body { font-family: Montserrat, sans-serif; background: #f4f4f4; padding: 20px; }
+    .box { background: white; padding: 20px; border-radius: 15px; max-width: 400px; margin: auto;
+           box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+    button {
+      background: #A0005A; color: white; padding: 12px; border: none; border-radius: 8px;
+      width: 100%; cursor: pointer; font-size: 16px; margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>Retirex</h2>
+    <p>Simulá tu plan de retiro en segundos.</p>
+
+    <label>Edad actual</label>
+    <input id="edad_actual" type="number" style="width:100%" />
+
+    <label>Edad de retiro</label>
+    <input id="edad_retiro" type="number" style="width:100%" />
+
+    <label>Aporte mensual</label>
+    <input id="aporte" type="number" style="width:100%" />
+
+    <label>Moneda</label>
+    <select id="moneda" style="width:100%">
+      <option value="pesos">Pesos</option>
+      <option value="usd">USD</option>
+    </select>
+
+    <button onclick="simular()">Simular</button>
+
+    <pre id="resultado" style="white-space: pre-wrap; margin-top:20px;"></pre>
+  </div>
+
+<script>
+async function simular() {
+  const body = {
+    edad_actual: Number(document.getElementById("edad_actual").value),
+    edad_retiro: Number(document.getElementById("edad_retiro").value),
+    aporte_mensual: Number(document.getElementById("aporte").value),
+    moneda: document.getElementById("moneda").value
+  };
+
+  const res = await fetch("https://TU-API.com/cotizar", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify(body)
+  });
+
+  const data = await res.json();
+  document.getElementById("resultado").innerText = JSON.stringify(data, null, 2);
+}
+</script>
+
+</body>
+</html>
