@@ -133,17 +133,21 @@ app.post("/ia", async (req, res) => {
       return res.status(400).json({ error: "Faltan mensajes para el chat" });
     }
 
-    const completion = await openai.chat.completions.create({
-      // Podés cambiar el modelo si tenés acceso a GPT-5 específico
-      model: "gpt-4o",
-      messages: [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...messages,
-      ],
-    });
+  const completion = await openai.responses.create({
+  model: "gpt-4o",
+  input: [
+    {
+      role: "system",
+      content: SYSTEM_PROMPT
+    },
+    ...messages
+  ]
+});
 
-    const respuesta = completion.choices[0]?.message?.content || "No pude generar respuesta, probemos de nuevo.";
-    return res.json({ reply: respuesta });
+const reply = completion.output_text;
+
+return res.json({ reply });
+
   } catch (e) {
     console.error("Error en /ia:", e);
     return res.status(500).json({ error: "Error interno en el agente IA" });
