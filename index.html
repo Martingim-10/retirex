@@ -2,369 +2,236 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Retirex – Simulador Inteligente de Retiro</title>
+  <title>Retirex IA – Asistente Inteligente de Retiro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
+    /* Paleta Prevención Retiro */
     :root {
-      --magenta: #a0005a;
-      --magenta-light: #c00064;
-      --blue: #004b9a;
-      --bg: #f4f4f7;
-      --card-bg: #ffffff;
-      --text-main: #222222;
-      --text-soft: #555555;
-      --radius-xl: 18px;
-      --radius: 10px;
+      --azul-oscuro: #003A70;
+      --azul: #005DAA;
+      --celeste: #00A4E4;
+      --naranja: #F36F21;
+      --blanco: #FFFFFF;
+      --gris-claro: #F7F9FB;
+      --gris-texto: #E5E9F0;
+      --glass: rgba(255,255,255,0.15);
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      padding: 0;
-      font-family: "Montserrat", system-ui, sans-serif;
-      background: radial-gradient(circle at top, #ffffff 0, var(--bg) 55%);
-      color: var(--text-main);
+      background: linear-gradient(135deg, var(--azul-oscuro), var(--azul), var(--celeste));
+      font-family: "Montserrat", system-ui;
+      overflow: hidden;
+      height: 100vh;
+      color: var(--blanco);
+      display: flex;
+      flex-direction: column;
     }
 
-    .page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
-    }
-
-    .brand-bar {
+    /* HEADER */
+    header {
+      padding: 18px 22px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      margin-bottom: 18px;
+      gap: 14px;
+      background: rgba(0,0,0,0.2);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.12);
     }
 
-    .brand-logo {
-      width: 40px;
-      height: 40px;
-      background: linear-gradient(135deg, var(--magenta), var(--blue));
-      color: white;
+    .logo {
+      width: 42px;
+      height: 42px;
+      background: var(--celeste);
+      border-radius: 10px;
       display: flex;
-      align-items: center;
       justify-content: center;
-      border-radius: 12px;
-      font-weight: 700;
+      align-items: center;
+      font-weight: 800;
       font-size: 20px;
+      color: var(--azul-oscuro);
     }
 
-    .brand-text h1 {
+    header h1 {
       margin: 0;
-      font-size: 22px;
-      color: var(--magenta);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: .5px;
     }
 
-    .brand-text span {
+    header span {
       font-size: 12px;
-      color: var(--text-soft);
+      color: var(--gris-texto);
     }
 
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
-      gap: 20px;
-    }
-
-    @media (max-width: 840px) {
-      .layout { grid-template-columns: minmax(0, 1fr); }
-    }
-
-    .card {
-      background: var(--card-bg);
-      border-radius: var(--radius-xl);
+    /* CHAT CANVAS */
+    #chat-container {
+      flex: 1;
+      overflow-y: auto;
       padding: 20px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+      padding-bottom: 100px;
     }
 
-    .pill {
-      display: inline-block;
-      padding: 4px 10px;
-      background: #fce7f2;
-      color: var(--magenta);
-      border-radius: 999px;
-      font-size: 11px;
-      margin-bottom: 10px;
-      font-weight: 600;
+    #messages {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-width: 750px;
+      margin: 0 auto;
     }
 
-    .card h2 {
-      margin: 0;
-      color: var(--magenta);
-      font-size: 18px;
+    /* Mensaje IA */
+    .bot-msg {
+      align-self: flex-start;
+      padding: 14px 18px;
+      background: var(--glass);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 18px;
+      max-width: 80%;
+      animation: fadeIn .3s ease;
+      color: var(--gris-claro);
     }
 
-    .card p.lead {
-      margin: 4px 0 16px;
-      font-size: 13px;
-      color: var(--text-soft);
+    /* Mensaje Usuario */
+    .user-msg {
+      align-self: flex-end;
+      padding: 14px 18px;
+      background: var(--azul);
+      border-radius: 18px;
+      max-width: 80%;
+      animation: fadeIn .3s ease;
+      color: white;
     }
 
-    label {
-      font-weight: 600;
-      font-size: 13px;
-      margin-top: 10px;
-      display: block;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    input, select {
-      width: 100%;
-      padding: 9px 10px;
-      border-radius: var(--radius);
-      border: 1px solid #d0d2da;
-      font-size: 14px;
+    /* Input flotante */
+    #input-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 14px 20px;
+      background: rgba(0,0,0,0.35);
+      backdrop-filter: blur(12px);
+      display: flex;
+      gap: 10px;
+      border-top: 1px solid rgba(255,255,255,0.15);
+    }
+
+    #userInput {
+      flex: 1;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      font-size: 15px;
       outline: none;
-      transition: border-color .15s, box-shadow .15s;
     }
 
-    input:focus, select:focus {
-      border-color: var(--magenta);
-      box-shadow: 0 0 0 2px rgba(160,0,90,0.12);
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 16px;
-      background: linear-gradient(135deg, var(--magenta), var(--magenta-light));
+    #sendBtn {
+      padding: 14px 20px;
+      background: var(--naranja);
       border: none;
       color: white;
-      font-size: 15px;
-      font-weight: 600;
-      border-radius: 999px;
+      border-radius: 14px;
       cursor: pointer;
-      box-shadow: 0 8px 20px rgba(160,0,90,0.35);
-      transition: transform .1s, box-shadow .1s, filter .1s;
-    }
-
-    button:hover {
-      filter: brightness(1.03);
-      transform: translateY(-1px);
-    }
-
-    button:active {
-      filter: brightness(0.97);
-      transform: translateY(0);
-    }
-
-    .results-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
-      margin-top: 20px;
-    }
-
-    .result-card {
-      padding: 10px;
-      background: #fafbff;
-      border-radius: var(--radius);
-      border: 1px solid #e3e4ed;
-    }
-
-    .result-title {
-      font-size: 12px;
       font-weight: 600;
-      color: var(--blue);
-      margin-bottom: 6px;
     }
 
-    .result-number {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 4px;
-      color: var(--magenta);
-    }
-
-    .summary-text {
-      margin-top: 14px;
-      font-size: 14px;
-      color: var(--text-soft);
-      line-height: 1.5;
-    }
-
-    .chart-wrapper {
-      margin-top: 16px;
+    /* Tarjeta para gráficos dentro del chat */
+    .chart-card {
+      background: var(--glass);
       padding: 12px;
-      background: #fbfbff;
-      border-radius: var(--radius);
-      border: 1px solid #e3e4ed;
-    }
-
-    .chart-wrapper h4 {
-      font-size: 14px;
-      color: var(--blue);
-      margin-bottom: 8px;
-    }
-
-    .info-card h3 { margin: 0 0 10px; font-size: 16px; color: var(--blue); }
-    .info-card p { font-size: 14px; color: var(--text-soft); }
-    .bullet { margin-left: 16px; font-size: 13px; color: var(--text-soft); }
-    .contact-card {
-      margin-top: 14px;
-      padding: 12px;
-      font-size: 13px;
-      border-radius: var(--radius);
-      border: 1px dashed rgba(160,0,90,0.45);
-      background: #f7f2f8;
+      border-radius: 18px;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--gris-claro);
+      max-width: 80%;
     }
 
   </style>
 </head>
 
 <body>
-  <div class="page">
-    <header class="brand-bar">
-      <div class="brand-logo">R</div>
-      <div class="brand-text">
-        <h1>Retirex</h1>
-        <span>Simulador basado en Prevención Retiro</span>
-      </div>
-    </header>
 
-    <main class="layout">
-      <!-- Simulador -->
-      <section class="card">
-        <div class="pill">Simulación rápida</div>
-        <h2>Simulá tu plan de retiro</h2>
-        <p class="lead">Compará el escenario oficial con una proyección más realista.</p>
-
-        <label>Edad actual</label>
-        <input id="edad_actual" type="number" placeholder="Ej: 40">
-
-        <label>Edad de retiro</label>
-        <input id="edad_retiro" type="number" placeholder="Ej: 65">
-
-        <label>Aporte mensual (mínimo $30.000 en pesos)</label>
-        <input id="aporte" type="number" placeholder="Ej: 75000">
-
-        <label>Moneda</label>
-        <select id="moneda">
-          <option value="pesos">Pesos</option>
-          <option value="usd">USD</option>
-        </select>
-
-        <button onclick="simular()">Simular</button>
-
-        <!-- Resultados -->
-        <div id="resultados" style="display:none;">
-          <div class="results-grid">
-            <div class="result-card">
-              <div class="result-title">Escenario oficial Prevención</div>
-              <div id="oficial" class="result-number">$0</div>
-            </div>
-
-            <div class="result-card">
-              <div class="result-title">Escenario realista (35% anual)</div>
-              <div id="real" class="result-number">$0</div>
-            </div>
-          </div>
-
-          <p id="summary" class="summary-text"></p>
-
-          <div class="chart-wrapper">
-            <h4>Comparación de capital proyectado</h4>
-            <canvas id="capitalChart" height="160"></canvas>
-          </div>
-        </div>
-      </section>
-
-      <!-- Info -->
-      <section class="card info-card">
-        <h3>¿Qué estás viendo?</h3>
-        <p>Este simulador compara la proyección oficial con una estimación más realista basada en rendimiento anual del 35%.</p>
-
-        <ul class="bullet">
-          <li>No pedimos tus datos personales.</li>
-          <li>Podés ver tus opciones sin compromiso.</li>
-          <li>Pronto: autos, motos, combinado familiar, salud.</li>
-        </ul>
-
-        <div class="contact-card">
-          <strong>Asesoramiento humano disponible.</strong><br>
-          Productor de seguros matriculado en Argentina.<br>
-          Podés reemplazar este texto con tus datos reales.
-        </div>
-      </section>
-    </main>
+<header>
+  <div class="logo">R</div>
+  <div>
+    <h1>Retirex IA</h1>
+    <span>Asistente basado en Prevención Retiro</span>
   </div>
+</header>
 
-  <script>
-    let chartInstance = null;
+<div id="chat-container">
+  <div id="messages"></div>
+</div>
 
-    function formato(valor, moneda) {
-      return new Intl.NumberFormat("es-AR", {
-        style: "currency",
-        currency: moneda === "usd" ? "USD" : "ARS",
-        maximumFractionDigits: 0
-      }).format(valor);
-    }
+<div id="input-bar">
+  <input id="userInput" placeholder="Escribí tu mensaje..." autocomplete="off" />
+  <button id="sendBtn">Enviar</button>
+</div>
 
-    async function simular() {
-      const edad_actual = Number(document.getElementById("edad_actual").value);
-      const edad_retiro = Number(document.getElementById("edad_retiro").value);
-      const aporte_mensual = Number(document.getElementById("aporte").value);
-      const moneda = document.getElementById("moneda").value;
 
-      const cont = document.getElementById("resultados");
-      cont.style.display = "none";
+<script>
+  const messagesDiv = document.getElementById("messages");
+  const input = document.getElementById("userInput");
+  const sendBtn = document.getElementById("sendBtn");
 
-      try {
-        const r = await fetch("https://retirex.onrender.com/cotizar", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ edad_actual, edad_retiro, aporte_mensual, moneda })
-        });
+  function addMessage(text, sender = "bot") {
+    const msg = document.createElement("div");
+    msg.className = sender === "bot" ? "bot-msg" : "user-msg";
+    msg.innerHTML = text;
+    messagesDiv.appendChild(msg);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
 
-        if (!r.ok) return alert("Error en la simulación");
+  async function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
 
-        const data = await r.json();
+    addMessage(text, "user");
+    input.value = "";
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-        const oficial = data.oficial.capital;
-        const real = data.real_pesos.capital;
+    // Fetch a tu backend IA
+    const res = await fetch("https://retirex.onrender.com/ia", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        messages: [
+          { role: "user", content: text }
+        ]
+      })
+    });
 
-        document.getElementById("oficial").textContent = formato(oficial, moneda);
-        document.getElementById("real").textContent = formato(real, moneda);
+    const data = await res.json();
+    const reply = data?.message || "Hubo un error.";
 
-        document.getElementById("summary").innerHTML =
-          `Con un aporte mensual de <strong>${formato(aporte_mensual, moneda)}</strong>, ` +
-          `el capital estimado oficial sería <strong>${formato(oficial, moneda)}</strong>, ` +
-          `y en un escenario realista alcanzaría <strong>${formato(real, moneda)}</strong>.`;
+    addMessage(reply, "bot");
+  }
 
-        // grafico
-        const ctx = document.getElementById("capitalChart").getContext("2d");
-        const dataChart = {
-          labels: ["Oficial Prevención", "Escenario realista"],
-          datasets: [{
-            data: [oficial, real],
-            backgroundColor: ["#a0005a77", "#004b9a77"],
-            borderColor: ["#a0005a", "#004b9a"],
-            borderWidth: 1
-          }]
-        };
+  sendBtn.onclick = sendMessage;
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") sendMessage();
+  });
 
-        if (chartInstance) chartInstance.destroy();
+  /* MENSAJE INICIAL */
+  window.onload = () => {
+    addMessage(`
+      👋 Hola, soy <strong>Retirex IA</strong>.<br>
+      Te acompaño a diseñar tu plan de retiro basado en <strong>Prevención Retiro</strong>.<br><br>
+      Empecemos fácil: <strong>¿Cuál es tu edad actual?</strong>
+    `);
+  };
+</script>
 
-        chartInstance = new Chart(ctx, {
-          type: "bar",
-          data: dataChart,
-          options: {
-            responsive: true,
-            plugins: { legend: { display: false } }
-          }
-        });
-
-        cont.style.display = "block";
-
-      } catch (e) {
-        alert("Error de conexión con la API");
-      }
-    }
-  </script>
 </body>
 </html>
