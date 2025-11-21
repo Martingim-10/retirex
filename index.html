@@ -7,7 +7,9 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    /* Paleta Prevención Retiro */
+    /* ================================
+       PALETA PREVENCIÓN RETIRO
+    =================================*/
     :root {
       --azul-oscuro: #003A70;
       --azul: #005DAA;
@@ -16,7 +18,7 @@
       --blanco: #FFFFFF;
       --gris-claro: #F7F9FB;
       --gris-texto: #E5E9F0;
-      --glass: rgba(255,255,255,0.15);
+      --glass: rgba(255,255,255,0.12);
     }
 
     * { box-sizing: border-box; }
@@ -25,22 +27,24 @@
       margin: 0;
       background: linear-gradient(135deg, var(--azul-oscuro), var(--azul), var(--celeste));
       font-family: "Montserrat", system-ui;
-      overflow: hidden;
-      height: 100vh;
       color: var(--blanco);
+      height: 100vh;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
-    /* HEADER */
+    /* ================================
+         HEADER
+    =================================*/
     header {
       padding: 18px 22px;
       display: flex;
       align-items: center;
       gap: 14px;
-      background: rgba(0,0,0,0.2);
+      background: rgba(0,0,0,0.25);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.12);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
     }
 
     .logo {
@@ -60,7 +64,6 @@
       margin: 0;
       font-size: 20px;
       font-weight: 700;
-      letter-spacing: .5px;
     }
 
     header span {
@@ -68,7 +71,9 @@
       color: var(--gris-texto);
     }
 
-    /* CHAT CANVAS */
+    /* ================================
+         CHAT CONTAINER
+    =================================*/
     #chat-container {
       flex: 1;
       overflow-y: auto;
@@ -84,36 +89,36 @@
       margin: 0 auto;
     }
 
-    /* Mensaje IA */
     .bot-msg {
       align-self: flex-start;
       padding: 14px 18px;
       background: var(--glass);
       backdrop-filter: blur(18px);
-      border: 1px solid rgba(255,255,255,0.15);
       border-radius: 18px;
-      max-width: 80%;
-      animation: fadeIn .3s ease;
       color: var(--gris-claro);
+      animation: fadeIn .3s ease;
+      max-width: 80%;
+      border: 1px solid rgba(255,255,255,0.15);
     }
 
-    /* Mensaje Usuario */
     .user-msg {
       align-self: flex-end;
       padding: 14px 18px;
       background: var(--azul);
       border-radius: 18px;
-      max-width: 80%;
       animation: fadeIn .3s ease;
+      max-width: 80%;
       color: white;
     }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* Input flotante */
+    /* ================================
+         INPUT BAR
+    =================================*/
     #input-bar {
       position: fixed;
       bottom: 0;
@@ -124,7 +129,7 @@
       backdrop-filter: blur(12px);
       display: flex;
       gap: 10px;
-      border-top: 1px solid rgba(255,255,255,0.15);
+      border-top: 1px solid rgba(255,255,255,0.12);
     }
 
     #userInput {
@@ -142,19 +147,49 @@
       border: none;
       color: white;
       border-radius: 14px;
-      cursor: pointer;
       font-weight: 600;
+      cursor: pointer;
     }
 
-    /* Tarjeta para gráficos dentro del chat */
+    /* ================================
+         TARJETA DE RESULTADOS PREMIUM
+    =================================*/
     .chart-card {
+      width: 100%;
       background: var(--glass);
-      padding: 12px;
       border-radius: 18px;
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.12);
+      padding: 18px;
+      backdrop-filter: blur(14px);
+      border: 1px solid rgba(255,255,255,0.15);
+      animation: fadeIn .3s ease;
       color: var(--gris-claro);
-      max-width: 80%;
+    }
+
+    .chart-values {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      text-align: center;
+    }
+
+    .value-box {
+      padding: 10px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .value-box div:first-child {
+      font-size: 11px;
+      color: var(--gris-texto);
+    }
+
+    .value-box div:last-child {
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 4px;
+      color: white;
     }
 
   </style>
@@ -162,6 +197,7 @@
 
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="logo">R</div>
   <div>
@@ -170,10 +206,12 @@
   </div>
 </header>
 
+<!-- CHAT -->
 <div id="chat-container">
   <div id="messages"></div>
 </div>
 
+<!-- INPUT -->
 <div id="input-bar">
   <input id="userInput" placeholder="Escribí tu mensaje..." autocomplete="off" />
   <button id="sendBtn">Enviar</button>
@@ -185,6 +223,14 @@
   const input = document.getElementById("userInput");
   const sendBtn = document.getElementById("sendBtn");
 
+  /* ==========================
+       MOTOR DE FLUJO
+  ========================== */
+  let state = "ask_age";
+  let edad_actual = null;
+  let edad_retiro = null;
+  let aporte = null;
+
   function addMessage(text, sender = "bot") {
     const msg = document.createElement("div");
     msg.className = sender === "bot" ? "bot-msg" : "user-msg";
@@ -193,41 +239,202 @@
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
 
+  function addCard(html) {
+    const div = document.createElement("div");
+    div.className = "chart-card";
+    div.innerHTML = html;
+    messagesDiv.appendChild(div);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+
   async function sendMessage() {
     const text = input.value.trim();
     if (!text) return;
 
-    addMessage(text, "user");
     input.value = "";
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    addMessage(text, "user");
 
-    // Fetch a tu backend IA
+    /* ==========================
+       ESTADO 1 → Edad actual
+    ========================== */
+    if (state === "ask_age") {
+      const n = Number(text);
+      if (!n || n < 18 || n > 65) {
+        addMessage("Necesito una edad válida entre 18 y 65. Probemos de nuevo.");
+        return;
+      }
+      edad_actual = n;
+      state = "ask_retire";
+      addMessage("Perfecto. ¿A qué edad te gustaría retirarte?");
+      return;
+    }
+
+    /* ==========================
+       ESTADO 2 → Edad retiro
+    ========================== */
+    if (state === "ask_retire") {
+      const n = Number(text);
+      if (!n || n <= edad_actual || n < 55 || n > 75) {
+        addMessage("La edad de retiro debe ser mayor a tu edad actual y no menor a 55. Probemos de nuevo.");
+        return;
+      }
+      edad_retiro = n;
+      state = "ask_aporte";
+      addMessage("Excelente. ¿Cuánto te gustaría aportar por mes? (mínimo $30.000)");
+      return;
+    }
+
+    /* ==========================
+       ESTADO 3 → Aporte
+    ========================== */
+    if (state === "ask_aporte") {
+      const n = Number(text);
+      if (!n || n < 30000) {
+        addMessage("El aporte mínimo es de $30.000. Ingresá un valor igual o mayor.");
+        return;
+      }
+      aporte = n;
+      state = "calculating";
+      addMessage("Dame un segundo, estoy proyectando tu plan…");
+      calculateRetirement();
+      return;
+    }
+
+    /* ==========================
+       DESPUÉS DEL RESULTADO
+       El mensaje se envía a la IA
+    ========================== */
+    if (state === "chat_free") {
+      sendToAI(text);
+    }
+  }
+
+  /* ==========================
+       LLAMADA A /cotizar
+  ========================== */
+  async function calculateRetirement() {
+    try {
+      const res = await fetch("https://retirex.onrender.com/cotizar", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({
+          edad_actual,
+          edad_retiro,
+          aporte_mensual: aporte,
+          moneda: "pesos"
+        })
+      });
+
+      const data = await res.json();
+      const oficial = data.oficial.capital;
+      const real = data.real_pesos.capital;
+      const dif = real - oficial;
+
+      /* ==========================
+           TARJETA PREMIUM
+      ========================== */
+      const cardHTML = `
+        <h3 style="margin:0 0 10px; font-size:18px; font-weight:600; color:white;">
+          📊 Proyección de tu plan
+        </h3>
+
+        <canvas id="chartCanvas" height="120"></canvas>
+
+        <div class="chart-values">
+          <div class="value-box">
+            <div>Oficial</div>
+            <div>$${oficial.toLocaleString()}</div>
+          </div>
+          <div class="value-box">
+            <div>Realista</div>
+            <div>$${real.toLocaleString()}</div>
+          </div>
+          <div class="value-box">
+            <div>Diferencia</div>
+            <div>$${dif.toLocaleString()}</div>
+          </div>
+        </div>
+      `;
+
+      addCard(cardHTML);
+
+      /* ==========================
+         RENDER GRAFICO
+      ========================== */
+      setTimeout(() => {
+        const ctx = document.getElementById("chartCanvas").getContext("2d");
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: ["Oficial", "Realista"],
+            datasets: [{
+              data: [oficial, real],
+              backgroundColor: ["#005DAA80", "#00A4E480"],
+              borderColor: ["#005DAA", "#00A4E4"],
+              borderWidth: 2
+            }]
+          },
+          options: {
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } }
+          }
+        });
+      }, 200);
+
+      /* ==========================
+         EXPLICACION DE LA IA
+      ========================== */
+      const explanation = `
+        Explicá estos resultados de forma clara y humana:
+        - Edad actual: ${edad_actual}
+        - Edad retiro: ${edad_retiro}
+        - Aporte mensual: $${aporte.toLocaleString()}
+        - Capital oficial: $${oficial.toLocaleString()}
+        - Capital realista: $${real.toLocaleString()}
+        - Diferencia: $${dif.toLocaleString()}
+      `;
+
+      sendToAI(explanation);
+
+      /* CTA automático */
+      setTimeout(() => {
+        addMessage("¿Querés ajustar los valores o preferís hablar con un asesor?");
+      }, 800);
+
+      state = "chat_free";
+
+    } catch (err) {
+      addMessage("Hubo un error al proyectar tu plan. Intentá más tarde.");
+      state = "chat_free";
+    }
+  }
+
+  /* ==========================
+       LLAMADA A /ia
+  ========================== */
+  async function sendToAI(text) {
     const res = await fetch("https://retirex.onrender.com/ia", {
       method: "POST",
       headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-        messages: [
-          { role: "user", content: text }
-        ]
-      })
+      body: JSON.stringify({ messages: [{ role:"user", content:text }] })
     });
-
     const data = await res.json();
-    const reply = data?.message || "Hubo un error.";
-
-    addMessage(reply, "bot");
+    addMessage(data.message, "bot");
   }
 
+  /* ==========================
+       EVENTOS
+  ========================== */
   sendBtn.onclick = sendMessage;
-  input.addEventListener("keydown", e => {
-    if (e.key === "Enter") sendMessage();
-  });
+  input.onkeydown = e => { if (e.key === "Enter") sendMessage(); };
 
-  /* MENSAJE INICIAL */
+  /* ==========================
+       MENSAJE INICIAL
+  ========================== */
   window.onload = () => {
     addMessage(`
       👋 Hola, soy <strong>Retirex IA</strong>.<br>
-      Te acompaño a diseñar tu plan de retiro basado en <strong>Prevención Retiro</strong>.<br><br>
+      Te voy a acompañar en el diseño de tu plan de retiro basado en <strong>Prevención Retiro</strong>.<br><br>
       Empecemos fácil: <strong>¿Cuál es tu edad actual?</strong>
     `);
   };
