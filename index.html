@@ -2,432 +2,373 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Retirex IA – Simulador Conversacional</title>
+  <title>Retirex – Simulador Inteligente de Retiro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root {
-      --azul-oscuro: #003A70;
-      --azul: #005DAA;
-      --celeste: #00A4E4;
-      --blanco: #ffffff;
-      --glass: rgba(255,255,255,0.15);
+      --magenta: #a0005a;
+      --magenta-dark: #7a0045;
+      --blue: #004b9a;
+      --blue-dark: #00356d;
+      --bg: #f4f4f7;
+      --card-bg: #ffffff;
+      --text-main: #222;
+      --text-soft: #555;
+      --radius-xl: 18px;
+      --radius: 10px;
     }
 
-    *{ box-sizing:border-box; }
-
-    body{
-      margin:0;
-      background:linear-gradient(135deg, var(--azul-oscuro), var(--azul));
-      font-family: "Montserrat", sans-serif;
-      color:white;
-      height:100vh;
-      display:flex;
-      flex-direction:column;
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: "Montserrat", system-ui, sans-serif;
+      background: radial-gradient(circle at top, #ffffff 0, var(--bg) 55%);
+      color: var(--text-main);
     }
 
-    header{
-      padding:16px 20px;
-      display:flex;
-      align-items:center;
-      gap:12px;
-      background:rgba(0,0,0,0.25);
-      backdrop-filter:blur(12px);
-      border-bottom:1px solid rgba(255,255,255,0.2);
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px 16px 40px;
     }
 
-    .logo{
-      width:42px;
-      height:42px;
-      border-radius:12px;
-      background:var(--celeste);
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      font-size:20px;
-      font-weight:800;
-      color:var(--azul-oscuro);
+    .brand-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
-    #chat{
-      flex:1;
-      overflow-y:auto;
-      padding:20px;
+    .brand-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--magenta), var(--blue));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 20px;
     }
 
-    #messages{
-      max-width:760px;
-      margin:0 auto;
-      display:flex;
-      flex-direction:column;
-      gap:14px;
+    .brand-text h1 {
+      margin: 0;
+      font-size: 22px;
+      color: var(--magenta);
     }
 
-    .msg-bot{
-      align-self:flex-start;
-      padding:14px 18px;
-      border-radius:18px;
-      background:var(--glass);
-      backdrop-filter:blur(14px);
-      border:1px solid rgba(255,255,255,0.2);
-      animation:fade .3s ease;
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 20px;
     }
 
-    .msg-user{
-      align-self:flex-end;
-      padding:14px 18px;
-      border-radius:18px;
-      background:var(--celeste);
-      color:black;
-      font-weight:600;
-      animation:fade .3s ease;
+    @media (max-width: 900px) {
+      .layout { grid-template-columns: 1fr; }
     }
 
-    @keyframes fade{
-      from{opacity:0; transform:translateY(10px);}
-      to{opacity:1; transform:translateY(0);}
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius-xl);
+      padding: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
     }
 
-    #inputBar{
-      display:flex;
-      padding:14px;
-      gap:10px;
-      background:rgba(0,0,0,0.3);
-      backdrop-filter:blur(12px);
-      border-top:1px solid rgba(255,255,255,0.2);
-      position:sticky;
-      bottom:0;
+    label { font-weight: 600; font-size: 13px; margin-top: 10px; display:block; }
+    input, select {
+      width: 100%;
+      padding: 9px 10px;
+      border-radius: var(--radius);
+      border: 1px solid #d0d2da;
+      font-size: 14px;
+      outline: none;
+    }
+    input:focus, select:focus {
+      border-color: var(--magenta);
+      box-shadow: 0 0 0 2px rgba(160,0,90,0.15);
     }
 
-    #input{
-      flex:1;
-      padding:12px;
-      border-radius:12px;
-      border:none;
-      outline:none;
-      font-size:15px;
+    button {
+      margin-top: 16px;
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, var(--magenta), var(--magenta-dark));
+      border: none;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(160,0,90,0.35);
     }
 
-    button{
-      padding:12px 18px;
-      border:none;
-      border-radius:12px;
-      background:var(--celeste);
-      font-weight:700;
-      cursor:pointer;
+    /* TARJETAS DE RESULTADOS */
+    .results-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-top: 20px;
     }
 
-    .card-chart{
-      background:var(--glass);
-      padding:16px;
-      border-radius:16px;
-      backdrop-filter:blur(12px);
-      border:1px solid rgba(255,255,255,0.25);
-      animation:fade .3s ease;
+    .result-card {
+      background: #fafbff;
+      border: 1px solid #e3e4ed;
+      border-radius: var(--radius);
+      padding: 10px;
     }
 
-    .value-box{
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding:8px;
-      border-radius:12px;
-      background:rgba(255,255,255,0.1);
-      border:1px solid rgba(255,255,255,0.2);
-      margin-top:10px;
+    .result-title { font-size: 12px; color: var(--blue); font-weight: 600; }
+    .result-number {
+      font-size: 22px; font-weight: 700; color: var(--magenta); margin-top: 6px;
     }
 
+    /* CHART */
+    .chart-wrapper {
+      background: #fff !important;
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid #e0e0e0;
+      margin-top: 18px;
+    }
+
+    .chart-wrapper h4 {
+      margin: 0 0 8px;
+      color: var(--blue);
+      font-size: 14px;
+    }
+
+    /* MENSAJES DE CHAT */
+    .chat-box {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 14px;
+      background: #f8f5fa;
+      border: 1px solid #e4d6e9;
+      line-height: 1.5;
+      font-size: 14px;
+      display: none;
+    }
   </style>
 </head>
 
-
 <body>
+<div class="page">
+  <header class="brand-bar">
+    <div class="brand-logo">R</div>
+    <div class="brand-text">
+      <h1>Retirex</h1>
+      <span>Simulador inteligente basado en Prevención Retiro</span>
+    </div>
+  </header>
 
-<header>
-  <div class="logo">R</div>
-  <div>
-    <h3 style="margin:0">Retirex IA</h3>
-    <small style="opacity:0.7;">Asistente de retiro basado en Prevención Retiro</small>
-  </div>
-</header>
+  <main class="layout">
+    <!-- SIMULADOR -->
+    <section class="card">
+      <h2>Simulá tu plan</h2>
+      <p class="lead">Completá tus datos y visualizá tu proyección.</p>
 
-<div id="chat">
-  <div id="messages"></div>
+      <label>Edad actual</label>
+      <input id="edad_actual" type="number" placeholder="Ej: 40">
+
+      <label>Edad de retiro</label>
+      <input id="edad_retiro" type="number" placeholder="Ej: 65">
+
+      <label>Aporte mensual</label>
+      <input id="aporte" type="number" placeholder="Ej: 75000">
+
+      <label>Moneda</label>
+      <select id="moneda">
+        <option value="pesos">Pesos</option>
+        <option value="usd">USD</option>
+      </select>
+
+      <button onclick="simular()">Simular</button>
+
+      <!-- RESULTADOS -->
+      <div id="resultados" style="display:none;">
+        <div class="results-grid">
+          <div class="result-card">
+            <div class="result-title">Oficial Prevención</div>
+            <div id="oficial" class="result-number">$0</div>
+          </div>
+          <div class="result-card">
+            <div class="result-title">Escenario realista</div>
+            <div id="real" class="result-number">$0</div>
+          </div>
+        </div>
+
+        <p id="summary" class="summary"></p>
+
+        <div class="chart-wrapper">
+          <h4>Comparación de capital</h4>
+          <canvas id="capitalChart" height="160"></canvas>
+        </div>
+
+        <!-- CHAT / CONVERSACIÓN -->
+        <div id="chat" class="chat-box"></div>
+      </div>
+    </section>
+
+    <!-- INFO -->
+    <section class="card">
+      <h3>¿Qué es un plan de retiro?</h3>
+      <p>Es un ahorro de largo plazo regulado, flexible… (texto interno fijo).</p>
+    </section>
+  </main>
 </div>
 
-<div id="inputBar">
-  <input id="input" placeholder="Escribí acá..." autocomplete="off"/>
-  <button onclick="enviar()">Enviar</button>
-</div>
 
 <script>
-/* ======================================
-   VARIABLES DEL FLUJO
-====================================== */
-let estado = "edad";
-let edad_actual = null;
-let edad_retiro = null;
-let aporte = null;
+let chartInstance = null;
 
-const mensajes = document.getElementById("messages");
-
-function bot(text){
-  const div = document.createElement("div");
-  div.className = "msg-bot";
-  div.innerHTML = text;
-  mensajes.appendChild(div);
-  mensajes.scrollTop = mensajes.scrollHeight;
+/* FORMATO MONEDA */
+function fm(valor, moneda) {
+  return new Intl.NumberFormat("es-AR", {
+    style: "currency",
+    currency: moneda === "usd" ? "USD" : "ARS",
+    maximumFractionDigits: 0
+  }).format(valor);
 }
 
-function user(text){
-  const div = document.createElement("div");
-  div.className = "msg-user";
-  div.textContent = text;
-  mensajes.appendChild(div);
-  mensajes.scrollTop = mensajes.scrollHeight;
-}
+/* MOTOR CENTRAL */
+async function simular() {
+  const edad_actual = Number(document.getElementById("edad_actual").value);
+  const edad_retiro = Number(document.getElementById("edad_retiro").value);
+  const aporte = Number(document.getElementById("aporte").value);
+  const moneda = document.getElementById("moneda").value;
 
-/* ======================================
-   RESPUESTAS INTERNAS (HUMANO CERCANO)
-====================================== */
+  const cont = document.getElementById("resultados");
+  cont.style.display = "none";
 
-const respuestasInternas = {
-  funcionamiento:
-    "El seguro de retiro es un ahorro programado. Aportás todos los meses y ese capital va creciendo año tras año. Cuando llegás a la edad elegida, retirás todo el capital generado.",
-  
-  beneficios:
-    "Los beneficios principales son: crecimiento compuesto, flexibilidad para pausar o ajustar aportes, posibilidad de rescatar antes si lo necesitás, y un respaldo regulado por la SSN.",
-  
-  dejarPagar:
-    "Si dejás de pagar no perdés nada. El contrato queda 'en pausa' y el dinero que tenés acumulado sigue siendo tuyo.",
-  
-  rescates:
-    "Podés rescatar parte o todo el capital antes de la edad de retiro. Siempre vas a poder recuperar tus aportes.",
-  
-  flexibilidad:
-    "Podés subir, bajar o pausar los aportes cuando quieras. El plan se adapta a tu situación.",
-  
-  contratar:
-    "Para contratarlo es un trámite muy simple. Te puedo guiar en unos minutos si querés.",
-  
-  seguridad:
-    "Prevención Retiro es una compañía argentina regulada por la Superintendencia de Seguros. Tu contrato está protegido.",
-  
-  puntos:
-    "Los puntos clave son: flexibilidad, crecimiento a largo plazo, previsibilidad y disponibilidad del capital si lo necesitás.",
-  
-  diferencia:
-    "La diferencia entre el cálculo oficial y el realista aparece porque el oficial usa una tasa muy conservadora. En la práctica, el rendimiento a largo plazo suele ser mayor, por eso la proyección realista termina siendo más alta."
-};
-
-
-/* ======================================
-   DECISOR: INTERNAS vs IA
-====================================== */
-function esPreguntaInterna(txt){
-  txt = txt.toLowerCase();
-
-  const claves = {
-    funcionamiento: ["funciona", "cómo funciona", "como funciona", "plan", "seguro de retiro"],
-    beneficios: ["beneficio", "ventaja", "qué gano"],
-    dejarPagar: ["dejo de pagar", "no puedo pagar", "si dejo"],
-    rescates: ["rescatar", "retirar antes", "retiro anticipado"],
-    flexibilidad: ["flexible", "aportes", "subir aporte", "bajar aporte"],
-    contratar: ["contratar", "quiero contratar"],
-    seguridad: ["seguro", "ssn", "seguridad", "respaldo"],
-    puntos: ["puntos", "clave", "resumen"],
-    diferencia: ["diferencia", "oficial", "realista"]
-  };
-
-  for (const key in claves){
-    if (claves[key].some(c => txt.includes(c))){
-      return key;
-    }
-  }
-  return null;
-}
-
-
-/* ======================================
-   FLUJO CONVERSACIONAL
-====================================== */
-async function enviar(){
-  const txt = document.getElementById("input").value.trim();
-  if(!txt) return;
-
-  user(txt);
-  document.getElementById("input").value = "";
-
-  /* ======== 1) Flujo edad ======== */
-  if (estado==="edad"){
-    let n = Number(txt);
-    if(!n || n<18 || n>65){
-      bot("Necesito tu edad real, entre 18 y 65.");
-      return;
-    }
-    edad_actual = n;
-    estado = "retiro";
-    bot("Perfecto. ¿A qué edad te gustaría retirarte?");
-    return;
-  }
-
-  /* ======== 2) Flujo edad retiro ======== */
-  if (estado==="retiro"){
-    let n = Number(txt);
-    if(!n || n<=edad_actual || n>75){
-      bot("La edad de retiro tiene que ser mayor a tu edad actual. Probemos de nuevo.");
-      return;
-    }
-    edad_retiro = n;
-    estado = "aporte";
-    bot("Genial. ¿Cuánto querés aportar por mes? El mínimo es $30.000.");
-    return;
-  }
-
-  /* ======== 3) Flujo aporte ======== */
-  if (estado==="aporte"){
-    let n = Number(txt);
-    if(!n || n<30000){
-      bot("El aporte mínimo es $30.000. Probemos de nuevo.");
-      return;
-    }
-    aporte = n;
-    estado = "cotizando";
-    bot("Listo, dame un segundo que estoy calculando…");
-    return cotizar();
-  }
-
-  /* ======== 4) Después de cotizar ======== */
-  
-  // Chequeo si es una pregunta interna
-  const clave = esPreguntaInterna(txt);
-  if(clave){
-    bot(respuestasInternas[clave]);
-    return;
-  }
-
-  // Si no es interna → usar IA
-  llamarIA(txt);
-}
-
-
-/* ======================================
-   COTIZAR
-====================================== */
-async function cotizar(){
-  try{
-    const res = await fetch("https://retirex.onrender.com/cotizar", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        edad_actual,
-        edad_retiro,
-        aporte_mensual: aporte,
-        moneda:"pesos"
-      })
+  try {
+    const r = await fetch("https://retirex.onrender.com/cotizar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ edad_actual, edad_retiro, aporte_mensual: aporte, moneda })
     });
 
-    const data = await res.json();
+    if (!r.ok) return alert("Error simulando");
 
+    const data = await r.json();
     const oficial = data.oficial.capital;
     const real = data.real_pesos.capital;
 
-    mostrarTarjeta(oficial, real);
+    document.getElementById("oficial").textContent = fm(oficial, moneda);
+    document.getElementById("real").textContent = fm(real, moneda);
 
-    bot(`
-      Mirá, acá tenés la diferencia:<br><br>
-      • Oficial: ${oficial.toLocaleString("es-AR")}<br>
-      • Realista: ${real.toLocaleString("es-AR")}<br><br>
-      Esto pasa porque el cálculo oficial usa una tasa muy conservadora.  
-      El realista toma un rendimiento más cercano a cómo funciona realmente un plan a largo plazo.<br><br>
-      Si querés, te explico más sobre los beneficios o vemos tus dudas.
-    `);
+    /* RESUMEN */
+    document.getElementById("summary").innerHTML =
+      `Con un aporte mensual de <strong>${fm(aporte, moneda)}</strong> ` +
+      `el capital estimado oficial sería <strong>${fm(oficial, moneda)}</strong>, ` +
+      `y en un escenario más realista alcanzaría <strong>${fm(real, moneda)}</strong>.`;
 
-    estado = "libre";
+    /* :::::::::::::::::::: GRÁFICO ::::::::::::::::::::: */
+    const ctx = document.getElementById("capitalChart").getContext("2d");
+    const dataChart = {
+      labels: ["Oficial Prevención", "Escenario realista"],
+      datasets: [{
+        data: [oficial, real],
+        backgroundColor: ["#A0005A", "#004B9A"],
+        borderColor: ["#7A0045", "#00356D"],
+        borderWidth: 2,
+        hoverBorderWidth: 2,
+        barThickness: 38,
+        maxBarThickness: 44
+      }]
+    };
 
-  }catch(e){
-    bot("Hubo un problema al cotizar. Probemos más tarde.");
-  }
-}
-
-
-/* ======================================
-   TARJETA + GRÁFICO
-====================================== */
-function mostrarTarjeta(oficial, real){
-  const div = document.createElement("div");
-  div.className = "card-chart";
-  div.innerHTML = `
-    <h3 style="margin:0 0 10px;">📊 Proyección</h3>
-    <canvas id="chart" height="130"></canvas>
-    <div class="value-box">
-      <div>Oficial: $${oficial.toLocaleString("es-AR")}</div>
-      <div>Realista: $${real.toLocaleString("es-AR")}</div>
-    </div>
-  `;
-  mensajes.appendChild(div);
-
-  setTimeout(()=>{
-    const ctx = document.getElementById("chart").getContext("2d");
-    new Chart(ctx,{
-      type:"bar",
-      data:{
-        labels:["Oficial","Realista"],
-        datasets:[{
-          data:[oficial,real],
-          backgroundColor:["#005DAA","#00A4E4"],
-          borderColor:"white",
-          borderWidth:2
-        }]
-      },
-      options:{
-        plugins:{legend:{display:false}},
-        scales:{y:{beginAtZero:true}}
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: "bar",
+      data: dataChart,
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          y: {
+            ticks: {
+              color: "#333",
+              callback: (v)=> v>=1_000_000?(v/1_000_000).toFixed(1)+"M":v,
+              font: { size:12 }
+            },
+            grid: { color:"#eaeaea" }
+          },
+          x: {
+            ticks: { color:"#333", font:{ size:12 } },
+            grid: { display:false }
+          }
+        }
       }
     });
-  },50);
-}
 
+    cont.style.display = "block";
 
-/* ======================================
-   LLAMADA A IA (CORREGIDA)
-====================================== */
-async function llamarIA(txt){
-  try{
-    const res = await fetch("https://retirex.onrender.com/ia", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
-        messages:[
-          {role:"user", content:txt}
-        ]
-      })
-    });
+    /* ::::::::::::: POST-COTIZACIÓN (conversación) ::::::::::::: */
+    mostrarExplicacionPostCotizacion(oficial, real, aporte, edad_actual, edad_retiro);
 
-    const data = await res.json();
-    const out = data.message || data.output_text || "Te respondo con gusto: consultame de nuevo.";
-    bot(out);
-
-  }catch(e){
-    bot("En este momento no pude consultar la IA, pero si querés te explico algo sobre el plan.");
+  } catch(e) {
+    alert("Error conectando a la API");
   }
 }
 
+/* ::::::::: EXPLICACIÓN POST-COTIZACIÓN ::::::::: */
+function mostrarExplicacionPostCotizacion(oficial, real, aporte, ea, er) {
+  const box = document.getElementById("chat");
+  box.style.display = "block";
 
-/* ======================================
-   MENSAJE INICIAL
-====================================== */
-window.onload = ()=>{
-  bot(`
-    Hola 👋 Soy <b>Retirex IA</b>.<br>
-    Te voy a ayudar a simular tu plan de retiro de manera simple y clara.<br><br>
-    Para empezar… ¿Cuál es tu edad actual?
-  `);
+  box.innerHTML =
+    `<strong>¿Por qué hay diferencia entre los escenarios?</strong><br><br>
+    El escenario oficial de Prevención Retiro utiliza parámetros más conservadores, 
+    porque está diseñado para garantizar estabilidad y cumplir normativas.  
+    <br><br>
+    En cambio, el escenario realista refleja un rendimiento estimado en pesos que suele ser mayor, 
+    por la forma en que se actualizan las inversiones a largo plazo.
+    <br><br>
+    Si querés, te explico:
+    <ul>
+      <li>Cómo funciona el plan</li>
+      <li>Cómo pausar o modificar aportes</li>
+      <li>Qué pasa si rescatas antes</li>
+      <li>Qué beneficios tiene respecto a un plazo fijo o jubilación estatal</li>
+    </ul>
+    <br>
+    Solo decime qué querés saber y te ayudo.`;
+}
+
+/* ::::::::::::::::: MOTOR DE RESPUESTAS FIJAS ::::::::::::::::: */
+
+const respuestasFijas = {
+  "pausar": "Podés pausar tus aportes sin dar de baja el plan. En general se permite detenerlos y retomarlos más adelante según tu situación. La compañía define condiciones en el reglamento, pero la pausa es una opción habitual y sin perder lo acumulado.",
+  "funciona": "Un plan de retiro funciona como un ahorro programa que se capitaliza mes a mes. Vos elegís cuánto aportar y por cuánto tiempo, y el capital final se multiplica por el interés compuesto. No necesitás decidir todo hoy: podés ajustar aportes con el tiempo.",
+  "rescatar": "Existe la posibilidad de hacer rescates anticipados, pero suelen aplicarse descuentos o ajustes según el momento y lo acumulado. No puedo darte un porcentaje exacto porque depende del contrato, pero es algo permitido bajo ciertas reglas.",
+  "inflacion": "Los planes de retiro están pensados para ganarle a la inflación en el largo plazo. La clave es la capitalización mes a mes y el horizonte amplio.",
+  "aporte": "Los aportes se pueden subir o bajar cuando lo necesites. Es un sistema flexible pensado para acompañar tus ingresos."
 };
 
-</script>
 
+async function responderUsuario(texto) {
+  texto = texto.toLowerCase();
+
+  // Intentamos primero respuestas internas
+  for (const clave in respuestasFijas) {
+    if (texto.includes(clave)) {
+      return respuestasFijas[clave];
+    }
+  }
+
+  // Si no coincide, activamos IA
+  const r = await fetch("https://retirex.onrender.com/ia", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ mensaje: texto })
+  });
+
+  const data = await r.json();
+  return data.respuesta || "Puedo ayudarte con eso, contame un poco más.";
+}
+</script>
 </body>
 </html>
