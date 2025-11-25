@@ -11,15 +11,14 @@
   <style>
     :root {
       --magenta: #a0005a;
-      --magenta-light: #c00064;
       --blue: #004b9a;
-      --bg: #f2f2f7;
-      --chat-bg: #e6e6ea;
+      --bg: #e5e5e5;
+      --chat-bg: #f2f2f7;
       --bubble-user: #d40077;
       --bubble-ai: #ffffff;
+      --radius: 16px;
       --text-dark: #1d1d1d;
       --text-soft: #555;
-      --radius: 16px;
     }
 
     body {
@@ -37,7 +36,7 @@
       background: var(--chat-bg);
       display: flex;
       flex-direction: column;
-      padding-bottom: 70px;
+      padding-bottom: 80px;
     }
 
     .header {
@@ -66,14 +65,14 @@
     .messages {
       flex: 1;
       overflow-y: auto;
-      padding: 12px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
     }
 
     .msg {
-      max-width: 80%;
+      max-width: 78%;
       padding: 10px 14px;
       border-radius: var(--radius);
       line-height: 1.45;
@@ -111,7 +110,6 @@
       border-radius: var(--radius);
       border: 1px solid #ddd;
       font-size: 14px;
-      outline: none;
     }
 
     .input-area button {
@@ -124,10 +122,29 @@
       cursor: pointer;
     }
 
+    /* BOTONES ESTILO WHATSAPP BUSINESS */
+    .option-button {
+      width: 100%;
+      padding: 12px;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #dcdcdc;
+      margin-top: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      text-align: left;
+      transition: 0.2s ease;
+    }
+
+    .option-button:hover {
+      background: #f7f7f7;
+    }
+
+    /* Cuadro gráfico */
     .chart-wrapper {
       background: white;
-      padding: 10px;
-      border-radius: 14px;
+      padding: 12px;
+      border-radius: 16px;
       margin-top: 6px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.06);
       border: 1px solid #e5e5e5;
@@ -136,7 +153,7 @@
     .disclaimer {
       font-size: 11px;
       color: #777;
-      margin-top: 4px;
+      margin-top: 8px;
     }
   </style>
 </head>
@@ -157,10 +174,10 @@
   </div>
 
 <script>
-/* ======================================================
-   UTILIDADES DEL CHAT
-====================================================== */
 
+/* =====================================
+   FUNCIÓN PARA AGREGAR MENSAJES
+===================================== */
 function addMessage(text, who = "ai") {
   const box = document.createElement("div");
   box.className = "msg " + who;
@@ -169,67 +186,95 @@ function addMessage(text, who = "ai") {
   box.scrollIntoView({ behavior: "smooth" });
 }
 
-/* ======================================================
-   BASE FIJA DE CONOCIMIENTO (SIN COSTO)
-====================================================== */
+/* =====================================
+   INICIO — MENSAJE AUTOMÁTICO
+===================================== */
+function sendWelcome() {
+  addMessage(`
+    Hola 👋 soy <strong>Retirex</strong>, tu asistente para ayudarte con los planes de retiro de Prevención Retiro.  
+    ¿Qué te gustaría hacer hoy?
+  `, "ai");
 
-const knowledge = {
-  "que es un plan de retiro": `
-    Un plan de retiro es una herramienta de ahorro de largo plazo donde aportás
-    mes a mes para armar tu propio capital futuro. <br><br>
-    En Prevención Retiro podés ajustar tu aporte en el tiempo, hacer incrementos,
-    pausas, rescates y llevar un control claro de tu crecimiento.
-  `,
+  showMainMenu();
+}
 
-  "como funciona": `
-    Funciona como un ahorro organizado. Aportás todos los meses y tu capital se va
-    capitalizando con el tiempo. Cuanto antes empezás, más crece el efecto del interés compuesto.
-  `,
+/* =====================================
+   MENÚ PRINCIPAL
+===================================== */
+function showMainMenu() {
+  addMessage(`
+    <button class="option-button" onclick="startSimulation()">🧮 Simular mi plan</button>
+    <button class="option-button" onclick="showBenefits()">📘 Beneficios del plan</button>
+    <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
+    <button class="option-button" onclick="askQuestion()">❓ Preguntar algo puntual</button>
+  `, "ai");
+}
 
-  "beneficios": `
-    Los beneficios principales son:<br>
-    • Ahorro organizado y flexible.<br>
-    • Capital propio para tu retiro.<br>
-    • Posibilidad de ajustar tu aporte según tu situación.<br>
-    • Rescates disponibles según condiciones de póliza.<br>
-    • Protegido ante imprevistos y separado de tu economía diaria.<br><br>
-    ¿Querés que te explique alguno en detalle?
-  `,
+/* =====================================
+   RESPUESTAS FIJAS
+===================================== */
+function showBenefits() {
+  addMessage(`
+    Estos son algunos beneficios del plan:<br><br>
+    ✔ Ahorro organizado y flexible.<br>
+    ✔ Ajustás tu aporte cuando quieras.<br>
+    ✔ Podés hacer pausas temporales.<br>
+    ✔ Rescates disponibles según póliza.<br>
+    ✔ Construís capital propio a largo plazo.<br><br>
+    ¿Querés profundizar en alguno de estos puntos?
+  `, "ai");
+}
 
-  "pausa aportes": `
-    Si en algún momento no podés pagar, no pasa nada grave. <br><br>
-    En general los planes permiten:<br>
-    • Pausar temporalmente el aporte.<br>
-    • Reducirlo a un monto menor.<br>
-    • Retomar más adelante sin perder tu historial.<br><br>
-    Los detalles exactos dependen de la póliza. Pero lo importante es que no quedás afuera por
-    tener un mes complicado.
-  `
-};
+function showFAQ() {
+  addMessage(`
+    Algunas preguntas frecuentes:<br><br>
+    • ¿Qué pasa si no puedo pagar un tiempo?<br>
+    • ¿Cómo funciona el rescate?<br>
+    • ¿Cómo ajusto el aporte?<br>
+    • ¿Qué diferencia hay entre el escenario oficial y el realista?<br><br>
+    Podés preguntarme cualquiera.
+  `, "ai");
+}
 
-/* detecta si la pregunta coincide */
-function checkKnowledge(question) {
-  question = question.toLowerCase();
+function askQuestion() {
+  addMessage("Perfecto, ¿qué te gustaría saber?", "ai");
+}
 
-  if (question.includes("pausar") || question.includes("no puedo pagar"))
-    return knowledge["pausa aportes"];
+/* =====================================
+   DETECCIÓN Y USO DE BASE FIJA
+===================================== */
+function fixedKnowledge(msg) {
+  msg = msg.toLowerCase();
 
-  if (question.includes("beneficio"))
-    return knowledge["beneficios"];
+  if (msg.includes("pausa") || msg.includes("no puedo pagar"))
+    return `
+      Podés pausar tu aporte o reducirlo temporalmente.  
+      En general no perdés tu historial y podés retomar cuando estés mejor.<br><br>
+      Los detalles exactos dependen de la póliza, pero lo importante es que hay flexibilidad para acompañarte.
+    `;
 
-  if (question.includes("como funciona"))
-    return knowledge["como funciona"];
+  if (msg.includes("beneficio"))
+    return `
+      ✔ Ahorro organizado<br>
+      ✔ Flexibilidad en el aporte<br>
+      ✔ Rescates disponibles<br>
+      ✔ Capital propio a largo plazo<br><br>
+      ¿Querés que te explique alguno?
+    `;
 
-  if (question.includes("plan de retiro") || question.includes("que es"))
-    return knowledge["que es un plan de retiro"];
+  if (msg.includes("plan de retiro") || msg.includes("qué es"))
+    return `
+      Un plan de retiro es un ahorro de largo plazo donde aportás mes a mes
+      para construir tu capital futuro.  
+      En Prevención Retiro podés ajustar tu aporte, hacer pausas y revisar tu crecimiento.
+    `;
 
   return null;
 }
 
-/* ======================================================
-    LLAMADO A IA SOLO PARA CONSULTAS COMPLEJAS
-====================================================== */
-
+/* =====================================
+   IA SOLO PARA CONSULTAS COMPLEJAS
+===================================== */
 async function callAI(msg) {
   const r = await fetch("https://retirex.onrender.com/ia", {
     method: "POST",
@@ -243,10 +288,9 @@ async function callAI(msg) {
   return data?.reply || "Puedo ayudarte con más detalles si querés.";
 }
 
-/* ======================================================
-   ENVÍO DE MENSAJE
-====================================================== */
-
+/* =====================================
+   SISTEMA DE MENSAJES
+===================================== */
 async function sendMessage() {
   const input = document.getElementById("userInput");
   const text = input.value.trim();
@@ -256,61 +300,68 @@ async function sendMessage() {
   addMessage(text, "user");
   input.value = "";
 
-  /* 1) Ver si es una simulación */
-  if (text.includes("simular") || text.includes("cotizar")) {
-    askSimulation();
+  if (flow.step > 0) handleFlow(text);
+  else processGeneralMessage(text);
+}
+
+/* =====================================
+   PROCESAR MENSAJE GENERAL
+===================================== */
+async function processGeneralMessage(text) {
+
+  if (text.includes("simular")) {
+    startSimulation();
     return;
   }
 
-  /* 2) Ver si se puede responder con base fija */
-  const fixed = checkKnowledge(text);
+  const fixed = fixedKnowledge(text);
   if (fixed) {
     addMessage(fixed, "ai");
     return;
   }
 
-  /* 3) Si no: activar IA */
   addMessage("Déjame pensar...", "ai");
-  const aiResponse = await callAI(text);
-  addMessage(aiResponse, "ai");
+  const ai = await callAI(text);
+  addMessage(ai, "ai");
 }
 
-/* ======================================================
-    SIMULACIÓN GUIADA
-====================================================== */
-
+/* =====================================
+   SIMULACIÓN GUIADA
+===================================== */
 let flow = { step: 0, edad: null, retiro: null, aporte: null };
 
-function askSimulation() {
+function startSimulation() {
   flow.step = 1;
-  addMessage("Perfecto. Empecemos 😊<br>¿Cuál es tu edad actual?", "ai");
+  addMessage("Perfecto, empecemos 😊<br>¿Cuál es tu edad actual?", "ai");
 }
 
-document.getElementById("userInput").addEventListener("keydown", async e => {
-  if (e.key !== "Enter") return;
-  const msg = e.target.value.trim().toLowerCase();
-
+async function handleFlow(msg) {
   if (flow.step === 1) {
     flow.edad = Number(msg);
     flow.step = 2;
     addMessage("¿A qué edad te gustaría retirarte?", "ai");
-  } else if (flow.step === 2) {
+  }
+
+  else if (flow.step === 2) {
     flow.retiro = Number(msg);
     flow.step = 3;
-    addMessage("¿Cuánto te gustaría aportar por mes?", "ai");
-  } else if (flow.step === 3) {
+    addMessage("Genial 👍 ¿Cuánto te gustaría aportar por mes?", "ai");
+  }
+
+  else if (flow.step === 3) {
     flow.aporte = Number(msg);
     flow.step = 0;
-    await runSimulation(flow);
+    await runSimulation();
   }
-});
+}
 
-/* ======================================================
-    EJECUTAR SIMULACIÓN
-====================================================== */
+/* =====================================
+   EJECUTAR SIMULACIÓN
+===================================== */
+async function runSimulation() {
+  const { edad, retiro, aporte } = flow;
 
-async function runSimulation({ edad, retiro, aporte }) {
-  addMessage("Estoy calculando tu simulación... ⏳", "ai");
+  addMessage("Calculando tu simulación... ⏳", "ai");
 
   const r = await fetch("https://retirex.onrender.com/cotizar", {
     method: "POST",
@@ -328,30 +379,39 @@ async function runSimulation({ edad, retiro, aporte }) {
   const oficial = data.oficial.capital;
   const real = data.real_pesos.capital;
 
-  /* Tarjeta resumen */
   addMessage(`
     <strong>Resultados listos 🎉</strong><br><br>
     <strong>Escenario oficial:</strong> $${oficial.toLocaleString("es-AR")}<br>
     <strong>Escenario realista:</strong> $${real.toLocaleString("es-AR")}
   `, "ai");
 
-  /* Disclaimer estilo “nota al pie” */
   addMessage(`
     <div class="disclaimer">
-      Esta es una simulación orientativa basada en escenarios estimados. 
-      No representa un contrato, ni garantiza resultados futuros. 
+      Esta es una simulación orientativa basada en escenarios estimados.  
+      No representa un contrato ni garantiza resultados futuros.  
       Las condiciones reales dependen de la póliza de Prevención Retiro.
     </div>
   `, "ai");
 
-  /* Explicación educativa */
   addMessage(`
-    La diferencia entre ambos escenarios surge de la forma en que se proyecta el crecimiento del capital:<br><br>
-    • El <strong>escenario oficial</strong> usa una capitalización conservadora, basada en los criterios de simulación que utiliza la compañía.<br>
-    • El <strong>escenario realista</strong> aplica un rendimiento más alineado a los resultados históricos recientes.<br><br>
-    ¿Querés que te cuente los beneficios del plan o ver cómo ajustar tu aporte?
+    La diferencia entre ambos escenarios surge de cómo se proyecta el crecimiento del capital.<br><br>
+    • El <strong>escenario oficial</strong> usa una metodología conservadora basada en la simulación que utiliza la compañía.<br>
+    • El <strong>escenario realista</strong> proyecta un rendimiento más alineado a resultados históricos recientes.<br><br>
+    ¿Qué te gustaría hacer ahora?
+  `, "ai");
+
+  addMessage(`
+    <button class="option-button" onclick="showBenefits()">📘 Ver beneficios</button>
+    <button class="option-button" onclick="startSimulation()">🔁 Nueva simulación</button>
+    <button class="option-button" onclick="addMessage('Te dejo los datos del productor: 👉 +54 9 ...', 'ai')">🤝 Hablar con el productor</button>
+    <button class="option-button" onclick="askQuestion()">❓ Hacer una consulta</button>
   `, "ai");
 }
+
+/* =====================================
+   INICIAR CHAT
+===================================== */
+window.onload = sendWelcome;
 
 </script>
 
