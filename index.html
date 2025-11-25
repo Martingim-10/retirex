@@ -345,24 +345,40 @@ async function sendMessage() {
   addMessage(text, "user");
   input.value = "";
 
-  // Si estamos en simulación guiada
+  // 1) Si estamos en flujo guiado
   if (flow.step > 0) {
     handleFlow(text);
     return;
   }
 
-  // Respuesta fija (si aplica)
+  // 2) COMANDOS RESERVADOS (cotizar, simular, etc.)
+  const low = text.toLowerCase();
+  if (
+    low.includes("cotizar") ||
+    low.includes("simular") ||
+    low.includes("simulación") ||
+    low.includes("hacer cálculo") ||
+    low.includes("calcular") ||
+    low.includes("plan de retiro")
+  ) {
+    addMessage("Perfecto, vamos a preparar tu simulación 😊");
+    startSimulation();
+    return;
+  }
+
+  // 3) RESPUESTAS FIJAS
   const fixed = checkFixedResponses(text);
   if (fixed) {
     addMessage(fixed);
     return;
   }
 
-  // IA (solo si es más complejo)
+  // 4) IA (solo si no aplica nada de lo anterior)
   addMessage("Dame un segundo...", "ai");
   const ai = await callAI(text);
   addMessage(ai);
 }
+
 
 /* ============================================
    BENEFICIOS
