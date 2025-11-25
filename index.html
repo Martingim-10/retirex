@@ -383,6 +383,7 @@ function askQuestion() {
 }
 
 /* ============================================
+  /* ============================================
    SIMULACION GUIADA
 ============================================ */
 let flow = { step: 0, edad: null, retiro: null, aporte: null };
@@ -393,22 +394,63 @@ function startSimulation() {
 }
 
 async function handleFlow(msg) {
+  
+  // PASO 1 — EDAD ACTUAL
   if (flow.step === 1) {
-    flow.edad = Number(msg);
+    const edad = Number(msg);
+
+    if (isNaN(edad) || edad < 18 || edad > 70) {
+      addMessage(`
+        Para iniciar un plan tenés que tener al menos <strong>18 años</strong> 😊<br>
+        Probemos de nuevo: ¿qué edad tenés?
+      `);
+      return;
+    }
+
+    flow.edad = edad;
     flow.step = 2;
     addMessage("¿A qué edad te gustaría retirarte?");
+    return;
   }
-  else if (flow.step === 2) {
-    flow.retiro = Number(msg);
+
+  // PASO 2 — EDAD RETIRO
+  if (flow.step === 2) {
+    const retiro = Number(msg);
+
+    if (isNaN(retiro) || retiro < flow.edad + 5 || retiro > 75) {
+      addMessage(`
+        La edad de retiro debe ser razonable según tu edad actual.<br>
+        Probemos otra vez 😊 ¿A qué edad te gustaría retirarte?
+      `);
+      return;
+    }
+
+    flow.retiro = retiro;
     flow.step = 3;
     addMessage("Genial 👍 ¿Cuánto te gustaría aportar por mes?");
+    return;
   }
-  else if (flow.step === 3) {
-    flow.aporte = Number(msg);
+
+  // PASO 3 — APORTE MENSUAL
+  if (flow.step === 3) {
+    const aporte = Number(msg);
+
+    if (isNaN(aporte) || aporte < 30000) {
+      addMessage(`
+        Hoy el aporte mínimo es de <strong>$30.000</strong> mensuales 😊<br>
+        Podés elegir un valor igual o mayor.<br><br>
+        ¿Cuánto te gustaría aportar?
+      `);
+      return;
+    }
+
+    flow.aporte = aporte;
     flow.step = 0;
     await runSimulation();
+    return;
   }
 }
+
 
 /* ============================================
    EJECUTAR SIMULACION + GRAFICO
