@@ -8,37 +8,25 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    :root {
-      --magenta: #a0005a;
-      --magenta-light: #c00064;
-      --blue: #004b9a;
-      --bg: #f4f4f7;
-      --card-bg: #ffffff;
-      --text-main: #222222;
-      --text-soft: #555555;
-      --radius-xl: 18px;
+@@ -20,15 +19,12 @@
       --radius: 10px;
     }
 
     * {
       box-sizing: border-box;
     }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       padding: 0;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
         Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      font-family: "Montserrat", system-ui, sans-serif;
       background: radial-gradient(circle at top, #ffffff 0, var(--bg) 55%);
       color: var(--text-main);
     }
-
-    .page {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 24px 16px 40px;
-    }
-
+@@ -42,33 +38,26 @@
     .brand-bar {
       display: flex;
       align-items: center;
@@ -51,42 +39,42 @@
       display: flex;
       align-items: center;
       gap: 10px;
+      margin-bottom: 18px;
     }
 
     .brand-logo {
       width: 36px;
       height: 36px;
       border-radius: 12px;
+      width: 40px;
+      height: 40px;
       background: linear-gradient(135deg, var(--magenta), var(--blue));
+      color: white;
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
+      border-radius: 12px;
       font-weight: 700;
       font-size: 18px;
+      font-size: 20px;
     }
 
     .brand-text h1 {
       font-size: 20px;
       margin: 0;
+      font-size: 22px;
       color: var(--magenta);
     }
 
-    .brand-text span {
-      font-size: 12px;
-      color: var(--text-soft);
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2.4fr);
-      gap: 20px;
+@@ -84,336 +73,236 @@
     }
 
     @media (max-width: 840px) {
       .layout {
         grid-template-columns: minmax(0, 1fr);
       }
+      .layout { grid-template-columns: minmax(0, 1fr); }
     }
 
     .card {
@@ -94,16 +82,32 @@
       border-radius: var(--radius-xl);
       box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
       padding: 20px 18px;
+      padding: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #fce7f2;
+      color: var(--magenta);
+      border-radius: 999px;
+      font-size: 11px;
+      margin-bottom: 10px;
+      font-weight: 600;
     }
 
     .card h2 {
       margin: 0 0 4px;
       font-size: 18px;
+      margin: 0;
       color: var(--magenta);
+      font-size: 18px;
     }
 
     .card p.lead {
       margin: 2px 0 16px;
+      margin: 4px 0 16px;
       font-size: 13px;
       color: var(--text-soft);
     }
@@ -114,10 +118,13 @@
       margin-bottom: 4px;
       font-weight: 600;
       font-size: 13px;
+      margin-top: 10px;
+      display: block;
     }
 
     input,
     select {
+    input, select {
       width: 100%;
       padding: 9px 10px;
       border-radius: var(--radius);
@@ -125,10 +132,12 @@
       font-size: 14px;
       outline: none;
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      transition: border-color .15s, box-shadow .15s;
     }
 
     input:focus,
     select:focus {
+    input:focus, select:focus {
       border-color: var(--magenta);
       box-shadow: 0 0 0 2px rgba(160, 0, 90, 0.12);
     }
@@ -140,6 +149,7 @@
 
     .row > div {
       flex: 1;
+      box-shadow: 0 0 0 2px rgba(160,0,90,0.12);
     }
 
     button {
@@ -148,13 +158,19 @@
       padding: 11px;
       border-radius: 999px;
       border: none;
+      padding: 12px;
+      margin-top: 16px;
       background: linear-gradient(135deg, var(--magenta), var(--magenta-light));
+      border: none;
       color: white;
       font-size: 15px;
       font-weight: 600;
+      border-radius: 999px;
       cursor: pointer;
       box-shadow: 0 8px 20px rgba(160, 0, 90, 0.35);
       transition: transform 0.08s ease, box-shadow 0.08s ease, filter 0.08s;
+      box-shadow: 0 8px 20px rgba(160,0,90,0.35);
+      transition: transform .1s, box-shadow .1s, filter .1s;
     }
 
     button:hover {
@@ -164,6 +180,7 @@
     }
 
     button:active {
+      filter: brightness(0.97);
       transform: translateY(0);
       box-shadow: 0 4px 12px rgba(160, 0, 90, 0.3);
     }
@@ -184,6 +201,7 @@
     .results-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
       gap: 10px;
       margin-top: 16px;
     }
@@ -192,9 +210,12 @@
       .results-grid {
         grid-template-columns: minmax(0, 1fr);
       }
+      margin-top: 20px;
     }
 
     .result-card {
+      padding: 10px;
+      background: #fafbff;
       border-radius: var(--radius);
       border: 1px solid #e3e4ed;
       padding: 10px 11px;
@@ -207,10 +228,12 @@
       font-weight: 600;
       color: var(--blue);
       margin-bottom: 4px;
+      margin-bottom: 6px;
     }
 
     .result-number {
       font-size: 17px;
+      font-size: 20px;
       font-weight: 700;
       margin-bottom: 2px;
     }
@@ -218,17 +241,22 @@
     .result-tag {
       font-size: 11px;
       color: var(--text-soft);
+      margin-bottom: 4px;
+      color: var(--magenta);
     }
 
     .summary-text {
       margin-top: 12px;
       font-size: 13px;
+      margin-top: 14px;
+      font-size: 14px;
       color: var(--text-soft);
       line-height: 1.4;
     }
 
     .summary-text strong {
       color: var(--magenta);
+      line-height: 1.5;
     }
 
     .raw-output {
@@ -236,16 +264,24 @@
       font-size: 11px;
       background: #1a1a1a;
       color: #f0f0f0;
+    .chart-wrapper {
+      margin-top: 16px;
+      padding: 12px;
+      background: #fbfbff;
       border-radius: var(--radius);
       padding: 10px 11px;
       overflow-x: auto;
       max-height: 240px;
+      border: 1px solid #e3e4ed;
     }
 
     .info-card h3 {
       margin: 0 0 6px;
       font-size: 15px;
+    .chart-wrapper h4 {
+      font-size: 14px;
       color: var(--blue);
+      margin-bottom: 8px;
     }
 
     .info-card p {
@@ -261,10 +297,16 @@
       list-style: disc;
     }
 
+    .info-card h3 { margin: 0 0 10px; font-size: 16px; color: var(--blue); }
+    .info-card p { font-size: 14px; color: var(--text-soft); }
+    .bullet { margin-left: 16px; font-size: 13px; color: var(--text-soft); }
     .contact-card {
       margin-top: 14px;
       padding: 10px 11px;
+      padding: 12px;
+      font-size: 13px;
       border-radius: var(--radius);
+      border: 1px dashed rgba(160,0,90,0.45);
       background: #f7f2f8;
       border: 1px dashed rgba(160, 0, 90, 0.45);
       font-size: 12px;
@@ -306,13 +348,19 @@
           <h1>Retirex</h1>
           <span>Simulador inteligente basado en Prevención Retiro</span>
         </div>
+      <div class="brand-logo">R</div>
+      <div class="brand-text">
+        <h1>Retirex</h1>
+        <span>Simulador basado en Prevención Retiro</span>
       </div>
     </header>
 
     <main class="layout">
       <!-- Columna izquierda: simulador -->
+      <!-- Simulador -->
       <section class="card">
         <div class="pill">Simulación en pocos pasos</div>
+        <div class="pill">Simulación rápida</div>
         <h2>Simulá tu plan de retiro</h2>
         <p class="lead">
           Ingresá tus datos y compará la proyección oficial con un escenario
@@ -329,17 +377,28 @@
             <input id="edad_retiro" type="number" min="55" max="75" placeholder="Ej: 65" />
           </div>
         </div>
+        <p class="lead">Compará el escenario oficial con una proyección más realista.</p>
+
+        <label>Edad actual</label>
+        <input id="edad_actual" type="number" placeholder="Ej: 40">
 
         <label for="aporte">Aporte mensual (mínimo $30.000 en pesos)</label>
         <input id="aporte" type="number" min="0" step="1000" placeholder="Ej: 75000" />
+        <label>Edad de retiro</label>
+        <input id="edad_retiro" type="number" placeholder="Ej: 65">
 
         <label for="moneda">Moneda</label>
+        <label>Aporte mensual (mínimo $30.000 en pesos)</label>
+        <input id="aporte" type="number" placeholder="Ej: 75000">
+
+        <label>Moneda</label>
         <select id="moneda">
           <option value="pesos">Pesos</option>
           <option value="usd">USD</option>
         </select>
 
         <button type="button" onclick="simular()">Simular</button>
+        <button onclick="simular()">Simular</button>
 
         <!-- Resultados resumidos -->
         <div id="resultados-cards" class="results-grid" style="display:none;">
@@ -352,19 +411,36 @@
             <div class="result-title">Escenario realista en pesos (35% anual)</div>
             <div class="result-number" id="val-real">$0</div>
             <div class="result-tag" id="tag-real">Tasa mensual: -</div>
+        <!-- Resultados -->
+        <div id="resultados" style="display:none;">
+          <div class="results-grid">
+            <div class="result-card">
+              <div class="result-title">Escenario oficial Prevención</div>
+              <div id="oficial" class="result-number">$0</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-title">Escenario realista (35% anual)</div>
+              <div id="real" class="result-number">$0</div>
+            </div>
           </div>
         </div>
 
         <p id="summary" class="summary-text" style="display:none;"></p>
+          <p id="summary" class="summary-text"></p>
 
         <!-- Gráfico -->
         <div id="chart-container" class="chart-wrapper" style="display:none;">
           <h4>Comparación de capital proyectado</h4>
           <canvas id="capitalChart" height="180"></canvas>
+          <div class="chart-wrapper">
+            <h4>Comparación de capital proyectado</h4>
+            <canvas id="capitalChart" height="160"></canvas>
+          </div>
         </div>
 
         <!-- Salida cruda para debug / transparencia -->
-        <pre id="resultado" class="raw-output" style="display:none;"></pre>
+        
 
         <p class="disclaimer">
           Las cifras mostradas son simulaciones basadas en supuestos de
@@ -373,6 +449,7 @@
       </section>
 
       <!-- Columna derecha: información + contacto -->
+      <!-- Info -->
       <section class="card info-card">
         <h3>¿Qué estás viendo?</h3>
         <p>
@@ -380,10 +457,15 @@
           escenario oficial y lo compara con una proyección más realista
           considerando un rendimiento anual del 35% en pesos y 2% en dólares.
         </p>
+        <p>Este simulador compara la proyección oficial con una estimación más realista basada en rendimiento anual del 35%.</p>
+
         <ul class="bullet">
           <li>Cuanto antes empezás, más se multiplica tu capital.</li>
           <li>Podés ajustar el aporte cuando tu situación cambie.</li>
           <li>No necesitás decidir hoy, el objetivo es que entiendas tus opciones.</li>
+          <li>No pedimos tus datos personales.</li>
+          <li>Podés ver tus opciones sin compromiso.</li>
+          <li>Pronto: autos, motos, combinado familiar, salud.</li>
         </ul>
 
         <div class="contact-card">
@@ -392,6 +474,9 @@
           contratación real, te asesoro personalmente como productor de
           seguros autorizado en Argentina.<br /><br />
           <em>Podés reemplazar este texto con tus datos de WhatsApp, mail y dirección.</em>
+          <strong>Asesoramiento humano disponible.</strong><br>
+          Productor de seguros matriculado en Argentina.<br>
+          Podés reemplazar este texto con tus datos reales.
         </div>
 
         <p style="margin-top:10px;font-size:12px;color:#7a7a7a;">
@@ -408,17 +493,19 @@
     function formatoMoneda(valor, moneda) {
       if (!isFinite(valor)) return "-";
       const opts = {
+    function formato(valor, moneda) {
+      return new Intl.NumberFormat("es-AR", {
         style: "currency",
         currency: moneda === "usd" ? "USD" : "ARS",
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
       };
       return new Intl.NumberFormat("es-AR", opts).format(valor);
+      }).format(valor);
     }
 
     async function simular() {
-      const edad_actual = Number(document.getElementById("edad_actual").value);
-      const edad_retiro = Number(document.getElementById("edad_retiro").value);
+@@ -422,121 +311,58 @@
       const aporte_mensual = Number(document.getElementById("aporte").value);
       const moneda = document.getElementById("moneda").value;
 
@@ -429,9 +516,12 @@
 
       salida.style.display = "block";
       salida.textContent = "Calculando...";
+      const cont = document.getElementById("resultados");
+      cont.style.display = "none";
 
       try {
         const res = await fetch("https://retirex.onrender.com/cotizar", {
+        const r = await fetch("https://retirex.onrender.com/cotizar", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -440,6 +530,7 @@
             aporte_mensual,
             moneda
           })
+          body: JSON.stringify({ edad_actual, edad_retiro, aporte_mensual, moneda })
         });
 
         if (!res.ok) {
@@ -491,6 +582,22 @@
           "</strong> en un escenario de rendimiento realista.";
 
         // Gráfico
+        if (!r.ok) return alert("Error en la simulación");
+
+        const data = await r.json();
+
+        const oficial = data.oficial.capital;
+        const real = data.real_pesos.capital;
+
+        document.getElementById("oficial").textContent = formato(oficial, moneda);
+        document.getElementById("real").textContent = formato(real, moneda);
+
+        document.getElementById("summary").innerHTML =
+          `Con un aporte mensual de <strong>${formato(aporte_mensual, moneda)}</strong>, ` +
+          `el capital estimado oficial sería <strong>${formato(oficial, moneda)}</strong>, ` +
+          `y en un escenario realista alcanzaría <strong>${formato(real, moneda)}</strong>.`;
+
+        // grafico
         const ctx = document.getElementById("capitalChart").getContext("2d");
         const labels = ["Oficial Prevención", "Escenario realista"];
 
@@ -503,6 +610,14 @@
               borderWidth: 1
             }
           ]
+        const dataChart = {
+          labels: ["Oficial Prevención", "Escenario realista"],
+          datasets: [{
+            data: [oficial, real],
+            backgroundColor: ["#a0005a77", "#004b9a77"],
+            borderColor: ["#a0005a", "#004b9a"],
+            borderWidth: 1
+          }]
         };
 
         if (chartInstance) {
@@ -532,13 +647,25 @@
         }
 
         chartContainer.style.display = "block";
+        if (chartInstance) chartInstance.destroy();
+
+        chartInstance = new Chart(ctx, {
+          type: "bar",
+          data: dataChart,
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } }
+          }
+        });
+
+        cont.style.display = "block";
+
       } catch (e) {
         salida.textContent = "Error llamando a la API: " + e.message;
         cards.style.display = "none";
         summary.style.display = "none";
         chartContainer.style.display = "none";
+        alert("Error de conexión con la API");
       }
     }
   </script>
-</body>
-</html>
