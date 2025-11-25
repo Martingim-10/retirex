@@ -216,6 +216,20 @@ function showMainMenu() {
     <button class="option-button" onclick="askQuestion()">❓ Preguntar algo puntual</button>
   `);
 }
+// COMANDOS RESERVADOS PARA VOLVER AL FLUJO
+const low = text.toLowerCase();
+if (
+  low.includes("cotizar") ||
+  low.includes("simular") ||
+  low.includes("simulación") ||
+  low.includes("hacer cálculo") ||
+  low.includes("calcular") ||
+  low.includes("plan de retiro")
+) {
+  addMessage("Perfecto, vamos a preparar tu simulación 😊");
+  startSimulation();
+  return;
+}
 
 /* ============================================
    RESPUESTAS FIJAS
@@ -295,6 +309,12 @@ function checkFixedResponses(msg) {
   }
 
   return null;
+}
+// RESPUESTAS FIJAS TIENEN PRIORIDAD
+const fixed = checkFixedResponses(text);
+if (fixed) {
+  addMessage(fixed);
+  return;
 }
 
 /* ============================================
