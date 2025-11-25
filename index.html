@@ -222,6 +222,22 @@ function showMainMenu() {
 ====================================================== */
 const FIXED_RESPONSES = [
   {
+    {
+  match: ["capitalización", "crece mi dinero", "rendimiento", "acumular", "crecimiento", "cómo crece", "cómo se invierte"],
+  reply: `
+    La capitalización es cómo va creciendo tu ahorro mes a mes dentro del plan.<br><br>
+    Funciona así, sin tecnicismos:<br>
+    1️⃣ Aportás todos los meses.<br>
+    2️⃣ La compañía invierte esos aportes para que crezcan en el tiempo.<br>
+    3️⃣ El capital se acumula y cuanto más años aportás, más se nota el efecto.<br><br>
+    Te muestro siempre dos escenarios porque ayudan a entender tus opciones:<br><br>
+    • <strong>Escenario oficial:</strong> es la proyección conservadora que utiliza Prevención Retiro. Sirve como piso.<br>
+    • <strong>Escenario realista:</strong> refleja rendimientos más acordes al contexto actual y suele mostrar mayor crecimiento.<br><br>
+    No tenés que elegir uno u otro: son dos formas de ver cómo podría evolucionar tu ahorro.<br><br>
+    Si querés, preparo una simulación con tus datos para que lo veas en números 📊.
+  `
+},
+
     match: ["no puedo pagar", "pausar", "pausa", "suspender"],
     reply: `
       Podés pausar tu aporte o reducirlo por un tiempo sin perder tu plan.<br><br>
