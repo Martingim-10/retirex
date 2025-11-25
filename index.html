@@ -17,8 +17,6 @@
       --bubble-user: #d40077;
       --bubble-ai: #ffffff;
       --radius: 16px;
-      --text-dark: #1d1d1d;
-      --text-soft: #555;
     }
 
     body {
@@ -129,13 +127,8 @@
       border-radius: 12px;
       border: 1px solid #dcdcdc;
       margin-top: 8px;
-      font-size: 14px;
       cursor: pointer;
       text-align: left;
-    }
-
-    .option-button:hover {
-      background: #f7f7f7;
     }
 
     .chart-wrapper {
@@ -183,9 +176,7 @@ function addMessage(text, who = "ai") {
   box.scrollIntoView({ behavior: "smooth" });
 }
 
-/* ======================================================
-   ENTER PARA ENVIAR
-====================================================== */
+/* ENTER PARA ENVIAR */
 document.getElementById("userInput").addEventListener("keydown", function (e) {
   if (e.key === "Enter" && !e.shiftKey) {
     e.preventDefault();
@@ -201,7 +192,6 @@ function sendWelcome() {
     Hola 👋 soy <strong>Retirex</strong>, tu asistente para ayudarte con los planes de retiro de Prevención Retiro.<br><br>
     ¿Qué te gustaría hacer hoy?
   `);
-
   showMainMenu();
 }
 
@@ -218,117 +208,101 @@ function showMainMenu() {
 }
 
 /* ======================================================
-/* ============================================
    RESPUESTAS FIJAS
-============================================ */
+====================================================== */
 const FIXED_RESPONSES = [
 
-  /* FLEXIBILIDAD DE APORTES */
   {
     match: ["cambiar aporte", "subir aporte", "bajar aporte", "ajustar aporte", "flexibilidad", "aporte flexible"],
     reply: `
       La flexibilidad de aportes es uno de los puntos más fuertes de los planes de Prevención Retiro 😊<br><br>
-
       Podés manejar tu aporte de tres maneras:<br><br>
-
-      • <strong>Subir tu aporte</strong>: si querés acelerar tu capital futuro, podés aumentarlo cuando quieras.<br>
-      • <strong>Bajarlo temporalmente</strong>: si tu situación cambia, podés reducirlo sin perder tu plan.<br>
-      • <strong>Aportes extraordinarios</strong>: podés sumar montos puntuales cuando te convenga.<br><br>
-
-      Todo esto está contemplado en la póliza y es parte normal del plan.<br><br>
-
-      Si querés, te cuento cuál sería una estrategia recomendada según tu edad y tu objetivo 😉
+      • <strong>Subirlo</strong> si querés acelerar tu capital futuro.<br>
+      • <strong>Bajarlo temporalmente</strong> si necesitás alivio.<br>
+      • <strong>Aportes extraordinarios</strong> para impulsar tu ahorro.<br><br>
+      Todo está contemplado en la póliza y es parte normal del plan.<br><br>
+      Si querés, te cuento cuál conviene según tu objetivo 😉
     `
   },
 
-  /* CAPITALIZACIÓN / RENDIMIENTO */
   {
     match: ["capitalización", "crece mi dinero", "rendimiento", "acumular", "crecimiento", "cómo crece", "cómo se invierte"],
     reply: `
-      La capitalización es cómo va creciendo tu ahorro dentro del plan, mes a mes.<br><br>
-
+      La capitalización es cómo va creciendo tu ahorro mes a mes.<br><br>
       Te lo explico simple:<br>
-      1️⃣ Aportás todos los meses.<br>
-      2️⃣ La compañía invierte esos aportes para que crezcan en el tiempo.<br>
-      3️⃣ Cuantos más años aportás, mayor es el efecto de acumulación.<br><br>
-
-      Siempre vas a ver dos escenarios:<br><br>
-
-      • <strong>Escenario oficial:</strong> proyección conservadora que usa la compañía. Sirve como piso.<br>
-      • <strong>Escenario realista:</strong> muestra rendimientos más acordes al contexto actual.<br><br>
-
-      No tenés que elegir uno: sirven para ver el rango posible de crecimiento.<br><br>
-
-      Si querés, preparo una simulación con tus datos para verlo en números 📊.
+      1️⃣ Aportás cada mes.<br>
+      2️⃣ La compañía invierte esos aportes.<br>
+      3️⃣ El capital va creciendo con el tiempo.<br><br>
+      Siempre mostramos dos escenarios:<br><br>
+      • <strong>Oficial</strong>: conservador, sirve como piso.<br>
+      • <strong>Realista</strong>: más acorde al contexto actual.<br><br>
+      Si querés verlo en números preparo tu simulación 📊.
     `
   },
 
-  /* NO PUEDO PAGAR / PAUSA */
   {
     match: ["no puedo pagar", "pausar", "pausa", "suspender"],
     reply: `
       Podés pausar tu aporte o reducirlo por un tiempo sin perder tu plan.<br><br>
-      Es algo totalmente normal y está contemplado en la póliza.<br>
-      Después podés retomar cuando estés más cómodo.<br><br>
-
-      Si querés, te cuento cómo podría impactar en tu capital futuro.
+      Está contemplado en la póliza y es normal.<br><br>
+      Si querés, te cuento cómo impacta en tu capital futuro.
     `
   },
 
-  /* RESCATES ANTICIPADOS */
   {
     match: ["rescatar", "rescate", "sacar plata", "retirar plata"],
     reply: `
-      Los planes permiten rescates anticipados, aunque suelen tener ajustes porque son productos diseñados para el largo plazo.<br><br>
-      Es algo que se evalúa caso por caso según la póliza.<br><br>
-
-      Si querés te explico cómo funcionan las opciones típicas sin tecnicismos.
+      Los planes permiten rescates anticipados.<br><br>
+      Suelen tener ajustes porque son productos de largo plazo.<br><br>
+      Si querés, te explico cómo funcionan las opciones sin tecnicismos.
     `
   },
 
-  /* DIFERENCIA ENTRE ESCENARIOS */
   {
     match: ["dos escenarios", "escenario", "oficial", "realista"],
     reply: `
-      Te muestro dos escenarios porque representan dos formas de proyectar tu capital:<br><br>
-
-      • <strong>Oficial:</strong> proyección conservadora basada en la metodología de la compañía.<br>
-      • <strong>Realista:</strong> refleja rendimientos más acordes al contexto actual.<br><br>
-
-      No son alternativas que tengas que elegir: sirven para ver un rango posible de crecimiento.
+      Mostramos dos escenarios porque representan dos formas de proyectar tu capital:<br><br>
+      • <strong>Oficial</strong>: conservador, metodología de la compañía.<br>
+      • <strong>Realista</strong>: refleja rendimientos más actuales.<br><br>
+      No hay que elegir: sirven para ver un rango posible.
     `
   },
 
-  /* QUE ES UN PLAN DE RETIRO */
   {
     match: ["qué es un plan", "qué es un seguro", "cómo funciona"],
     reply: `
       Un plan de retiro es un ahorro de largo plazo regulado por la Superintendencia de Seguros.<br><br>
-      Vos aportás mes a mes y tu capital se va acumulando en el tiempo.<br><br>
-      Es flexible: podés ajustar, pausar y revisar tu evolución cuando quieras.
+      Vos aportás cada mes y tu capital crece con el tiempo.<br><br>
+      Es flexible: podés ajustar, pausar o revisar cuando quieras.
     `
   },
 
-  /* IMPUESTO A LAS GANANCIAS */
   {
     match: ["ganancias", "impuesto", "deducción"],
     reply: `
-      En muchos casos, los aportes a seguros de retiro pueden ser deducibles del Impuesto a las Ganancias.<br><br>
-      Depende de tu situación fiscal, pero suele ser un beneficio importante.<br><br>
-      Si querés, te explico cómo podría aplicarse a tu caso.
+      Los aportes a seguros de retiro pueden ser deducibles de Ganancias según tu situación fiscal.<br><br>
+      Si querés, te explico cómo aplicaría en tu caso.
     `
   },
 
-  /* RIESGO / INFLACION */
   {
     match: ["riesgo", "seguro?", "inflación"],
     reply: `
       El principal riesgo es no ahorrar a tiempo.<br><br>
-      Un plan de retiro no es un plazo fijo ni un fondo común: es un sistema de capitalización de largo plazo.<br><br>
-      Su objetivo es ayudarte a construir un capital propio con orden y constancia.
+      No es un plazo fijo: es capitalización de largo plazo.<br><br>
+      El objetivo es ayudarte a construir un capital propio.
     `
   }
 ];
+
+/* LÓGICA DE RESPUESTAS FIJAS */
+function checkFixedResponses(msg) {
+  const t = msg.toLowerCase();
+  for (const item of FIXED_RESPONSES) {
+    if (item.match.some(k => t.includes(k))) return item.reply;
+  }
+  return null;
+}
 
 /* ======================================================
    IA (solo consultas complejas)
@@ -347,7 +321,7 @@ async function callAI(msg) {
 }
 
 /* ======================================================
-   MENSAJE PRINCIPAL (ORDEN CORRECTO)
+   SEND MESSAGE (ORDEN CORRECTO)
 ====================================================== */
 async function sendMessage() {
   const input = document.getElementById("userInput");
@@ -357,13 +331,13 @@ async function sendMessage() {
   addMessage(text, "user");
   input.value = "";
 
-  /* 1) Flujos guiados */
+  /* 1 — flujo guiado */
   if (flow.step > 0) {
     handleFlow(text);
     return;
   }
 
-  /* 2) Comandos reservados */
+  /* 2 — comandos reservados */
   const low = text.toLowerCase();
   if (
     low.includes("cotizar") ||
@@ -378,14 +352,14 @@ async function sendMessage() {
     return;
   }
 
-  /* 3) Respuestas fijas */
+  /* 3 — respuestas fijas */
   const fixed = checkFixedResponses(text);
   if (fixed) {
     addMessage(fixed);
     return;
   }
 
-  /* 4) IA */
+  /* 4 — IA */
   addMessage("Dame un segundo...", "ai");
   const ai = await callAI(text);
   addMessage(ai);
@@ -418,7 +392,7 @@ function showFAQ() {
     • ¿Por qué hay dos escenarios?<br>
     • ¿Qué es un plan de retiro?<br>
     • ¿Cómo impacta en Ganancias?<br><br>
-    Podés preguntarme cualquiera 😊
+    Preguntame la que quieras 😊
   `);
 }
 
@@ -427,7 +401,7 @@ function askQuestion() {
 }
 
 /* ======================================================
-   SIMULACIÓN
+   SIMULACIÓN GUIADA
 ====================================================== */
 let flow = { step: 0, edad: null, retiro: null, aporte: null };
 
@@ -456,14 +430,14 @@ async function handleFlow(msg) {
     return;
   }
 
-  /* 2 — Edad de retiro */
+  /* 2 — Edad retiro */
   if (flow.step === 2) {
     const retiro = Number(msg);
 
     if (isNaN(retiro) || retiro < flow.edad + 5 || retiro > 75) {
       addMessage(`
-        La edad de retiro debe ser razonable según tu edad actual.<br>
-        Probemos otra vez 😊 ¿A qué edad te gustaría retirarte?
+        La edad de retiro debe tener sentido según tu edad actual.<br>
+        ¿A qué edad te gustaría retirarte?
       `);
       return;
     }
@@ -480,7 +454,7 @@ async function handleFlow(msg) {
 
     if (isNaN(aporte) || aporte < 30000) {
       addMessage(`
-        El aporte mínimo hoy es de <strong>$30.000</strong> mensuales 😊<br><br>
+        Hoy el aporte mínimo es de <strong>$30.000</strong> mensuales 😊<br>
         ¿Cuánto te gustaría aportar?
       `);
       return;
@@ -549,7 +523,7 @@ async function runSimulation() {
 
   addMessage(`
     <div class="disclaimer">
-      Esta es una simulación orientativa basada en supuestos.  
+      Esta es una simulación orientativa basada en supuestos.<br>
       No representa un contrato ni garantiza resultados futuros.
     </div>
   `);
@@ -568,8 +542,6 @@ async function runSimulation() {
 window.onload = sendWelcome;
 
 </script>
-
-
 
 </body>
 </html>
