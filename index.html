@@ -177,40 +177,65 @@ function addUser(msg) {
 /* ------------------------------------------------------------------
               BASE DE RESPUESTAS INTERNAS (premium)
 -------------------------------------------------------------------*/
-
 const respuestasFijas = [
   {
-    keywords:["pausar", "dejar de pagar", "suspender", "no puedo seguir"],
-    answer:`Podés pausar los aportes sin perder nada.  
-Tu contrato queda “en descanso” y lo retomás cuando quieras.  
-El capital siempre sigue siendo tuyo.`
+    keywords:["funciona", "cómo funciona", "que es un plan", "que es un seguro"],
+    answer:`Un plan de retiro de Prevención Retiro es una herramienta de ahorro a largo plazo. 
+Vas aportando regularmente, el capital va creciendo y cuando llegás a la edad que elegís podés retirarlo. 
+Está regulado por la Superintendencia de Seguros de la Nación y tiene el respaldo del Grupo Sancor Seguros.`
   },
   {
-    keywords:["funciona", "cómo funciona", "que es un plan"],
-    answer:`Un plan de retiro funciona como un ahorro programado a largo plazo.  
-Vos aportás cada mes y, al llegar a la edad elegida, retirás todo el capital acumulado.  
-Es simple, flexible y 100% regulado.`
+    keywords:["beneficio", "ventaja", "para que sirve"],
+    answer:`Los planes de retiro ofrecen varios beneficios: ahorro sistemático, crecimiento en el tiempo, 
+flexibilidad para ajustar aportes, posibilidad de rescate parcial o total y respaldo regulado. 
+Es una forma de complementar tu futuro con claridad y control.`
+  },
+  {
+    keywords:["diferencia", "oficial", "realista", "por qué hay dos", "escenario"],
+    answer:`Cuando simulamos tu plan te muestro dos escenarios porque están calculados con dos metodologías distintas:
+
+• Escenario oficial Prevención Retiro: es una proyección conservadora basada en la forma en que la compañía calcula el crecimiento del plan. Funciona como referencia prudente a largo plazo.
+
+• Escenario realista: considera un rendimiento más alineado con lo que suele observarse hoy en instrumentos de ahorro a largo plazo.
+
+La diferencia no es una elección, sino dos formas complementarias de ver cómo puede evolucionar tu aporte con el tiempo.`
+  },
+  {
+    keywords:["pausar", "dejar de pagar", "suspender", "no puedo pagar", "no puedo seguir", "flexibilidad"],
+    answer:`Tu plan puede adaptarse a vos: podés subir, bajar o incluso pausar los aportes cuando lo necesités. 
+El capital que ya acumulaste sigue siendo tuyo. 
+Los detalles dependen de la póliza, pero en general este tipo de planes contemplan esa flexibilidad.`
   },
   {
     keywords:["rescate", "retirar", "sacar plata"],
-    answer:`Podés pedir un rescate antes de la edad de retiro.  
-Puede haber condiciones según el contrato, pero tus aportes siempre te pertenecen.`
+    answer:`Podés hacer rescates parciales o totales antes de la edad de retiro. 
+Puede haber condiciones o ajustes definidos por la póliza, pero tus aportes siempre son tuyos. 
+Lo ideal es ver tu caso puntual con el productor.`
   },
   {
-    keywords:["beneficios", "ventajas"],
-    answer:`Tenés crecimiento compuesto, flexibilidad de aportes y posibilidad de rescate.  
-Todo bajo regulación de la SSN.`
+    keywords:["seguro", "seguridad", "ssn", "regulado"],
+    answer:`Prevención Retiro forma parte del Grupo Sancor Seguros y está regulada por la Superintendencia de Seguros de la Nación (inscripción 0930). 
+Tu contrato está respaldado y sujeto a normativa clara.`
   },
   {
-    keywords:["contratar", "quiero hacerlo", "avanzar"],
-    answer:`Podemos avanzar cuando quieras.  
+    keywords:["contratar", "quiero hacerlo", "avanzar", "quiero contratar"],
+    answer:`Contratar el plan es simple: primero simulamos tu caso, definimos aporte y edad de retiro y después se formaliza. 
 Trabajo junto a un productor matriculado que te acompaña paso a paso.`
   },
   {
-    keywords:["diferencia", "realista", "oficial"],
-    answer:`La simulación oficial usa una tasa muy conservadora.  
-El escenario realista refleja mejor cómo suelen comportarse los ahorros a largo plazo.  
-Por eso la diferencia.`
+    keywords:["edad", "mínimo", "aporte mínimo", "cuanto es el minimo"],
+    answer:`El aporte mínimo actual para un plan individual es de $30.000 por mes. 
+Desde ahí podés ajustarlo hacia arriba o hacia abajo según tu situación.`
+  },
+  {
+    keywords:["para que sirve", "complemento", "jubilacion"],
+    answer:`Este plan funciona como un complemento de tu futura jubilación. 
+No reemplaza la prestación estatal, pero te ayuda a construir un ingreso adicional y previsible a largo plazo.`
+  },
+  {
+    keywords:["adaptar", "personalizar", "compatible", "proyecto"],
+    answer:`El plan está pensado para adaptarse a vos: podés modificar aportes, revisar la estrategia y ajustar la edad de retiro si tu situación cambia. 
+Es una herramienta flexible, no rígida.`
   }
 ];
 
