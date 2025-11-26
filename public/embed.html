@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Retirex – Chat embebido</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    :root {
+      --magenta: #a0005a;
+      --blue: #004b9a;
+      --bg: #e5e5e5;
+      --chat-bg: #f2f2f7;
+      --bubble-user: #d40077;
+      --bubble-ai: #ffffff;
+      --radius: 16px;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Montserrat", system-ui, sans-serif;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+    }
+
+    .chat-container {
+      width: 100%;
+      max-width: 480px;
+      height: 100vh;
+      background: var(--chat-bg);
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 80px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--magenta), var(--blue));
+      padding: 14px;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 600;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      background: white;
+      color: var(--magenta);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .msg {
+      max-width: 78%;
+      padding: 10px 14px;
+      border-radius: var(--radius);
+      line-height: 1.45;
+      font-size: 14px;
+    }
+
+    .ai {
+      background: var(--bubble-ai);
+      align-self: flex-start;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+    .user {
+      background: var(--bubble-user);
+      color: white;
+      align-self: flex-end;
+    }
+
+    .input-area {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 480px;
+      background: white;
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+      border-top: 1px solid #ccc;
+    }
+
+    .input-area input {
+      flex: 1;
+      padding: 10px;
+      border-radius: var(--radius);
+      border: 1px solid #ddd;
+      font-size: 14px;
+    }
+
+    .input-area button {
+      min-width: 70px;
+      background: var(--magenta);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .option-button {
+      width: 100%;
+      padding: 12px;
+      background: white;
+      border-radius: 12px;
+      border: 1px solid #dcdcdc;
+      margin-top: 8px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .chart-wrapper {
+      background: white;
+      padding: 14px;
+      border-radius: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      border: 1px solid #e5e5e5;
+      margin-top: 6px;
+    }
+
+    .cta-whatsapp {
+      margin-top: 18px;
+      padding: 16px;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      border: 1px solid #e3e3e3;
+    }
+
+    .cta-whatsapp h3 {
+      margin: 0 0 8px;
+      color: var(--magenta);
+      font-size: 16px;
+    }
+
+    .cta-whatsapp p {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.4;
+    }
+
+    .whatsapp-btn {
+      display: inline-block;
+      margin-top: 8px;
+      background: #25D366;
+      color: white;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 14px;
+      text-decoration: none;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+    }
+
+    .privacidad {
+      font-size: 11px;
+      color: #6b6b6b;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="chat-container">
+    <div class="header">
+      <div class="avatar">R</div>
+      Retirex – Asesor inteligente
+    </div>
+
+    <div class="messages" id="messages"></div>
+
+    <div class="input-area">
+      <input id="userInput" type="text" placeholder="Escribí tu consulta..." />
+      <button onclick="sendMessage()">Enviar</button>
+    </div>
+  </div>
+
+<script>
+/* ======================================================
+   SISTEMA DE CHAT
+====================================================== */
+function addMessage(text, who = "ai") {
+  const box = document.createElement("div");
+  box.className = "msg " + who;
+  box.innerHTML = text;
+  document.getElementById("messages").appendChild(box);
+  box.scrollIntoView({ behavior: "smooth" });
+}
+
+/* ENTER PARA ENVIAR */
+document.getElementById("userInput").addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+
+/* ======================================================
+   MENSAJE DE BIENVENIDA
+====================================================== */
+function sendWelcome() {
+  addMessage(`
+    Hola 👋 soy <strong>Retirex</strong>, tu asistente para ayudarte con los planes de retiro de Prevención Retiro.<br><br>
+    ¿Qué te gustaría hacer hoy?
+  `);
+
+  showMainMenu();
+}
+
+/* ======================================================
+   MENÚ PRINCIPAL
+====================================================== */
+function showMainMenu() {
+  addMessage(`
+    <button class="option-button" onclick="startSimulation()">🧮 Simular mi plan</button>
+    <button class="option-button" onclick="showBenefits()">📘 Beneficios del plan</button>
+    <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
+    <button class="option-button" onclick="askQuestion()">❓ Preguntar algo puntual</button>
+  `);
+}
+
+/* ======================================================
+   RESPUESTAS FIJAS
+====================================================== */
+const FIXED_RESPONSES = [
+  {
+    match: ["cambiar aporte", "subir aporte", "bajar aporte", "ajustar aporte", "flexibilidad", "aporte flexible"],
+    reply: `
+      La flexibilidad de aportes es uno de los puntos más fuertes de los planes de Prevención Retiro 😊<br><br>
+      Podés manejar tu aporte así:<br><br>
+      • <strong>Subirlo</strong> para acelerar tu capital futuro.<br>
+      • <strong>Bajarlo temporalmente</strong> sin perder tu plan.<br>
+      • <strong>Aportes extraordinarios</strong> cuando puedas.<br><br>
+      Si querés, te cuento qué estrategia conviene en tu caso 😉
+    `
+  },
+  {
+    match: ["capitalización", "crece mi dinero", "rendimiento", "acumular", "crecimiento", "cómo crece", "cómo se invierte"],
+    reply: `
+      La capitalización es cómo crece tu ahorro mes a mes.<br><br>
+      1️⃣ Aportás.<br>
+      2️⃣ La compañía invierte.<br>
+      3️⃣ El capital crece en el tiempo.<br><br>
+      Siempre mostramos dos escenarios:<br>
+      • <strong>Oficial:</strong> piso conservador.<br>
+      • <strong>Realista:</strong> rendimiento más actual.<br><br>
+      Si querés, lo vemos en números 📊
+    `
+  },
+  {
+    match: ["no puedo pagar", "pausar", "pausa", "suspender"],
+    reply: `
+      Podés pausar o bajar tu aporte un tiempo sin perder tu plan.<br><br>
+      Después podés retomarlo normalmente.<br><br>
+      Si querés te cuento cómo impacta.
+    `
+  },
+  {
+    match: ["rescatar", "rescate", "sacar plata", "retirar plata"],
+    reply: `
+      Se pueden hacer rescates anticipados, aunque suelen tener ajustes porque el plan es de largo plazo.<br><br>
+      Te cuento cómo funciona si querés.
+    `
+  },
+  {
+    match: ["escenario", "oficial", "realista"],
+    reply: `
+      Mostramos dos escenarios porque son dos formas de proyectar tu capital:<br><br>
+      • <strong>Oficial:</strong> conservador.<br>
+      • <strong>Realista:</strong> más acorde al contexto actual.<br><br>
+      No hay que elegir: sirven para comparar.
+    `
+  },
+  {
+    match: ["qué es un plan", "qué es un seguro", "cómo funciona"],
+    reply: `
+      Es un ahorro de largo plazo regulado por la Superintendencia de Seguros.<br><br>
+      Aportás cada mes, tu capital crece y podés ajustar el aporte cuando quieras.
+    `
+  },
+  {
+    match: ["ganancias", "impuesto", "deducción"],
+    reply: `
+      Los aportes pueden ser deducibles de Ganancias según tu situación fiscal.<br><br>
+      Si querés, lo revisamos juntos.
+    `
+  },
+  {
+    match: ["riesgo", "inflación"],
+    reply: `
+      No es un plazo fijo: es capitalización de largo plazo.<br><br>
+      El riesgo real es no ahorrar a tiempo.
+    `
+  }
+];
+
+/* Lógica de respuestas fijas */
+function checkFixedResponses(msg) {
+  const t = msg.toLowerCase();
+  for (const r of FIXED_RESPONSES) {
+    if (r.match.some(k => t.includes(k))) return r.reply;
+  }
+  return null;
+}
+
+/* ======================================================
+   IA SOLO PARA CONSULTAS ABIERTAS
+====================================================== */
+async function callAI(msg) {
+  const r = await fetch("https://retirex.onrender.com/ia", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages: [{ role: "user", content: msg }] })
+  });
+
+  const data = await r.json();
+  return data?.reply || "Puedo ayudarte con más detalles si querés.";
+}
+
+/* ======================================================
+   ENVÍO DE MENSAJE
+====================================================== */
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  addMessage(text, "user");
+  input.value = "";
+
+  /* 1 — Flujo guiado */
+  if (flow.step > 0) return handleFlow(text);
+
+  /* 2 — Comandos reservados */
+  const low = text.toLowerCase();
+  if (
+    low.includes("simular") ||
+    low.includes("cotizar") ||
+    low.includes("cálculo") ||
+    low.includes("plan de retiro")
+  ) {
+    addMessage("Perfecto, vamos a preparar tu simulación 😊");
+    return startSimulation();
+  }
+
+  /* 3 — Respuestas fijas */
+  const fixed = checkFixedResponses(text);
+  if (fixed) return addMessage(fixed);
+
+  /* 4 — IA */
+  addMessage("Dame un segundo...", "ai");
+  const ai = await callAI(text);
+  addMessage(ai);
+}
+
+/* ======================================================
+   SIMULACIÓN
+====================================================== */
+let flow = { step: 0, edad: null, retiro: null, aporte: null };
+
+function startSimulation() {
+  flow.step = 1;
+  addMessage("Perfecto 😊 ¿Cuál es tu edad actual?");
+}
+
+async function handleFlow(msg) {
+  /* Paso 1 — Edad */
+  if (flow.step === 1) {
+    const edad = Number(msg);
+    if (isNaN(edad) || edad < 18 || edad > 70) {
+      return addMessage(`
+        Para iniciar un plan necesitás tener al menos <strong>18 años</strong>.<br>
+        ¿Qué edad tenés?
+      `);
+    }
+    flow.edad = edad;
+    flow.step = 2;
+    return addMessage("¿A qué edad te gustaría retirarte?");
+  }
+
+  /* Paso 2 — Edad retiro */
+  if (flow.step === 2) {
+    const retiro = Number(msg);
+    if (isNaN(retiro) || retiro < flow.edad + 5 || retiro > 75) {
+      return addMessage(`
+        La edad de retiro debe tener sentido según tu edad actual.<br>
+        ¿A qué edad te gustaría retirarte?
+      `);
+    }
+    flow.retiro = retiro;
+    flow.step = 3;
+    return addMessage("Genial 👍 ¿Cuánto te gustaría aportar por mes?");
+  }
+
+  /* Paso 3 — Aporte */
+  if (flow.step === 3) {
+    const aporte = Number(msg);
+    if (isNaN(aporte) || aporte < 30000) {
+      return addMessage(`
+        Hoy el aporte mínimo es de <strong>$30.000</strong> por mes 😊<br>
+        ¿Cuánto te gustaría aportar?
+      `);
+    }
+    flow.aporte = aporte;
+    flow.step = 0;
+    return runSimulation();
+  }
+}
+
+/* ======================================================
+   EJECUTAR SIMULACIÓN + GRÁFICO + CTA
+====================================================== */
+async function runSimulation() {
+  const { edad, retiro, aporte } = flow;
+
+  addMessage("Calculando tu simulación... ⏳");
+
+  const r = await fetch("https://retirex.onrender.com/cotizar", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      edad_actual: edad,
+      edad_retiro: retiro,
+      aporte_mensual: aporte,
+      moneda: "pesos"
+    })
+  });
+
+  const data = await r.json();
+
+  const oficial = data.oficial.capital;
+  const real = data.real_pesos.capital;
+
+  addMessage(`
+    <strong>Resultados listos 🎉</strong><br><br>
+    <strong>Escenario oficial:</strong> $${oficial.toLocaleString("es-AR")}<br>
+    <strong>Escenario realista:</strong> $${real.toLocaleString("es-AR")}
+  `);
+
+  const chartId = "chart-" + Date.now();
+
+  addMessage(`
+    <div class="chart-wrapper">
+      <strong>Comparación de capital proyectado</strong><br><br>
+      <canvas id="${chartId}" height="170"></canvas>
+    </div>
+  `);
+
+  addMessage(`
+    <div class="cta-whatsapp">
+      <h3>¿Querés un análisis personalizado?</h3>
+      <p>
+        Te preparo una recomendación pensada para vos:  
+        sin compromiso, sin spam y sin compartir tus datos.
+      </p>
+
+      <a href="https://wa.me/549XXXXXXXXXX?text=Hola,%20quiero%20mi%20análisis%20personalizado"
+         target="_blank"
+         class="whatsapp-btn">
+        📲 Enviarme WhatsApp
+      </a>
+
+      <p class="privacidad">
+        Recibís solo 1 o 2 mensajes para ayudarte a entender tu simulación.  
+        Nunca compartimos tus datos.
+      </p>
+    </div>
+  `);
+
+  setTimeout(() => {
+    new Chart(document.getElementById(chartId), {
+      type: "bar",
+      data: {
+        labels: ["Oficial", "Realista"],
+        datasets: [{
+          data: [oficial, real],
+          backgroundColor: ["#A0005A", "#004B9A"],
+          borderRadius: 10
+        }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+  }, 200);
+
+  addMessage(`
+    <div class="disclaimer">
+      Esta es una simulación orientativa basada en supuestos.<br>
+      No representa un contrato ni garantiza resultados futuros.
+    </div>
+  `);
+
+  addMessage(`
+    ¿Querés hacer algo más?<br><br>
+    <button class="option-button" onclick="showBenefits()">📘 Beneficios</button>
+    <button class="option-button" onclick="startSimulation()">🔁 Nueva simulación</button>
+    <button class="option-button" onclick="askQuestion()">❓ Otra consulta</button>
+  `);
+}
+
+/* ======================================================
+   INICIO
+====================================================== */
+window.onload = sendWelcome;
+</script>
+
+</body>
+</html>
