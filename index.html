@@ -211,7 +211,7 @@
 
 <script>
 
-/* =======================================================
+/* ======================================================
    SISTEMA DE CHAT
 ====================================================== */
 function addMessage(text, who = "ai") {
@@ -230,7 +230,7 @@ document.getElementById("userInput").addEventListener("keydown", function (e) {
   }
 });
 
-/* =======================================================
+/* ======================================================
    MENSAJE DE BIENVENIDA
 ====================================================== */
 function sendWelcome() {
@@ -241,7 +241,7 @@ function sendWelcome() {
   showMainMenu();
 }
 
-/* =======================================================
+/* ======================================================
    MENÚ PRINCIPAL
 ====================================================== */
 function showMainMenu() {
@@ -253,7 +253,7 @@ function showMainMenu() {
   `);
 }
 
-/* =======================================================
+/* ======================================================
    RESPUESTAS FIJAS
 ====================================================== */
 const FIXED_RESPONSES = [
@@ -350,7 +350,7 @@ function checkFixedResponses(msg) {
   return null;
 }
 
-/* =======================================================
+/* ======================================================
    IA (solo consultas complejas)
 ====================================================== */
 async function callAI(msg) {
@@ -366,7 +366,7 @@ async function callAI(msg) {
   return data?.reply || "Puedo ayudarte con más detalles si querés.";
 }
 
-/* =======================================================
+/* ======================================================
    SEND MESSAGE (ORDEN CORRECTO)
 ====================================================== */
 async function sendMessage() {
@@ -411,7 +411,7 @@ async function sendMessage() {
   addMessage(ai);
 }
 
-/* =======================================================
+/* ======================================================
    BENEFICIOS
 ====================================================== */
 function showBenefits() {
@@ -426,7 +426,7 @@ function showBenefits() {
   `);
 }
 
-/* =======================================================
+/* ======================================================
    DUDAS FRECUENTES
 ====================================================== */
 function showFAQ() {
@@ -446,7 +446,7 @@ function askQuestion() {
   addMessage("Perfecto, ¿qué te gustaría saber?");
 }
 
-/* =======================================================
+/* ======================================================
    SIMULACIÓN GUIADA
 ====================================================== */
 let flow = { step: 0, edad: null, retiro: null, aporte: null };
@@ -512,7 +512,7 @@ async function handleFlow(msg) {
   }
 }
 
-/* =======================================================
+/* ======================================================
    EJECUTAR SIMULACIÓN + GRÁFICO
 ====================================================== */
 async function runSimulation() {
@@ -533,4 +533,82 @@ async function runSimulation() {
 
   const data = await r.json();
 
-  const ofic...
+  const oficial = data.oficial.capital;
+  const real = data.real_pesos.capital;
+
+  addMessage(`
+    <strong>Resultados listos 🎉</strong><br><br>
+    <strong>Escenario oficial:</strong> $${oficial.toLocaleString("es-AR")}<br>
+    <strong>Escenario realista:</strong> $${real.toLocaleString("es-AR")}
+  `);
+
+  const chartId = "chart-" + Date.now();
+
+  addMessage(`
+    <div class="chart-wrapper">
+      <strong>Comparación de capital proyectado</strong><br><br>
+      <canvas id="${chartId}" height="170"></canvas>
+    </div>
+  `);
+
+  addMessage(`
+    <div class="cta-whatsapp">
+      <h3>¿Querés un análisis personalizado?</h3>
+      <p>
+        Te puedo preparar una recomendación pensada para tu situación puntual:  
+        sin compromiso, sin spam y sin compartir tus datos.
+      </p>
+
+      <a href="https://wa.me/549XXXXXXXXXX?text=Hola%20Retirex,%20quiero%20mi%20análisis%20personalizado"
+         target="_blank"
+         class="whatsapp-btn">
+        📲 Enviame tu WhatsApp
+      </a>
+
+      <p class="privacidad">
+        Solo recibirás 1 o 2 mensajes para ayudarte a entender tu simulación.  
+        No hacemos spam ni compartimos tus datos con nadie.
+      </p>
+    </div>
+  `);
+
+  setTimeout(() => {
+    const ctx = document.getElementById(chartId);
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Oficial", "Realista"],
+        datasets: [{
+          data: [oficial, real],
+          backgroundColor: ["#A0005A", "#004B9A"],
+          borderRadius: 10
+        }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+  }, 200);
+
+  addMessage(`
+    <div class="disclaimer">
+      Esta es una simulación orientativa basada en supuestos.<br>
+      No representa un contrato ni garantiza resultados futuros.
+    </div>
+  `);
+
+  addMessage(`
+    ¿Querés hacer algo más?<br><br>
+    <button class="option-button" onclick="showBenefits()">📘 Beneficios</button>
+    <button class="option-button" onclick="startSimulation()">🔁 Nueva simulación</button>
+    <button class="option-button" onclick="askQuestion()">❓ Otra consulta</button>
+  `);
+}
+
+/* ======================================================
+   INICIO
+====================================================== */
+window.onload = sendWelcome;
+
+</script>
+
+</body>
+</html>
