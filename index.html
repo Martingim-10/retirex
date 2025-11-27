@@ -468,26 +468,25 @@ async function runSimulation() {
     </div>
   `);
 
-  addMessage(`
-    <div class="cta-whatsapp">
-      <h3>¿Querés un análisis personalizado?</h3>
-      <p>
-        Te preparo una recomendación pensada para vos:  
-        sin compromiso, sin spam y sin compartir tus datos.
-      </p>
+ addMessage(`
+  <div class="cta-whatsapp">
+    <h3>¿Querés un análisis personalizado?</h3>
+    <p>
+      Te preparo una recomendación pensada para vos:<br>
+      sin compromiso, sin spam y sin compartir tus datos.
+    </p>
 
-      <a href="https://wa.me/5492804866612text=Hola,%20quiero%20mi%20análisis%20personalizado"
-         target="_blank"
-         class="whatsapp-btn">
-        📲 Enviarme WhatsApp
-      </a>
+    <a href="#" id="waLink" target="_blank" class="whatsapp-btn">
+      📲 Enviarme WhatsApp
+    </a>
 
-      <p class="privacidad">
-        Recibís solo 1 o 2 mensajes para ayudarte a entender tu simulación.  
-        Nunca compartimos tus datos.
-      </p>
-    </div>
-  `);
+    <p class="privacidad">
+      Recibís solo 1 o 2 mensajes para ayudarte a entender tu simulación.<br>
+      Nunca compartimos tus datos.
+    </p>
+  </div>
+`);
+
 
   setTimeout(() => {
     new Chart(document.getElementById(chartId), {
