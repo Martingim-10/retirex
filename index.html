@@ -517,6 +517,25 @@ async function runSimulation() {
     <button class="option-button" onclick="askQuestion()">❓ Otra consulta</button>
   `);
 }
+// ========================
+// GENERAR LINK DE WHATSAPP
+// ========================
+
+const msg = encodeURIComponent(`
+Hola Martín 👋 Quiero avanzar con mi plan de retiro.
+
+Acabo de hacer una simulación en Retirex:
+• Edad actual: ${edad}
+• Edad de retiro: ${retiro}
+• Aporte mensual: $${aporte.toLocaleString("es-AR")}
+• Escenario oficial: $${oficial.toLocaleString("es-AR")}
+• Escenario realista: $${real.toLocaleString("es-AR")}
+
+¿Me ayudás a continuar?
+`);
+
+document.getElementById("waLink").href =
+  "https://wa.me/5492804866612?text=" + msg;
 
 /* ======================================================
    INICIO
