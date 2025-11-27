@@ -348,49 +348,77 @@ async function runSimulation() {
   const oficial = data.oficial.capital;
   const real = data.real_pesos.capital;
 
-  addMessage(`
-    <strong>Resultados listos 🎉</strong><br><br>
-    <strong>Escenario oficial:</strong> $${oficial.toLocaleString("es-AR")}<br>
-    <strong>Escenario realista:</strong> $${real.toLocaleString("es-AR")}
-  `);
+ /* ============================
+   RESULTADOS
+============================ */
+addMessage(`
+  <strong>Resultados listos 🎉</strong><br><br>
+  <strong>Escenario oficial:</strong> $${oficial.toLocaleString("es-AR")}<br>
+  <strong>Escenario realista:</strong> $${real.toLocaleString("es-AR")}<br><br>
 
-  const chartId = "chart-" + Date.now();
+  <strong>¿Por qué mostramos dos escenarios?</strong><br>
+  • <strong>Oficial:</strong> es un piso conservador basado en parámetros utilizados por la compañía para estimaciones formales.<br>
+  • <strong>Realista:</strong> usa una tasa más acorde al rendimiento histórico y al contexto actual de Argentina.<br><br>
 
-  addMessage(`
-    <div class="chart-wrapper">
-      <strong>Comparación de capital proyectado</strong><br><br>
-      <canvas id="${chartId}" height="170"></canvas>
-    </div>
-  `);
+  No es necesario elegir uno: sirven para comparar distintas expectativas de crecimiento.
+`);
 
-  /* CTA WHATSAPP */
-  addMessage(`
-    <div class="cta-whatsapp">
-      <h3>¿Querés un análisis personalizado?</h3>
-      <p>Te preparo una recomendación pensada para vos.</p>
-      <a href="#" id="waLink" target="_blank" class="whatsapp-btn">📲 Enviarme WhatsApp</a>
-      <p class="privacidad">Nunca compartimos tus datos.</p>
-    </div>
-  `);
+/* ============================
+   GRÁFICO
+============================ */
+const chartId = "chart-" + Date.now();
 
-  /* GRÁFICO */
-  setTimeout(() => {
-    new Chart(document.getElementById(chartId), {
-      type: "bar",
-      data: {
-        labels: ["Oficial", "Realista"],
-        datasets: [{
-          data: [oficial, real],
-          backgroundColor: ["#A0005A", "#004B9A"],
-          borderRadius: 10
-        }]
-      },
-      options: { plugins: { legend: { display: false } } }
-    });
-  }, 200);
+addMessage(`
+  <div class="chart-wrapper">
+    <strong>Comparación de capital proyectado</strong><br><br>
+    <canvas id="${chartId}" height="170"></canvas>
+  </div>
+`);
 
-  /* LINK DE WHATSAPP */
-  const msg = encodeURIComponent(`
+/* ============================
+   CTA WHATSAPP
+============================ */
+addMessage(`
+  <div class="cta-whatsapp">
+    <h3>¿Querés un análisis personalizado?</h3>
+    <p>
+      Te preparo una recomendación pensada para vos:<br>
+      sin compromiso, sin spam y sin compartir tus datos.
+    </p>
+
+    <a href="#" id="waLink" target="_blank" class="whatsapp-btn">
+      📲 Enviarme WhatsApp
+    </a>
+
+    <p class="privacidad">
+      Recibís solo 1 o 2 mensajes para ayudarte a entender tu simulación.<br>
+      Nunca compartimos tus datos.
+    </p>
+  </div>
+`);
+
+/* ============================
+   CREAR GRÁFICO
+============================ */
+setTimeout(() => {
+  new Chart(document.getElementById(chartId), {
+    type: "bar",
+    data: {
+      labels: ["Oficial", "Realista"],
+      datasets: [{
+        data: [oficial, real],
+        backgroundColor: ["#A0005A", "#004B9A"],
+        borderRadius: 10
+      }]
+    },
+    options: { plugins: { legend: { display: false } } }
+  });
+}, 200);
+
+/* ============================
+   LINK DE WHATSAPP
+============================ */
+const msg = encodeURIComponent(`
 Hola Martín 👋 Quiero avanzar con mi plan de retiro.
 
 Acabo de hacer una simulación en Retirex:
@@ -403,16 +431,35 @@ Acabo de hacer una simulación en Retirex:
 ¿Me ayudás a continuar?
 `);
 
-  setTimeout(() => {
-    document.getElementById("waLink").href =
-      "https://wa.me/5492804866612?text=" + msg;
-  }, 300);
+setTimeout(() => {
+  document.getElementById("waLink").href =
+    "https://wa.me/5492804866612?text=" + msg;
+}, 300);
 
-  addMessage(`
-    ¿Querés hacer algo más?<br><br>
-    <button class="option-button" onclick="startSimulation()">🔁 Nueva simulación</button>
-    <button class="option-button" onclick="askQuestion()">❓ Otra consulta</button>
-  `);
+/* ============================
+   DISCLAIMER COMPLETO
+============================ */
+addMessage(`
+  <div class="disclaimer">
+    <strong>Importante:</strong><br>
+    Esta es una <strong>simulación orientativa</strong> basada en supuestos de capitalización.
+    No constituye una oferta, contrato ni compromiso de rendimiento futuro.
+    Los valores finales pueden variar según normativa, contexto económico, aportes,
+    fechas de pago y evolución real del fondo.<br><br>
+    Si querés, podés ver alternativas o ajustar tu aporte.
+  </div>
+`);
+
+/* ============================
+   MENÚ FINAL
+============================ */
+addMessage(`
+  ¿Querés hacer algo más?<br><br>
+  <button class="option-button" onclick="startSimulation()">🔁 Nueva simulación</button>
+  <button class="option-button" onclick="showBenefits()">📘 Beneficios</button>
+  <button class="option-button" onclick="askQuestion()">❓ Otra consulta</button>
+`);
+
 }
 
 /* ======================
