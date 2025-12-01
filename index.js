@@ -124,11 +124,10 @@ app.post("/ia", async (req, res) => {
   }
 });
 
-/* ======================================================
+ /* ======================================================
    ENDPOINT GUARDAR LEAD – vía Apps Script
 ====================================================== */
 
-// URL de tu Web App de Apps Script (la que termina en /exec)
 const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwKf_4QUYUa5bvToa4xJsx1r6VzOD5ngbp1zgLlw_uOaaw6CWGO12yJU7agSVSlBhng/exec";
 
@@ -142,6 +141,7 @@ app.post("/guardar-lead", async (req, res) => {
 
     const data = await respuesta.json();
     return res.json(data);
+
   } catch (e) {
     console.error("Error guardando lead:", e);
     return res
