@@ -161,6 +161,29 @@ app.post("/ia", async (req, res) => {
 app.get("/", (req, res) => {
   res.send("Retirex API + IA funcionando ✅");
 });
+// =======================
+// GUARDAR LEAD EN SHEETS
+// =======================
+
+app.post("/guardar-lead", async (req, res) => {
+  try {
+    const url = https://script.google.com/macros/s/AKfycbwKf_4QUYUa5bvToa4xJsx1r6VzOD5ngbp1zgLlw_uOaaw6CWGO12yJU7agSVSlBhng/exec; // <-- reemplazar acá
+
+    const respuesta = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(req.body),
+    });
+
+    const data = await respuesta.json();
+
+    return res.json(data);
+
+  } catch (e) {
+    console.error("Error guardando lead:", e);
+    return res.status(500).json({ ok: false, error: "No se pudo guardar" });
+  }
+});
 
 /* ======================================================
    LEVANTAR SERVIDOR
