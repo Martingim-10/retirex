@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import OpenAI from "openai";
+import { google } from "googleapis";
 
 const app = express();
 app.use(cors());
@@ -10,7 +11,7 @@ app.use(express.json());
 //  CONFIGURACIÓN OPENAI
 // =======================
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // la vas a setear en Render
+  apiKey: process.env.OPENAI_API_KEY, // setear en Render
 });
 
 // Prompt maestro del agente Retirex IA
@@ -24,58 +25,35 @@ Tu tarea es:
   * Escenario realista en pesos (35% anual estimado).
   * Escenario en dólares (2% anual estimado), cuando sea relevante.
 - Nunca muestres tasas, fórmulas, ni porcentajes técnicos al usuario. Solo hablá de montos, plazos y conceptos.
-- No des datos específicos de reglamentos internos de la compañía que no conozcas con certeza. Usá frases del tipo:
-  "En general...", "La compañía establece condiciones específicas en el contrato..." y sugerí siempre revisar con el productor.
 
 Contexto:
 - La compañía con la que trabajás es Prevención Retiro, del Grupo Sancor Seguros, en Argentina.
-- El productor que te "maneja" es un productor de seguros matriculado y autorizado para operar estos planes.
-- No hagas alarde, pero cuando tenga sentido podés decir:
-  "Trabajo junto a un productor de seguros autorizado para operar Prevención Retiro en Argentina".
+- El productor es un productor matriculado y autorizado para operar estos planes.
 
-Sobre la simulación:
-- El cálculo numérico LO HACE un servicio aparte (la API de Retirex).
-- Vos no inventás números desde tu cabeza: si el usuario ya hizo la simulación, comentás y explicás los resultados.
-- Si el usuario aún no simuló, pedile:
-  * Edad actual.
-  * Edad a la que le gustaría retirarse.
-  * Aporte mensual aproximado.
-- Podés decirle algo como:
-  "Con esos datos puedo preparar una simulación estimada para que veas la diferencia entre el escenario oficial y uno más realista".
+Sobre simulación:
+- El cálculo numérico lo hace la API de Retirex.
+- Vos no inventás números; comentás los resultados.
 
 Sobre rescates y cambios:
-- Explicá que normalmente:
-  * Puede existir rescate anticipado, pero con penalidades/descuentos.
-  * Se pueden hacer cambios de aporte con el tiempo (subir o bajar).
-- NO inventes porcentajes de penalidad ni plazos exactos.
-- Siempre sugerí:
-  "Los detalles precisos figuran en el reglamento y en la póliza, y se revisan caso por caso".
+- Se puede rescatar, pero con ajustes.
+- Se pueden cambiar aportes.
+- No inventes porcentajes ni plazos exactos.
 
 Tono:
-- Cercano, sin ser invasivo.
-- Didáctico, simple, concreto.
-- Sin lenguaje "vendedor agresivo".
-- Pensá en ayudar, no en cerrar una venta inmediata.
-
-Contacto:
-- Antes de pedir datos al usuario, ofrecé siempre los datos del productor:
-  "Si querés hablar con alguien real para ver tu caso puntual, te dejo mis datos y después, si querés, me compartís los tuyos."
-- No inventes teléfonos ni mails; el frontend se encargará de mostrarlos.
-
-Si el usuario hace preguntas generales (qué es, cómo funciona, ventajas, riesgos, inflación, jubilación estatal vs privada, etc.), respondé con claridad.
-Si el usuario pide una simulación concreta, pedile los datos necesarios de forma amigable.
+- Cercano, didáctico, simple.
+- Ayudar > vender.
 `;
 
 // =======================
 //  LÓGICA FINANCIERA
 // =======================
-
 function capitalizacionMensual(aporte, meses, tasaMensual) {
-  // FV = aporte * [ ((1+t)^n - 1) / t ]
   return aporte * ((Math.pow(1 + tasaMensual, meses) - 1) / tasaMensual);
 }
 
-// Endpoint de simulación de retiro
+// =======================
+//  ENDPOINT COTIZADOR
+// =======================
 app.post("/cotizar", (req, res) => {
   try {
     const { edad_actual, edad_retiro, aporte_mensual, moneda } = req.body;
@@ -86,10 +64,10 @@ app.post("/cotizar", (req, res) => {
       return res.status(400).json({ error: "Datos inválidos para la simulación" });
     }
 
-    // Tasas (no se muestran al usuario, son internas)
-    const tasa_oficial = 0.013; // ~1,3% mensual, más conservador
-    const tasa_real_pesos = Math.pow(1 + 0.35, 1 / 12) - 1; // ~35% anual en pesos
-    const tasa_real_usd = Math.pow(1 + 0.02, 1 / 12) - 1;   // ~2% anual en USD
+    // Tasas internas
+    const tasa_oficial = 0.013;
+    const tasa_real_pesos = Math.pow(1 + 0.35, 1 / 12) - 1;
+    const tasa_real_usd = Math.pow(1 + 0.02, 1 / 12) - 1;
 
     const capital_oficial = capitalizacionMensual(aporte_mensual, meses, tasa_oficial);
     const capital_real_pesos = capitalizacionMensual(aporte_mensual, meses, tasa_real_pesos);
@@ -118,13 +96,8 @@ app.post("/cotizar", (req, res) => {
 });
 
 // =======================
-//  ENDPOINT DEL AGENTE IA
+//  ENDPOINT IA
 // =======================
-//
-// Espera un body { messages: [ { role: "user"|"assistant", content: "..." }, ... ] }
-// El frontend se encarga de ir mandando el historial de chat.
-// Devuelve { reply: "texto del asistente" }
-
 app.post("/ia", async (req, res) => {
   try {
     const { messages } = req.body;
@@ -133,33 +106,83 @@ app.post("/ia", async (req, res) => {
       return res.status(400).json({ error: "Faltan mensajes para el chat" });
     }
 
-  const completion = await openai.responses.create({
-  model: "gpt-4o",
-  input: [
-    {
-      role: "system",
-      content: SYSTEM_PROMPT
-    },
-    ...messages
-  ]
-});
+    const completion = await openai.responses.create({
+      model: "gpt-4o",
+      input: [
+        { role: "system", content: SYSTEM_PROMPT },
+        ...messages
+      ]
+    });
 
-const reply = completion.output_text;
+    const reply = completion.output_text;
 
-return res.json({ reply });
-
+    return res.json({ reply });
   } catch (e) {
     console.error("Error en /ia:", e);
     return res.status(500).json({ error: "Error interno en el agente IA" });
   }
 });
 
-// Endpoint simple para verificar que la API vive
+// =======================
+//  RESPUESTAS DESDE GOOGLE SHEETS
+// =======================
+
+// Cargar credenciales de variable de entorno
+const sheetsCredentials = JSON.parse(process.env.GOOGLE_SHEETS_CREDENTIALS);
+
+const auth = new google.auth.GoogleAuth({
+  credentials: sheetsCredentials,
+  scopes: ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+});
+
+const sheets = google.sheets({ version: "v4", auth });
+
+// ID del Sheet de Respuestas Retirex
+const SPREADSHEET_ID = "1xie-u86pV1cP4l0WqW1H7AZ-yc98lTFOq3-4ZoCI1Vc";
+
+app.get("/respuestas", async (req, res) => {
+  try {
+    const resp = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: "Retiros!A:C" // keyword | respuesta | tag
+    });
+
+    const rows = resp.data.values;
+
+    if (!rows || rows.length < 2) {
+      return res.status(500).json({ error: "Hoja vacía o sin datos" });
+    }
+
+    const respuestas = {};
+
+    for (let i = 1; i < rows.length; i++) {
+      const [keyword, respuesta, tag] = rows[i];
+      if (!keyword || !respuesta) continue;
+
+      respuestas[keyword.trim().toLowerCase()] = {
+        respuesta,
+        tag: tag || null
+      };
+    }
+
+    return res.json(respuestas);
+
+  } catch (error) {
+    console.error("Error leyendo Google Sheets:", error);
+    return res.status(500).json({ error: "No se pudo leer el Sheet" });
+  }
+});
+
+// =======================
+//  ENDPOINT TEST
+// =======================
 app.get("/", (req, res) => {
   res.send("Retirex API + IA funcionando ✅");
 });
 
-// Levantar servidor
+// =======================
+//  SERVIDOR
+// =======================
 const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log(`Retirex API escuchando en puerto ${PORT}`);
