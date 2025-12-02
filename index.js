@@ -100,6 +100,11 @@ app.post("/cotizar", (req, res) => {
 /* ======================================================
    ENDPOINT IA /ia
 ====================================================== */
+/* ======================================================
+   ENDPOINT IA /ia
+====================================================== */
+import axios from "axios";
+
 app.post("/ia", async (req, res) => {
   try {
     const { messages } = req.body;
@@ -108,6 +113,25 @@ app.post("/ia", async (req, res) => {
       return res.status(400).json({ error: "Faltan mensajes" });
     }
 
+    // Último mensaje del usuario
+    const ultimaEntrada = messages[messages.length - 1].content;
+
+    // 1. Consultar respuestas fijas en la hoja (endpoint /respuestas)
+    try {
+      const respuestaLocal = await axios.post("http://localhost:10000/respuestas", {
+        mensaje: ultimaEntrada,
+      });
+
+      if (respuestaLocal.data && respuestaLocal.data.respuesta) {
+        // Si hay respuesta fija → devolverla directamente
+        return res.json({ reply: respuestaLocal.data.respuesta });
+      }
+    } catch (err) {
+      console.error("Error consultando respuestas fijas:", err);
+      // Si falla la consulta, seguimos con OpenAI como fallback
+    }
+
+    // 2. Fallback a OpenAI si no hay respuesta fija
     const completion = await openai.responses.create({
       model: "gpt-4o",
       input: [
@@ -118,20 +142,22 @@ app.post("/ia", async (req, res) => {
 
     const reply = completion.output_text;
     return res.json({ reply });
+
   } catch (e) {
     console.error("Error en /ia:", e);
     return res.status(500).json({ error: "Error interno" });
   }
 });
 
+
  /* ======================================================
-   ENDPOINT GUARDAR LEAD – vía Apps Script
+   ENDPOINT RESPUESTAS – vía Apps Script
 ====================================================== */
 
 const APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbwKf_4QUYUa5bvToa4xJsx1r6VzOD5ngbp1zgLlw_uOaaw6CWGO12yJU7agSVSlBhng/exec";
 
-app.post("/guardar-lead", async (req, res) => {
+app.post("/respuestas", async (req, res) => {
   try {
     const respuesta = await fetch(APPS_SCRIPT_URL, {
       method: "POST",
@@ -143,10 +169,10 @@ app.post("/guardar-lead", async (req, res) => {
     return res.json(data);
 
   } catch (e) {
-    console.error("Error guardando lead:", e);
+    console.error("Error consultando respuestas:", e);
     return res
       .status(500)
-      .json({ ok: false, error: "No se pudo guardar el lead" });
+      .json({ ok: false, error: "No se pudo consultar las respuestas" });
   }
 });
 
