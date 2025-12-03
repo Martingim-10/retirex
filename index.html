@@ -223,7 +223,7 @@ function showMainMenu() {
     <button class="option-button" onclick="startSimulation()">🧮 Simular mi plan</button>
     <button class="option-button" onclick="showBenefits()">📘 Beneficios del plan</button>
     <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
-    <button class="option-button" onclick="askQuestion()">❓ Preguntar algo puntual</button>
+    
   `);
 }
 
@@ -357,12 +357,6 @@ function sendFAQ(tipo) {
   addMessage(texto);
 }
 
-function askQuestion() {
-  addMessage(`
-    Perfecto 😊<br>
-    Contame tu duda puntual y te doy una explicación clara y personalizada.
-  `);
-}
 
 /* ======================
    IA
