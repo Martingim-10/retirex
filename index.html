@@ -223,7 +223,6 @@ function showMainMenu() {
     <button class="option-button" onclick="startSimulation()">🧮 Simular mi plan</button>
     <button class="option-button" onclick="showBenefits()">📘 Beneficios del plan</button>
     <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
-    
   `);
 }
 
@@ -240,7 +239,6 @@ const FIXED_RESPONSES = [
       • Bajar tu aporte temporalmente sin perder tu plan.<br>
       • Pausar durante algunos meses si lo necesitás.<br>
       • Hacer aportes extraordinarios cuando puedas.<br><br>
-      
     `
   },
   {
@@ -251,7 +249,6 @@ const FIXED_RESPONSES = [
       2️⃣ La compañía invierte en instrumentos diversificados.<br>
       3️⃣ Tu capital crece y se reinvierte automáticamente.<br><br>
       Por eso mostramos dos escenarios de crecimiento.<br>
-      
     `
   },
   {
@@ -259,7 +256,6 @@ const FIXED_RESPONSES = [
     reply: `
       Podés pausar o bajar tu aporte un tiempo sin perder tu plan 🙌<br><br>
       Luego retomás normalmente.<br><br>
-      
     `
   },
   {
@@ -275,7 +271,7 @@ const FIXED_RESPONSES = [
       Mostramos dos escenarios de crecimiento:<br><br>
       • <strong>Oficial:</strong> más conservador.<br>
       • <strong>Realista:</strong> más acorde al contexto actual y al rendimiento típico de largo plazo.<br><br>
-      Servirá para comparar y planificar mejor.
+      Sirven para comparar y planificar mejor.
     `
   },
   {
@@ -284,14 +280,12 @@ const FIXED_RESPONSES = [
       Es un ahorro de largo plazo regulado por la Superintendencia de Seguros de la Nación.<br><br>
       Aportás mes a mes y tu capital crece mediante capitalización.<br>
       Podés ajustar el aporte, pausar, rescatar y sumar beneficiarios.<br><br>
-      
     `
   },
   {
     match: ["ganancias", "impuesto", "deducción"],
     reply: `
       Los aportes pueden ser deducibles del Impuesto a las Ganancias, dependiendo de tu situación fiscal.<br><br>
-     
     `
   },
   {
@@ -357,7 +351,6 @@ function sendFAQ(tipo) {
   addMessage(texto);
 }
 
-
 /* ======================
    IA
 ====================== */
@@ -382,51 +375,78 @@ async function sendMessage() {
   addMessage(text, "user");
   input.value = "";
 
-  if (flow.step > 0) return handleFlow(text);
+  // Flujo guiado activo
+  if (flow.step > 0) {
+    return handleFlow(text);
+  }
 
+  // Comandos para simular
   const low = text.toLowerCase();
-  if (low.includes("simular") || low.includes("cotizar") || low.includes("plan"))
+  if (low.includes("simular") || low.includes("cotizar") || low.includes("plan")) {
     return startSimulation();
+  }
 
+  // Respuestas fijas
   const fixed = checkFixedResponses(text);
   if (fixed) return addMessage(fixed);
 
+  // IA
   addMessage("Dame un segundo...", "ai");
   const ai = await callAI(text);
   addMessage(ai);
 }
 
 /* ======================
-   FLUJO GUIADO
+   FLUJO GUIADO (ahora con SEXO)
 ====================== */
-let flow = { step: 0, edad: null, retiro: null, aporte: null };
+let flow = { step: 0, sexo: null, edad: null, retiro: null, aporte: null };
 
 function startSimulation() {
-  flow.step = 1;
-  addMessage("Perfecto 😊 ¿Cuál es tu edad actual?");
+  flow = { step: 1, sexo: null, edad: null, retiro: null, aporte: null };
+  addMessage("Perfecto 😊 Para empezar, ¿cuál es tu sexo? (M/F)");
 }
 
 async function handleFlow(msg) {
+
+  // PASO 1 — SEXO
   if (flow.step === 1) {
-    const edad = Number(msg);
-    if (isNaN(edad) || edad < 18) return addMessage("Tenés que tener 18+ 😊");
-    flow.edad = edad;
+    const s = msg.trim().toUpperCase();
+    if (s !== "M" && s !== "F") {
+      return addMessage("Ingresá M (masculino) o F (femenino) 😊");
+    }
+    flow.sexo = s;
     flow.step = 2;
+    return addMessage("Genial 👍 ¿Cuál es tu edad actual?");
+  }
+
+  // PASO 2 — EDAD ACTUAL
+  if (flow.step === 2) {
+    const edad = Number(msg);
+    if (isNaN(edad) || edad < 18 || edad > 70) {
+      return addMessage("Ingresá una edad válida (mínimo 18, máximo 70) 😊");
+    }
+    flow.edad = edad;
+    flow.step = 3;
     return addMessage("¿A qué edad te gustaría retirarte?");
   }
 
-  if (flow.step === 2) {
+  // PASO 3 — EDAD DE RETIRO
+  if (flow.step === 3) {
     const retiro = Number(msg);
-    if (isNaN(retiro) || retiro < flow.edad + 5)
-      return addMessage("Debe ser una edad razonable 👍");
+    if (isNaN(retiro) || retiro < flow.edad + 5 || retiro > 75) {
+      return addMessage("Elegí una edad razonable según tu edad actual (al menos 5 años más) 👍");
+    }
     flow.retiro = retiro;
-    flow.step = 3;
-    return addMessage("Genial 👍 ¿Cuánto querés aportar por mes?");
+    flow.step = 4;
+    return addMessage("Perfecto 🙌 ¿Cuánto querés aportar por mes?");
   }
 
-  if (flow.step === 3) {
+  // PASO 4 — APORTE
+  if (flow.step === 4) {
     const aporte = Number(msg);
-    if (aporte < 30000) return addMessage("Hoy el mínimo es de $30.000 😊");
+    if (isNaN(aporte) || aporte < 30000) {
+      return addMessage("Hoy el aporte mínimo es de $30.000 😊");
+    }
     flow.aporte = aporte;
     flow.step = 0;
     return runSimulation();
@@ -434,10 +454,10 @@ async function handleFlow(msg) {
 }
 
 /* ======================
-   SIMULACIÓN
+   SIMULACIÓN (usa backend nuevo)
 ====================== */
 async function runSimulation() {
-  const { edad, retiro, aporte } = flow;
+  const { sexo, edad, retiro, aporte } = flow;
 
   addMessage("Calculando tu simulación... ⏳");
 
@@ -445,28 +465,34 @@ async function runSimulation() {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
+      sexo,
       edad_actual: edad,
       edad_retiro: retiro,
-      aporte_mensual: aporte,
-      moneda: "pesos"
+      aporte_mensual: aporte
     })
   });
 
   const data = await r.json();
 
-  const oficial = data.oficial.capital;
-  const real = data.real_pesos.capital;
+  if (!r.ok || !data.oficial || !data.realista) {
+    addMessage("Hubo un problema con la simulación. Probemos de nuevo en un momento 🙏");
+    console.error("Error en respuesta /cotizar:", data);
+    return;
+  }
+
+  const oficial  = data.oficial.capital;
+  const realista = data.realista.capital;
 
   addMessage(`
     <strong>Resultados listos 🎉</strong><br><br>
     <strong>Escenario oficial:</strong> $${oficial.toLocaleString("es-AR")}<br>
-    <strong>Escenario realista:</strong> $${real.toLocaleString("es-AR")}<br><br>
+    <strong>Escenario realista:</strong> $${realista.toLocaleString("es-AR")}<br><br>
 
-    <strong>¿Por qué mostramos dos escenarios?</strong><br>
-    • <strong>Oficial:</strong> estimación conservadora basada en los parámetros formales del plan.<br>
-    • <strong>Realista:</strong> crecimiento más acorde al contexto económico actual y la capitalización típica de largo plazo.<br><br>
+    <strong>¿Qué estás viendo?</strong><br>
+    • <strong>Oficial:</strong> proyección conservadora basada en parámetros formales del plan.<br>
+    • <strong>Realista:</strong> crecimiento más alineado con una capitalización del 30% anual estimado en el largo plazo.<br><br>
 
-    No hay que elegir uno u otro: sirven para comparar distintas expectativas de crecimiento.
+    No tenés que elegir uno u otro: sirven como referencia de piso y techo para tomar mejores decisiones.
   `);
 
   const chartId = "chart-" + Date.now();
@@ -478,6 +504,37 @@ async function runSimulation() {
     </div>
   `);
 
+  // Gráfico
+  setTimeout(() => {
+    new Chart(document.getElementById(chartId), {
+      type: "bar",
+      data: {
+        labels: ["Oficial", "Realista"],
+        datasets: [{
+          data: [oficial, realista],
+          backgroundColor: ["#A0005A", "#004B9A"],
+          borderRadius: 10
+        }]
+      },
+      options: { plugins: { legend: { display: false } } }
+    });
+  }, 200);
+
+  // CTA WhatsApp
+  const msg = encodeURIComponent(`
+Hola Martín 👋 Quiero avanzar con mi plan de retiro.
+
+Hice una simulación en Retirex:
+• Sexo: ${sexo === "M" ? "Masculino" : "Femenino"}
+• Edad actual: ${edad}
+• Edad de retiro: ${retiro}
+• Aporte mensual: $${aporte.toLocaleString("es-AR")}
+• Escenario oficial: $${oficial.toLocaleString("es-AR")}
+• Escenario realista: $${realista.toLocaleString("es-AR")}
+
+¿Me ayudás a continuar?
+`);
+
   addMessage(`
     <div class="cta-whatsapp">
       <h3>¿Querés un análisis personalizado?</h3>
@@ -486,7 +543,7 @@ async function runSimulation() {
         sin compromiso, sin spam y sin compartir tus datos.
       </p>
 
-      <a href="#" id="waLink" target="_blank" class="whatsapp-btn">
+      <a href="https://wa.me/5492804866612?text=${msg}" target="_blank" class="whatsapp-btn">
         📲 Enviarme WhatsApp
       </a>
 
@@ -496,39 +553,6 @@ async function runSimulation() {
       </p>
     </div>
   `);
-
-  setTimeout(() => {
-    new Chart(document.getElementById(chartId), {
-      type: "bar",
-      data: {
-        labels: ["Oficial", "Realista"],
-        datasets: [{
-          data: [oficial, real],
-          backgroundColor: ["#A0005A", "#004B9A"],
-          borderRadius: 10
-        }]
-      },
-      options: { plugins: { legend: { display: false } } }
-    });
-  }, 200);
-
-  const msg = encodeURIComponent(`
-Hola Martín 👋 Quiero avanzar con mi plan de retiro.
-
-Acabo de hacer una simulación en Retirex:
-• Edad actual: ${edad}
-• Edad de retiro: ${retiro}
-• Aporte mensual: $${aporte.toLocaleString("es-AR")}
-• Escenario oficial: $${oficial.toLocaleString("es-AR")}
-• Escenario realista: $${real.toLocaleString("es-AR")}
-
-¿Me ayudás a continuar?
-`);
-
-  setTimeout(() => {
-    document.getElementById("waLink").href =
-      "https://wa.me/5492804866612?text=" + msg;
-  }, 300);
 
   addMessage(`
     <div class="disclaimer">
@@ -541,13 +565,11 @@ Acabo de hacer una simulación en Retirex:
   `);
 
   addMessage(`
-  ¿Querés hacer algo más?<br><br>
-
-  <button class="option-button" onclick="startSimulation()">🧮 Nueva simulación</button>
-  <button class="option-button" onclick="showBenefits()">📘 Beneficios del plan</button>
-  <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
-`);
-
+    ¿Querés hacer algo más?<br><br>
+    <button class="option-button" onclick="startSimulation()">🧮 Nueva simulación</button>
+    <button class="option-button" onclick="showBenefits()">📘 Beneficios del plan</button>
+    <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
+  `);
 }
 
 /* ======================
