@@ -36,61 +36,63 @@ function capitalizacionMensual(aporte, meses, tasaMensual) {
 }
 
 /* ======================================================
-   ENDPOINT SIMULACIÓN /cotizar
+ /* ======================================================
+   ENDPOINT SIMULACIÓN /cotizar (NUEVO – LÓGICA REAL)
 ====================================================== */
 app.post("/cotizar", (req, res) => {
   try {
-    const { edad_actual, edad_retiro, aporte_mensual, moneda } = req.body;
+    const { edad_actual, edad_retiro, aporte_mensual, sexo } = req.body;
 
+    const aporte = Number(aporte_mensual);
     const meses = (edad_retiro - edad_actual) * 12;
 
-    if (
-      !edad_actual ||
-      !edad_retiro ||
-      !aporte_mensual ||
-      meses <= 0 ||
-      aporte_mensual <= 0
-    ) {
-      return res
-        .status(400)
-        .json({ error: "Datos inválidos para la simulación" });
+    if (meses <= 0 || aporte <= 0) {
+      return res.status(400).json({ error: "Datos inválidos" });
     }
 
-    // Tasas internas
-    const tasa_oficial = 0.013; // ~1,3% mensual
-    const tasa_real_pesos = Math.pow(1 + 0.30, 1 / 12) - 1; // 30% anual
-    const tasa_real_usd = Math.pow(1 + 0.02, 1 / 12) - 1; // 2% anual
+    /* ===============================================
+       CÁLCULOS ACTUARIALES (exactos al Excel oficial)
+    =============================================== */
 
-    const capital_oficial = capitalizacionMensual(
-      aporte_mensual,
-      meses,
-      tasa_oficial
-    );
-    const capital_real_pesos = capitalizacionMensual(
-      aporte_mensual,
-      meses,
-      tasa_real_pesos
-    );
-    const capital_real_usd =
-      moneda === "usd"
-        ? capitalizacionMensual(aporte_mensual, meses, tasa_real_usd)
-        : null;
+    // Prima de tarifa y prima pura normal (ARS)
+    const primaTarifa = aporte / 1.006;
+    const primaPura = primaTarifa * 0.90; // -10% gastos
 
-    return res.json({
-      entrada: {
-        edad_actual,
-        edad_retiro,
-        aporte_mensual,
-        moneda,
-      },
+    // Tasas anuales
+    const tasaRealistaAnual = 0.30; // 30%
+    const tasaOficialAnual  = 0.18; // 18%
+
+    // Tasas mensuales equivalentes
+    const tasaRealistaMensual = Math.pow(1 + tasaRealistaAnual, 1/12) - 1;
+    const tasaOficialMensual  = Math.pow(1 + tasaOficialAnual, 1/12) - 1;
+
+    // RFU
+    function rfu(tasa, n) {
+      return (
+        (Math.pow(1 + tasa, n) * (1 - Math.pow(1 + tasa, -n))) /
+        (1 - Math.pow(1 + tasa, -1))
+      );
+    }
+
+    const RFU_realista = rfu(tasaRealistaMensual, meses);
+    const RFU_oficial  = rfu(tasaOficialMensual, meses);
+
+    const capital_realista = primaPura * RFU_realista;
+    const capital_oficial  = primaPura * RFU_oficial;
+
+    /* ===============================================
+       RESPUESTA
+    =============================================== */
+    res.json({
+      entrada: { edad_actual, edad_retiro, aporte_mensual, sexo },
       oficial: {
-        capital: Math.round(capital_oficial),
+        capital: Math.round(capital_oficial)
       },
-      real_pesos: {
-        capital: Math.round(capital_real_pesos),
-      },
-      real_usd: capital_real_usd ? Math.round(capital_real_usd) : null,
+      realista: {
+        capital: Math.round(capital_realista)
+      }
     });
+
   } catch (e) {
     console.error("Error en /cotizar:", e);
     return res.status(500).json({ error: "Error interno" });
