@@ -20,7 +20,7 @@ Tu tarea es:
 - Ayudar a entender cuánto puede acumular una persona según su simulación.
 - Comparar SIEMPRE escenarios:
   * Oficial Prevención (conservador).
-  * Realista pesos (35% anual estimado).
+  * Realista pesos (30% anual estimado).
 - No mostrar tasas, solo montos y diferencias.
 - No inventar datos regulatorios específicos.
 - Tono amable, didáctico, profesional.
@@ -58,7 +58,7 @@ app.post("/cotizar", (req, res) => {
 
     // Tasas internas
     const tasa_oficial = 0.013; // ~1,3% mensual
-    const tasa_real_pesos = Math.pow(1 + 0.35, 1 / 12) - 1; // 35% anual
+    const tasa_real_pesos = Math.pow(1 + 0.30, 1 / 12) - 1; // 30% anual
     const tasa_real_usd = Math.pow(1 + 0.02, 1 / 12) - 1; // 2% anual
 
     const capital_oficial = capitalizacionMensual(
