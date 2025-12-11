@@ -229,12 +229,19 @@ function sendWelcome() {
 ====================== */
 function showMainMenu() {
   addMessage(`
-    <button class="option-button" onclick="startSimulation()">🧮 Simular mi plan</button>
-    <button class="option-button" onclick="showBenefits()">📘 Beneficios del plan</button>
-    <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
+    <div id="menu-inicial">
+      <button class="option-button" id="btnSimular">🧮 Simular mi plan</button>
+      <button class="option-button" id="btnBeneficios">📘 Beneficios del plan</button>
+      <button class="option-button" id="btnFAQ">💬 Dudas frecuentes</button>
+    </div>
   `);
-}
 
+  setTimeout(() => {
+    document.getElementById("btnSimular").onclick = () => startSimulation();
+    document.getElementById("btnBeneficios").onclick = () => showBenefits();
+    document.getElementById("btnFAQ").onclick = () => showFAQ();
+  }, 150);
+}
 /* ======================
    RESPUESTAS FIJAS (sin cambios)
 ====================== */
@@ -420,12 +427,19 @@ async function runSimulation() {
   `);
 
   addMessage(`
+  <div id="menu-final">
     ¿Querés hacer algo más?<br><br>
-    <button class="option-button" onclick="startSimulation()">🧮 Nueva simulación</button>
-    <button class="option-button" onclick="showBenefits()">📘 Beneficios del plan</button>
-    <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
-  `);
-}
+    <button class="option-button" id="btnNueva">🧮 Nueva simulación</button>
+    <button class="option-button" id="btnFinalBeneficios">📘 Beneficios del plan</button>
+    <button class="option-button" id="btnFinalFAQ">💬 Dudas frecuentes</button>
+  </div>
+`);
+
+setTimeout(() => {
+  document.getElementById("btnNueva").onclick = () => startSimulation();
+  document.getElementById("btnFinalBeneficios").onclick = () => showBenefits();
+  document.getElementById("btnFinalFAQ").onclick = () => showFAQ();
+}, 150);
 
 /* ======================
    INICIO
