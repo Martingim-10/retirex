@@ -4,15 +4,17 @@
   <meta charset="UTF-8" />
   <title>Retirex – Chat Inteligente de Retiro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-68HDQMVBVX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
 
-  gtag('config', 'G-68HDQMVBVX');
-</script>
+  <!-- Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-68HDQMVBVX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+
+    gtag("js", new Date());
+    gtag("config", "G-68HDQMVBVX");
+  </script>
+
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -179,24 +181,24 @@
 </head>
 
 <body>
-  <div class="chat-container">
-    <div class="header">
-      <div class="avatar">R</div>
-      Retirex – Asesor inteligente
-    </div>
-
-    <div class="messages" id="messages"></div>
-
-    <div class="input-area">
-      <input id="userInput" type="text" placeholder="Escribí tu consulta..." />
-      <button onclick="sendMessage()">Enviar</button>
-    </div>
+<div class="chat-container">
+  <div class="header">
+    <div class="avatar">R</div>
+    Retirex – Asesor inteligente
   </div>
 
+  <div class="messages" id="messages"></div>
+
+  <div class="input-area">
+    <input id="userInput" type="text" placeholder="Escribí tu consulta..." />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+</div>
+
 <script>
-/* ======================
-   SISTEMA DE CHAT
-====================== */
+/* ============================================================
+   SISTEMA DE CHAT + ANALYTICS
+============================================================ */
 function addMessage(text, who = "ai") {
   const box = document.createElement("div");
   box.className = "msg " + who;
@@ -212,99 +214,65 @@ document.getElementById("userInput").addEventListener("keydown", function (e) {
   }
 });
 
-/* ======================
+/* ============================================================
    MENSAJE DE BIENVENIDA
-====================== */
+============================================================ */
 function sendWelcome() {
   addMessage(`
     Hola 👋 soy <strong>Retirex</strong>, tu asistente digital especializado en los planes de retiro de Prevención Retiro.<br><br>
     ¿Qué te gustaría hacer hoy?
   `);
+
+  gtag("event", "chat_inicio", { timestamp: Date.now() });
+
   showMainMenu();
 }
 
-/* ======================
-   MENÚ PRINCIPAL
-====================== */
+/* ============================================================
+   MENÚ PRINCIPAL + TRACKING
+============================================================ */
+function trackMenu(opcion) {
+  gtag("event", "menu_click", {
+    opcion: opcion,
+    timestamp: Date.now()
+  });
+}
+
 function showMainMenu() {
   addMessage(`
-    <button class="option-button" onclick="startSimulation()">🧮 Simular mi plan</button>
-    <button class="option-button" onclick="showBenefits()">📘 Beneficios del plan</button>
-    <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
+    <button class="option-button" onclick="trackMenu('simular'); startSimulation()">🧮 Simular mi plan</button>
+    <button class="option-button" onclick="trackMenu('beneficios'); showBenefits()">📘 Beneficios del plan</button>
+    <button class="option-button" onclick="trackMenu('faq'); showFAQ()">💬 Dudas frecuentes</button>
   `);
 }
 
-/* ======================
-   RESPUESTAS FIJAS COMPLETAS
-====================== */
+/* ============================================================
+   RESPUESTAS FIJAS
+============================================================ */
 const FIXED_RESPONSES = [
   {
-    match: ["cambiar aporte", "subir aporte", "bajar aporte", "ajustar aporte", "flexibilidad", "aporte flexible", "aportes flexibles"],
+    match: ["cambiar aporte", "subir aporte", "bajar aporte", "ajustar aporte", "flexibilidad"],
     reply: `
-      La flexibilidad de aportes es uno de los puntos más fuertes de los planes de Prevención Retiro 😊<br><br>
-      Podés manejar tu aporte así:<br><br>
-      • Subirlo para acelerar tu capital futuro.<br>
-      • Bajar tu aporte temporalmente sin perder tu plan.<br>
-      • Pausar durante algunos meses si lo necesitás.<br>
-      • Hacer aportes extraordinarios cuando puedas.<br><br>
+      La flexibilidad de aportes es uno de los puntos más fuertes 😊<br><br>
+      • Subir tu aporte<br>
+      • Bajar tu aporte<br>
+      • Pausar temporalmente<br>
+      • Hacer aportes extraordinarios<br><br>
     `
   },
   {
-    match: ["capitalización", "crece mi dinero", "rendimiento", "acumular", "crecimiento", "cómo crece", "cómo se invierte"],
+    match: ["capitalizacion", "rendimiento", "crecimiento", "cómo crece"],
     reply: `
-      La capitalización es cómo crece tu ahorro mes a mes.<br><br>
-      1️⃣ Aportás cada mes.<br>
-      2️⃣ La compañía invierte en instrumentos diversificados.<br>
-      3️⃣ Tu capital crece y se reinvierte automáticamente.<br><br>
-      Por eso mostramos dos escenarios de crecimiento.<br>
-    `
-  },
-  {
-    match: ["pausar", "suspender", "no puedo pagar", "pausa"],
-    reply: `
-      Podés pausar o bajar tu aporte un tiempo sin perder tu plan 🙌<br><br>
-      Luego retomás normalmente.<br><br>
-    `
-  },
-  {
-    match: ["rescatar", "rescate", "retirar plata", "sacar plata"],
-    reply: `
-      Se pueden hacer rescates anticipados, aunque suelen tener ajustes porque el plan está diseñado para el largo plazo.<br><br>
-      Si querés te explico cómo funciona.
-    `
-  },
-  {
-    match: ["escenario", "oficial", "realista"],
-    reply: `
-      Mostramos dos escenarios de crecimiento:<br><br>
-      • <strong>Oficial:</strong> más conservador.<br>
-      • <strong>Realista:</strong> más acorde al contexto actual y al rendimiento típico de largo plazo.<br><br>
-      Sirven para comparar y planificar mejor.
-    `
-  },
-  {
-    match: ["qué es un plan", "qué es un seguro", "cómo funciona"],
-    reply: `
-      Es un ahorro de largo plazo regulado por la Superintendencia de Seguros de la Nación.<br><br>
-      Aportás mes a mes y tu capital crece mediante capitalización.<br>
-      Podés ajustar el aporte, pausar, rescatar y sumar beneficiarios.<br><br>
-    `
-  },
-  {
-    match: ["ganancias", "impuesto", "deducción"],
-    reply: `
-      Los aportes pueden ser deducibles del Impuesto a las Ganancias, dependiendo de tu situación fiscal.<br><br>
-    `
-  },
-  {
-    match: ["riesgo", "inflación"],
-    reply: `
-      No es un plazo fijo: es un ahorro capitalizable de largo plazo.<br><br>
-      El verdadero riesgo es no comenzar con tiempo 😉
+      Tu dinero crece mediante capitalización:<br><br>
+      1️⃣ Aportás<br>
+      2️⃣ Se invierte<br>
+      3️⃣ Se reinvierte<br><br>
+      Y por eso mostramos dos escenarios.
     `
   }
 ];
 
+/* CHECKEO */
 function checkFixedResponses(msg) {
   const t = msg.toLowerCase();
   for (const r of FIXED_RESPONSES) {
@@ -313,55 +281,9 @@ function checkFixedResponses(msg) {
   return null;
 }
 
-/* ======================
-   FUNCIONES SECUNDARIAS
-====================== */
-function showBenefits() {
-  addMessage(`
-    <strong>Principales beneficios del plan de retiro:</strong><br><br>
-    • Ahorro inteligente y de largo plazo.<br>
-    • Aportes flexibles en todo momento.<br>
-    • Deducción posible en Ganancias.<br>
-    • Rentabilidad proyectada con dos escenarios comparativos.<br>
-    • Rescates bajo ciertas condiciones.<br>
-    • 100% digital, sin trámites presenciales.<br><br>
-    ¿Querés ver cuánto podrías acumular?<br>
-    <button class="option-button" onclick="startSimulation()">🧮 Simular mi plan</button>
-  `);
-}
-
-function showFAQ() {
-  addMessage(`
-    <strong>Dudas frecuentes</strong><br><br>
-
-    <button class="option-button" onclick="sendFAQ('aporte')">¿Puedo cambiar mi aporte?</button>
-    <button class="option-button" onclick="sendFAQ('rescate')">¿Puedo rescatar antes del retiro?</button>
-    <button class="option-button" onclick="sendFAQ('capitalizacion')">¿Cómo crece mi dinero?</button>
-    <button class="option-button" onclick="sendFAQ('ganancias')">¿Puedo descontarlo en Ganancias?</button>
-    <button class="option-button" onclick="sendFAQ('riesgo')">¿Qué tan seguro es este plan?</button>
-  `);
-}
-
-function sendFAQ(tipo) {
-  let texto = "";
-
-  if (tipo === "aporte")
-    texto = `Podés subir, bajar o pausar tu aporte cuando quieras 😊`;
-  if (tipo === "rescate")
-    texto = `Podés rescatar antes del retiro, aunque tiene ajustes por ser un ahorro de largo plazo.`;
-  if (tipo === "capitalizacion")
-    texto = `Tu dinero crece mediante capitalización: aportás, se invierte y se reinvierte cada mes.`;
-  if (tipo === "ganancias")
-    texto = `Según tu situación fiscal, los aportes pueden ser deducibles de Ganancias.`;
-  if (tipo === "riesgo")
-    texto = `Es un plan regulado por la Superintendencia. El verdadero riesgo es no empezar 😉`;
-
-  addMessage(texto);
-}
-
-/* ======================
-   IA
-====================== */
+/* ============================================================
+   IA BACKEND
+============================================================ */
 async function callAI(msg) {
   const r = await fetch("https://retirex.onrender.com/ia", {
     method: "POST",
@@ -372,9 +294,9 @@ async function callAI(msg) {
   return data?.reply || "Puedo ayudarte con más detalles si querés.";
 }
 
-/* ======================
-   ENVÍO DE MENSAJE
-====================== */
+/* ============================================================
+   ENVÍO DE MENSAJES + ANALYTICS
+============================================================ */
 async function sendMessage() {
   const input = document.getElementById("userInput");
   const text = input.value.trim();
@@ -383,87 +305,77 @@ async function sendMessage() {
   addMessage(text, "user");
   input.value = "";
 
-  // Flujo guiado activo
-  if (flow.step > 0) {
-    return handleFlow(text);
-  }
+  gtag("event", "mensaje_usuario", {
+    texto: text.substring(0, 50),
+    timestamp: Date.now()
+  });
 
-  // Comandos para simular
-  const low = text.toLowerCase();
-  if (low.includes("simular") || low.includes("cotizar") || low.includes("plan")) {
-    return startSimulation();
-  }
+  if (flow.step > 0) return handleFlow(text);
 
-  // Respuestas fijas
+  if (text.toLowerCase().includes("simular")) return startSimulation();
+
   const fixed = checkFixedResponses(text);
   if (fixed) return addMessage(fixed);
 
-  // IA
   addMessage("Dame un segundo...", "ai");
   const ai = await callAI(text);
   addMessage(ai);
 }
 
-/* ======================
-   FLUJO GUIADO (ahora con SEXO)
-====================== */
+/* ============================================================
+   FLUJO GUIADO (incluye SEXO)
+============================================================ */
 let flow = { step: 0, sexo: null, edad: null, retiro: null, aporte: null };
 
 function startSimulation() {
   flow = { step: 1, sexo: null, edad: null, retiro: null, aporte: null };
+
+  gtag("event", "simulacion_inicio", { timestamp: Date.now() });
+
   addMessage("Perfecto 😊 Para empezar, ¿cuál es tu sexo? (M/F)");
 }
 
 async function handleFlow(msg) {
-
-  // PASO 1 — SEXO
+  // SEXO
   if (flow.step === 1) {
     const s = msg.trim().toUpperCase();
-    if (s !== "M" && s !== "F") {
-      return addMessage("Ingresá M (masculino) o F (femenino) 😊");
-    }
+    if (s !== "M" && s !== "F") return addMessage("Ingresá M o F 😊");
     flow.sexo = s;
     flow.step = 2;
     return addMessage("Genial 👍 ¿Cuál es tu edad actual?");
   }
 
-  // PASO 2 — EDAD ACTUAL
+  // EDAD
   if (flow.step === 2) {
     const edad = Number(msg);
-    if (isNaN(edad) || edad < 18 || edad > 70) {
-      return addMessage("Ingresá una edad válida (mínimo 18, máximo 70) 😊");
-    }
+    if (isNaN(edad) || edad < 18) return addMessage("Edad mínima 18 👌");
     flow.edad = edad;
     flow.step = 3;
     return addMessage("¿A qué edad te gustaría retirarte?");
   }
 
-  // PASO 3 — EDAD DE RETIRO
+  // RETIRO
   if (flow.step === 3) {
-    const retiro = Number(msg);
-    if (isNaN(retiro) || retiro < flow.edad + 5 || retiro > 75) {
-      return addMessage("Elegí una edad razonable según tu edad actual (al menos 5 años más) 👍");
-    }
-    flow.retiro = retiro;
+    const r = Number(msg);
+    if (isNaN(r) || r < flow.edad + 5) return addMessage("Debe ser al menos 5 años más 👍");
+    flow.retiro = r;
     flow.step = 4;
     return addMessage("Perfecto 🙌 ¿Cuánto querés aportar por mes?");
   }
 
-  // PASO 4 — APORTE
+  // APORTE
   if (flow.step === 4) {
-    const aporte = Number(msg);
-    if (isNaN(aporte) || aporte < 30000) {
-      return addMessage("Hoy el aporte mínimo es de $30.000 😊");
-    }
-    flow.aporte = aporte;
+    const a = Number(msg);
+    if (isNaN(a) || a < 30000) return addMessage("El mínimo hoy es $30.000 😊");
+    flow.aporte = a;
     flow.step = 0;
     return runSimulation();
   }
 }
 
-/* ======================
-   SIMULACIÓN (usa backend nuevo)
-====================== */
+/* ============================================================
+   SIMULACIÓN (via backend)
+============================================================ */
 async function runSimulation() {
   const { sexo, edad, retiro, aporte } = flow;
 
@@ -472,35 +384,30 @@ async function runSimulation() {
   const r = await fetch("https://retirex.onrender.com/cotizar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      sexo,
-      edad_actual: edad,
-      edad_retiro: retiro,
-      aporte_mensual: aporte
-    })
+    body: JSON.stringify({ sexo, edad_actual: edad, edad_retiro: retiro, aporte_mensual: aporte })
   });
 
   const data = await r.json();
 
-  if (!r.ok || !data.oficial || !data.realista) {
-    addMessage("Hubo un problema con la simulación. Probemos de nuevo en un momento 🙏");
-    console.error("Error en respuesta /cotizar:", data);
+  if (!r.ok || !data.oficial) {
+    addMessage("Hubo un problema con la simulación 🙏");
     return;
   }
 
-  const oficial  = data.oficial.capital;
+  const oficial = data.oficial.capital;
   const realista = data.realista.capital;
+
+  gtag("event", "simulacion_completada", {
+    sexo, edad, retiro, aporte,
+    capital_oficial: oficial,
+    capital_realista: realista,
+    timestamp: Date.now()
+  });
 
   addMessage(`
     <strong>Resultados listos 🎉</strong><br><br>
     <strong>Escenario oficial:</strong> $${oficial.toLocaleString("es-AR")}<br>
     <strong>Escenario realista:</strong> $${realista.toLocaleString("es-AR")}<br><br>
-
-    <strong>¿Qué estás viendo?</strong><br>
-    • <strong>Oficial:</strong> proyección conservadora basada en parámetros formales del plan.<br>
-    • <strong>Realista:</strong> crecimiento más alineado con una capitalización del 30% anual estimado en el largo plazo.<br><br>
-
-    No tenés que elegir uno u otro: sirven como referencia de piso y techo para tomar mejores decisiones.
   `);
 
   const chartId = "chart-" + Date.now();
@@ -512,7 +419,6 @@ async function runSimulation() {
     </div>
   `);
 
-  // Gráfico
   setTimeout(() => {
     new Chart(document.getElementById(chartId), {
       type: "bar",
@@ -528,47 +434,24 @@ async function runSimulation() {
     });
   }, 200);
 
-  // CTA WhatsApp
   const msg = encodeURIComponent(`
 Hola Martín 👋 Quiero avanzar con mi plan de retiro.
 
-Hice una simulación en Retirex:
-• Sexo: ${sexo === "M" ? "Masculino" : "Femenino"}
-• Edad actual: ${edad}
-• Edad de retiro: ${retiro}
-• Aporte mensual: $${aporte.toLocaleString("es-AR")}
-• Escenario oficial: $${oficial.toLocaleString("es-AR")}
-• Escenario realista: $${realista.toLocaleString("es-AR")}
-
-¿Me ayudás a continuar?
-`);
+• Sexo: ${sexo}
+• Edad: ${edad}
+• Retiro: ${retiro}
+• Aporte: $${aporte.toLocaleString("es-AR")}
+• Oficial: $${oficial.toLocaleString("es-AR")}
+• Realista: $${realista.toLocaleString("es-AR")}
+  `);
 
   addMessage(`
     <div class="cta-whatsapp">
       <h3>¿Querés un análisis personalizado?</h3>
-      <p>
-        Te preparo una recomendación pensada para vos:<br>
-        sin compromiso, sin spam y sin compartir tus datos.
-      </p>
-
-      <a href="https://wa.me/5492804866612?text=${msg}" target="_blank" class="whatsapp-btn">
-        📲 Enviarme WhatsApp
-      </a>
-
-      <p class="privacidad">
-        Recibís solo 1 o 2 mensajes para ayudarte a entender tu simulación.<br>
-        Nunca compartimos tus datos.
-      </p>
-    </div>
-  `);
-
-  addMessage(`
-    <div class="disclaimer">
-      <strong>Importante:</strong><br>
-      Esta es una <strong>simulación orientativa</strong> basada en supuestos de capitalización.<br>
-      No constituye una oferta, contrato ni compromiso de rendimiento futuro.<br>
-      Los valores pueden variar según aportes, normativa, fechas de pago
-      y evolución real del fondo.
+      <a onclick="gtag('event','whatsapp_click',{timestamp:Date.now()})"
+         href="https://wa.me/5492804866612?text=${msg}"
+         target="_blank" class="whatsapp-btn">📲 Enviarme WhatsApp</a>
+      <p class="privacidad">Nunca compartimos tus datos.</p>
     </div>
   `);
 
@@ -580,9 +463,6 @@ Hice una simulación en Retirex:
   `);
 }
 
-/* ======================
-   INICIO
-====================== */
 window.onload = sendWelcome;
 </script>
 
