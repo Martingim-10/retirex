@@ -96,24 +96,84 @@ function showFAQ(){
     <strong>Dudas frecuentes</strong><br><br>
 
     <button class="option-button" onclick="toggleBlock('faq1')">🧠 ¿Qué es un plan de retiro y cómo funciona?</button>
-    <div id="faq1" class="info-block">
-      Un plan de retiro es un ahorro de largo plazo regulado por la Superintendencia de Seguros de la Nación.<br><br>
-      Funciona así:<br>
-      1️⃣ Aportás todos los meses un monto que elegís.<br>
-      2️⃣ Ese dinero se capitaliza con el tiempo.<br>
-      3️⃣ Al llegar a tu edad de retiro, contás con un capital acumulado para complementar tu jubilación.
-    </div>
+   <div id="faq1" class="info-block">
+  Un plan de retiro es un ahorro de largo plazo regulado por la
+  <strong>Superintendencia de Seguros de la Nación</strong>.<br><br>
+
+  Funciona de forma simple y previsible:<br><br>
+
+  1️⃣ Aportás todos los meses un monto que elegís.<br>
+  2️⃣ Ese dinero se invierte y se capitaliza con el paso del tiempo.<br>
+  3️⃣ Al llegar a la edad de retiro, contás con un capital acumulado
+  para complementar tu jubilación.<br><br>
+
+  No es un plazo fijo ni una inversión especulativa.<br>
+  Está pensado para aprovechar el <strong>tiempo</strong>,
+  que es el factor más importante en este tipo de ahorro.
+</div>
 
     <button class="option-button" onclick="toggleBlock('faq2')">⏳ La importancia del tiempo</button>
     <div id="faq2" class="info-block">
-      En este tipo de planes, el tiempo suele ser más importante que el monto inicial.
-      Aportar antes, aunque sea poco, suele generar mejores resultados a largo plazo.
-    </div>
+  En los planes de retiro, el <strong>tiempo</strong> es más importante
+  que el monto inicial.<br><br>
+
+  Aportar un poco durante muchos años suele generar más capital
+  que aportar mucho durante pocos años.<br><br>
+
+  Esto sucede porque:<br>
+  • El dinero se capitaliza mes a mes.<br>
+  • Los intereses se reinvierten.<br>
+  • Cada año adicional potencia al anterior.<br><br>
+
+  Por eso, empezar antes —aunque sea con un aporte moderado—
+  suele marcar una gran diferencia en el resultado final.
+</div>
 
     <button class="option-button" onclick="toggleBlock('faq3')">🔄 Flexibilidad</button>
     <div id="faq3" class="info-block">
-      Podés subir, bajar o pausar aportes según tu situación, sin perder el capital acumulado.
-    </div>
+  Uno de los puntos más fuertes de los planes de retiro
+  es la <strong>flexibilidad</strong>.<br><br>
+
+  A lo largo del tiempo podés:<br>
+  • Subir tu aporte cuando tus ingresos mejoran.<br>
+  • Bajarlo si atravesás un período más ajustado.<br>
+  • Pausar aportes por un tiempo sin perder lo ya acumulado.<br>
+  • Hacer aportes extraordinarios cuando te convenga.<br><br>
+
+  El plan se adapta a tu realidad, no al revés.
+</div>
+<button class="option-button" onclick="toggleBlock('faq4')">
+  🧘‍♂️ ¿Qué pasa si no puedo pagar por un tiempo?
+</button>
+
+<div id="faq4" class="info-block">
+  Es una situación común y está contemplada en este tipo de planes.<br><br>
+
+  Si en algún momento no podés pagar:<br>
+  • Podés reducir el aporte.<br>
+  • Podés pausar los aportes por un período.<br>
+  • El capital ya acumulado sigue siendo <strong>tuyo</strong>.<br><br>
+
+  No perdés el plan ni lo construido hasta ese momento.
+</div>
+
+<button class="option-button" onclick="toggleBlock('faq5')">
+  💰 Rescates: ¿se puede retirar dinero antes?
+</button>
+
+<div id="faq5" class="info-block">
+  Los planes de retiro permiten rescates anticipados,
+  pero están pensados para el largo plazo.<br><br>
+
+  Por eso, los rescates pueden tener ajustes que dependen de:<br>
+  • El momento en que se realicen.<br>
+  • El tiempo que lleve el plan.<br>
+  • Las condiciones específicas de la póliza.<br><br>
+
+  No es una cuenta corriente.<br>
+  Es un ahorro con objetivo.
+</div>
+
   `);
 }
 
@@ -189,19 +249,66 @@ async function runSimulation(){
     <strong>Antes de seguir, una breve guía 👇</strong>
 
     <button class="option-button" onclick="toggleBlock('post1')">🧠 Cómo leer estos resultados</button>
-    <div id="post1" class="info-block">
-      Se muestran dos escenarios para entender el rango posible de evolución del ahorro a largo plazo.
-    </div>
+   <div id="post1" class="info-block">
+  Esta simulación muestra <strong>dos escenarios distintos</strong> porque un ahorro de largo plazo no se puede analizar con una sola cifra.<br><br>
+
+  🔹 <strong>Escenario Oficial</strong><br>
+  Es una simulación estimada por la compañía, construida bajo criterios conservadores.<br>
+  No es un piso, ni una promesa, ni un mínimo garantizado.<br>
+  Sirve para mostrar cómo podría evolucionar el plan bajo supuestos prudentes.<br><br>
+
+  🔹 <strong>Escenario Realista</strong><br>
+  Refleja un crecimiento más alineado con la lógica del largo plazo en Argentina.<br>
+  Tiene en cuenta una dinámica más cercana a la evolución histórica de los fondos en pesos.<br><br>
+
+  👉 No tenés que elegir uno u otro.<br>
+  Los dos existen para que entiendas el <strong>rango posible</strong> en el que puede moverse tu ahorro a lo largo del tiempo.
+</div>
 
     <button class="option-button" onclick="toggleBlock('post2')">🛡️ Qué tan seguro es este plan</button>
     <div id="post2" class="info-block">
-      Plan de Prevención Retiro, parte del Grupo Sancor Seguros, regulado por la SSN y con capitalización individual.
-    </div>
+  Este plan de retiro es un producto de <strong>Prevención Retiro</strong>, compañía especializada en seguros de retiro,<br>
+  y forma parte del <strong>Grupo Sancor Seguros</strong>, el grupo asegurador líder del mercado argentino.<br><br>
+
+  Funciona bajo un esquema de <strong>capitalización individual</strong>, regulado por la
+  <strong>Superintendencia de Seguros de la Nación</strong>.<br><br>
+
+  ✔️ Tu ahorro se registra a tu nombre<br>
+  ✔️ No se mezcla con el de otros asegurados<br>
+  ✔️ Está administrado bajo normas estrictas de control y solvencia<br><br>
+
+  🔒 <strong>Punto clave que pocos conocen</strong><br>
+  <strong>Rendimiento técnico garantizado en pesos</strong><br><br>
+
+  El plan cuenta con un <strong>rendimiento técnico garantizado del 4 % anual en pesos</strong>.<br>
+  Esto implica que, incluso en escenarios económicos adversos:<br><br>
+
+  👉 El capital aportado no puede disminuir<br>
+  👉 Nunca podrías perder el dinero que aportaste al plan<br><br>
+
+  La simulación muestra escenarios posibles de crecimiento.<br>
+  La garantía actúa como un <strong>respaldo real del capital base</strong>.<br><br>
+
+  Por eso, un seguro de retiro se diferencia de otros instrumentos financieros:
+  combina <strong>proyección de crecimiento</strong> con <strong>protección del ahorro</strong>.
+</div>
 
     <button class="option-button" onclick="toggleBlock('post3')">🔄 Qué pasa si mi situación cambia</button>
     <div id="post3" class="info-block">
-      Podés ajustar o pausar aportes sin perder el capital ya acumulado.
-    </div>
+  La vida cambia. Tu plan también puede hacerlo.<br><br>
+
+  Este tipo de plan no es rígido ni cerrado.<br>
+  Está pensado para acompañarte en el tiempo.<br><br>
+
+  ✔️ Podés subir o bajar el aporte según tus ingresos<br>
+  ✔️ Podés pausar los aportes si lo necesitás<br>
+  ✔️ Podés hacer aportes extraordinarios cuando te convenga<br>
+  ✔️ Existen opciones de rescate, según la etapa del plan<br><br>
+
+  El objetivo no es exigirte todos los meses,<br>
+  sino <strong>adaptarse a tu realidad</strong>, incluso cuando las cosas cambian.
+</div>
+
   `);
 
   const wsp=encodeURIComponent(
