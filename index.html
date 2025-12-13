@@ -449,6 +449,13 @@ Escenario realista: $${realista.toLocaleString("es-AR")}
 }
 
 window.onload=sendWelcome;
+// ⌨️ Permitir enviar con Enter
+document.getElementById("userInput").addEventListener("keydown", function (e) {
+  if (e.key === "Enter") {
+    e.preventDefault(); // evita saltos raros
+    sendMessage();
+  }
+});
 </script>
 
 </body>
