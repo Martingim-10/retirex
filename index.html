@@ -76,7 +76,40 @@ function toggleBlock(id){
   const e=document.getElementById(id);
   if(e) e.style.display=e.style.display==="block"?"none":"block";
 }
+async function callAI(userMessage) {
+  const systemPrompt = `
+Sos Retirex, un asesor digital especializado en planes de retiro en Argentina,
+en particular en planes de Prevención Retiro.
 
+Reglas estrictas:
+- Respondé solo preguntas relacionadas con planes de retiro, ahorro previsional y simulaciones.
+- No hables de inversiones financieras generales, crypto, política ni temas ajenos.
+- No prometas rendimientos ni inventes números.
+- Usá un lenguaje claro, humano y prudente.
+- Si la pregunta no corresponde, redirigí con educación.
+- Cerrá siempre con una invitación suave a simular o continuar el análisis.
+`;
+
+  try {
+    const response = await fetch("https://retirex.onrender.com/ia", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userMessage }
+        ]
+      })
+    });
+
+    const data = await response.json();
+    return data?.reply || "Si querés, puedo ayudarte a verlo con una simulación 😊";
+  } catch (error) {
+    return "Ahora mismo no puedo responder esa consulta. Si querés, seguimos con una simulación.";
+  }
+}
 /* ================= BIENVENIDA ================= */
 function sendWelcome(){
   addMessage(`
@@ -185,13 +218,31 @@ function startSimulation(){
   addMessage("Perfecto 😊 Para empezar, ¿cuál es tu sexo? (M/F)");
 }
 
-function sendMessage(){
-  const i=document.getElementById("userInput");
-  const t=i.value.trim();
-  if(!t) return;
-  addMessage(t,"user");
-  i.value="";
-  if(flow.step>0) handleFlow(t);
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const text = input.value.trim();
+  if (!text) return;
+
+  addMessage(text, "user");
+  input.value = "";
+
+  // 🔴 SI ESTAMOS EN FLUJO GUIADO → MANDA A handleFlow
+  if (flow.step > 0) {
+    handleFlow(text);
+    return;
+  }
+
+  // 🔹 RESPUESTAS FIJAS
+  const fixed = checkFixedResponses(text);
+  if (fixed) {
+    addMessage(fixed);
+    return;
+  }
+
+  // 🔵 FALLBACK IA (OpenAI)
+  addMessage("Dame un segundo...", "ai");
+  const aiReply = await callAI(text);
+  addMessage(aiReply);
 }
 
 function handleFlow(msg){
