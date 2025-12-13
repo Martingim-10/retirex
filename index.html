@@ -2,10 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Retirex – Chat Inteligente de Retiro</title>
+  <title>Retirex – Asesor Inteligente de Retiro</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Google tag (gtag.js) -->
+  <!-- Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-68HDQMVBVX"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -138,6 +138,18 @@
       margin-top: 8px;
       cursor: pointer;
       text-align: left;
+      font-weight: 600;
+    }
+
+    .info-block {
+      display: none;
+      background: #ffffff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      padding: 12px;
+      margin-top: 6px;
+      font-size: 13px;
+      line-height: 1.45;
     }
 
     .chart-wrapper {
@@ -168,7 +180,6 @@
       font-weight: 600;
       font-size: 14px;
       text-decoration: none;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.12);
     }
 
     .privacidad {
@@ -180,24 +191,22 @@
 </head>
 
 <body>
-  <div class="chat-container">
-    <div class="header">
-      <div class="avatar">R</div>
-      Retirex – Asesor inteligente
-    </div>
-
-    <div class="messages" id="messages"></div>
-
-    <div class="input-area">
-      <input id="userInput" type="text" placeholder="Escribí tu consulta..." />
-      <button onclick="sendMessage()">Enviar</button>
-    </div>
+<div class="chat-container">
+  <div class="header">
+    <div class="avatar">R</div>
+    Retirex – Asesor inteligente
   </div>
 
+  <div class="messages" id="messages"></div>
+
+  <div class="input-area">
+    <input id="userInput" type="text" placeholder="Escribí tu consulta..." />
+    <button onclick="sendMessage()">Enviar</button>
+  </div>
+</div>
+
 <script>
-/* ============================================================
-   SISTEMA DE CHAT
-============================================================ */
+/* ================= CHAT ================= */
 function addMessage(text, who = "ai") {
   const box = document.createElement("div");
   box.className = "msg " + who;
@@ -206,328 +215,122 @@ function addMessage(text, who = "ai") {
   box.scrollIntoView({ behavior: "smooth" });
 }
 
+function toggleBlock(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === "block" ? "none" : "block";
+}
+
 document.getElementById("userInput").addEventListener("keydown", e => {
-  if (e.key === "Enter" && !e.shiftKey) {
-    e.preventDefault();
-    sendMessage();
-  }
+  if (e.key === "Enter") sendMessage();
 });
 
-/* ============================================================
-   MENSAJE DE BIENVENIDA
-============================================================ */
-function sendWelcome() {
+/* ================= BIENVENIDA ================= */
+window.onload = () => {
+  addMessage(`Hola 👋 soy <strong>Retirex</strong>. ¿Qué te gustaría hacer?`);
   addMessage(`
-    Hola 👋 soy <strong>Retirex</strong>, tu asistente digital especializado en los planes de retiro de Prevención Retiro.<br><br>
-    ¿Qué te gustaría hacer hoy?
+    <button class="option-button" onclick="startSimulation()">🧮 Simular mi plan</button>
+    <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
   `);
-  showMainMenu();
-}
+};
 
-/* ============================================================
-   MENÚ PRINCIPAL
-============================================================ */
-function showMainMenu() {
-  addMessage(`
-    <div id="menu-inicial">
-      <button class="option-button" id="btnSimularIni">🧮 Simular mi plan</button>
-      <button class="option-button" id="btnBenefIni">📘 Beneficios del plan</button>
-      <button class="option-button" id="btnFAQIni">💬 Dudas frecuentes</button>
-    </div>
-  `);
-
-  bindInitialMenuEvents();
-}
-
-function bindInitialMenuEvents() {
-  const b1 = document.getElementById("btnSimularIni");
-  const b2 = document.getElementById("btnBenefIni");
-  const b3 = document.getElementById("btnFAQIni");
-
-  if (!b1 || !b2 || !b3) return setTimeout(bindInitialMenuEvents, 80);
-
-  b1.onclick = () => startSimulation();
-  b2.onclick = () => showBenefits();
-  b3.onclick = () => showFAQ();
-}
-
-/* ============================================================
-   RESPUESTAS FIJAS
-============================================================ */
-const FIXED_RESPONSES = [
-  { match: ["cambiar aporte","subir","bajar"], reply: "Podés subir o bajar tu aporte cuando lo necesites 😊" },
-  { match: ["capitalización","rendimiento"], reply: "Tu capital crece todos los meses mediante capitalización compuesta 📈" },
-  { match: ["rescatar","retirar"], reply: "Podés hacer rescates, aunque tienen ajustes por ser un ahorro de largo plazo." }
-];
-
-function checkFixedResponses(msg) {
-  const t = msg.toLowerCase();
-  for (const r of FIXED_RESPONSES) {
-    if (r.match.some(k => t.includes(k))) return r.reply;
-  }
-  return null;
-}
-
-/* ============================================================
-   FAQ – BENEFICIOS
-============================================================ */
-function showBenefits() {
-  addMessage(`
-    <strong>Beneficios del plan:</strong><br><br>
-    ✔ Ahorro capitalizable<br>
-    ✔ Flexibilidad de aportes<br>
-    ✔ Posible deducción en Ganancias<br>
-    ✔ Rescates disponibles<br>
-    ✔ 100% digital<br><br>
-    ¿Querés ver cuánto podrías acumular?<br>
-    <button class="option-button" id="btnSimularAfterBenef">🧮 Simular mi plan</button>
-  `);
-
-  setTimeout(() => {
-    const b = document.getElementById("btnSimularAfterBenef");
-    if (b) b.onclick = () => startSimulation();
-  }, 80);
-}
-
+/* ================= FAQ EDUCATIVAS ================= */
 function showFAQ() {
   addMessage(`
-    <strong>Dudas frecuentes</strong><br><br>
-    • ¿Puedo cambiar mi aporte?<br>
-    • ¿Puedo rescatar antes del retiro?<br>
-    • ¿Cómo crece mi dinero?<br>
-    • ¿Puedo descontarlo en Ganancias?<br><br>
-    Preguntame cualquiera 😊
+    <button class="option-button" onclick="toggleBlock('f1')">🧠 ¿Qué es un plan de retiro?</button>
+    <div id="f1" class="info-block">Ahorro de largo plazo regulado, pensado para aprovechar el tiempo.</div>
+
+    <button class="option-button" onclick="toggleBlock('f2')">⏳ La importancia del tiempo</button>
+    <div id="f2" class="info-block">Empezar antes suele importar más que el monto inicial.</div>
+
+    <button class="option-button" onclick="toggleBlock('f3')">🔄 Flexibilidad</button>
+    <div id="f3" class="info-block">Podés ajustar aportes, pausarlos o retomarlos.</div>
   `);
 }
 
-/* ============================================================
-   IA FALLBACK
-============================================================ */
-async function callAI(msg) {
-  const r = await fetch("https://retirex.onrender.com/ia", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages: [{ role: "user", content: msg }] })
-  });
-  const data = await r.json();
-  return data?.reply || "Puedo ayudarte con más detalles si querés.";
-}
-
-/* ============================================================
-   ENVÍO DE MENSAJE
-============================================================ */
-async function sendMessage() {
-  const input = document.getElementById("userInput");
-  const text = input.value.trim();
-  if (!text) return;
-
-  addMessage(text, "user");
-  input.value = "";
-
-  if (flow.step > 0) return handleFlow(text);
-
-  const fixed = checkFixedResponses(text);
-  if (fixed) return addMessage(fixed);
-
-  addMessage("Dame un segundo...", "ai");
-  const ai = await callAI(text);
-  addMessage(ai);
-}
-
-/* ============================================================
-   FLUJO GUIADO – con SEXO
-============================================================ */
-let flow = { step: 0, sexo: null, edad: null, retiro: null, aporte: null };
+/* ================= SIMULACIÓN ================= */
+let flow = { step: 0 };
 
 function startSimulation() {
-  flow = { step: 1, sexo: null, edad: null, retiro: null, aporte: null };
-  addMessage("Perfecto 😊 Para empezar, ¿cuál es tu sexo? (M/F)");
+  flow = { step: 1 };
+  addMessage("¿Cuál es tu sexo? (M/F)");
+}
+
+async function sendMessage() {
+  const input = document.getElementById("userInput");
+  const msg = input.value.trim();
+  if (!msg) return;
+  addMessage(msg, "user");
+  input.value = "";
+  handleFlow(msg);
 }
 
 async function handleFlow(msg) {
-
-  // SEXO
   if (flow.step === 1) {
-    const s = msg.trim().toUpperCase();
-    if (s !== "M" && s !== "F") return addMessage("Ingresá M o F 😊");
-    flow.sexo = s;
+    flow.sexo = msg.toUpperCase();
     flow.step = 2;
-    return addMessage("Genial 👍 ¿Cuál es tu edad actual?");
+    return addMessage("¿Tu edad?");
   }
-
-  // EDAD
   if (flow.step === 2) {
-    const edad = Number(msg);
-    if (isNaN(edad) || edad < 18 || edad > 70)
-      return addMessage("Edad inválida 😊");
-    flow.edad = edad;
+    flow.edad = Number(msg);
     flow.step = 3;
-    return addMessage("¿A qué edad te gustaría retirarte?");
+    return addMessage("¿Edad de retiro?");
   }
-
-  // EDAD DE RETIRO
   if (flow.step === 3) {
-    const retiro = Number(msg);
-    if (isNaN(retiro) || retiro < flow.edad + 5 || retiro > 75)
-      return addMessage("Elegí una edad razonable 👍");
-    flow.retiro = retiro;
+    flow.retiro = Number(msg);
     flow.step = 4;
-    return addMessage("Perfecto 🙌 ¿Cuánto querés aportar por mes?");
+    return addMessage("¿Aporte mensual?");
   }
-
-  // APORTE
   if (flow.step === 4) {
-    const aporte = Number(msg);
-    if (aporte < 30000) return addMessage("El mínimo es $30.000 😊");
-    flow.aporte = aporte;
+    flow.aporte = Number(msg);
     flow.step = 0;
-    return runSimulation();
+    runSimulation();
   }
 }
 
-/* ============================================================
-   EJECUTAR SIMULACIÓN
-============================================================ */
 async function runSimulation() {
-  const { sexo, edad, retiro, aporte } = flow;
-
-  addMessage("Calculando tu simulación... ⏳");
-
   const r = await fetch("https://retirex.onrender.com/cotizar", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ sexo, edad_actual: edad, edad_retiro: retiro, aporte_mensual: aporte })
+    body: JSON.stringify({
+      sexo: flow.sexo,
+      edad_actual: flow.edad,
+      edad_retiro: flow.retiro,
+      aporte_mensual: flow.aporte
+    })
   });
 
   const data = await r.json();
-
-  if (!data || !data.oficial || !data.realista) {
-    addMessage("Hubo un error inesperado. Probemos nuevamente 🙏");
-    return;
-  }
-
   const oficial = data.oficial.capital;
   const realista = data.realista.capital;
 
   addMessage(`
-    <strong>Resultados listos 🎉</strong><br><br>
-
-    <strong>Escenario oficial:</strong><br>
-    $${oficial.toLocaleString("es-AR")}<br><br>
-
-    <strong>Escenario realista:</strong><br>
-    $${realista.toLocaleString("es-AR")}<br><br>
-
-    <strong>¿Qué estás viendo?</strong><br>
-    • <strong>Escenario oficial</strong>: usa supuestos conservadores del plan.<br>
-    • <strong>Escenario realista</strong>: muestra un crecimiento estimado a largo plazo con capitalización compuesta.<br><br>
-
-    No tenés que elegir uno: sirven como piso y techo para evaluar tu estrategia de retiro.
+    <strong>Resultado de tu simulación</strong><br><br>
+    Escenario oficial: $${oficial.toLocaleString("es-AR")}<br>
+    Escenario realista: $${realista.toLocaleString("es-AR")}
   `);
 
-  /* ============================
-       GRÁFICO
-  ============================ */
-  const chartId = "chart-" + Date.now();
+  const wspMsg = encodeURIComponent(
+`Hola, quiero avanzar con mi plan de retiro.
 
-  addMessage(`
-    <div class="chart-wrapper">
-      <strong>Comparación gráfica</strong><br><br>
-      <canvas id="${chartId}" height="160"></canvas>
-    </div>
-  `);
+Datos de mi simulación:
+Sexo: ${flow.sexo}
+Edad actual: ${flow.edad}
+Edad retiro: ${flow.retiro}
+Aporte mensual: $${flow.aporte.toLocaleString("es-AR")}
 
-  setTimeout(() => {
-    new Chart(document.getElementById(chartId), {
-      type: "bar",
-      data: {
-        labels: ["Oficial", "Realista"],
-        datasets: [{
-          data: [oficial, realista],
-          backgroundColor: ["#A0005A", "#004B9A"],
-          borderRadius: 10
-        }]
-      },
-      options: { plugins: { legend: { display: false } } }
-    });
-  }, 200);
-
-  /* ============================
-       CTA WHATSAPP
-  ============================ */
-  const msg = encodeURIComponent(`
-Hola Martín, quiero avanzar con mi plan de retiro.
-
-Simulación realizada en Retirex:
-• Sexo: ${sexo === "M" ? "Masculino" : "Femenino"}
-• Edad actual: ${edad}
-• Edad retiro: ${retiro}
-• Aporte: $${aporte.toLocaleString("es-AR")}
-• Oficial: $${oficial.toLocaleString("es-AR")}
-• Realista: $${realista.toLocaleString("es-AR")}
-
-¿Me ayudás a continuar?
+Escenarios cotizados:
+• Escenario oficial: $${oficial.toLocaleString("es-AR")}
+• Escenario realista: $${realista.toLocaleString("es-AR")}
 `);
 
   addMessage(`
     <div class="cta-whatsapp">
-      <h3>¿Querés avanzar con tu análisis?</h3>
-      <a class="whatsapp-btn" href="https://wa.me/5492804866612?text=${msg}" target="_blank">
-        📲 Enviar a WhatsApp
+      <a class="whatsapp-btn" href="https://wa.me/5492804866612?text=${wspMsg}" target="_blank">
+        📲 Hablar con un asesor
       </a>
-      <p class="privacidad">
-        Sin spam, sin compromisos. Solo asesoramiento real.
-      </p>
     </div>
   `);
-
-  /* ============================
-       DISCLAIMER
-  ============================ */
-  addMessage(`
-    <div class="disclaimer" style="font-size:12px;color:#666;margin-top:12px;">
-      <strong>Importante:</strong> Esta es una <strong>simulación orientativa</strong> basada en supuestos actuariales.
-      No constituye una oferta, contrato ni garantía de rendimiento futuro.
-      Los valores pueden variar según aportes, normativa y evolución del fondo.
-    </div>
-  `);
-
-  /* ============================
-       MENÚ FINAL (tres botones)
-  ============================ */
-  addMessage(`
-    <div id="menu-final">
-      ¿Querés hacer algo más?<br><br>
-      <button class="option-button" id="btnNueva">🧮 Nueva simulación</button>
-      <button class="option-button" id="btnFinalBeneficios">📘 Beneficios del plan</button>
-      <button class="option-button" id="btnFinalFAQ">💬 Dudas frecuentes</button>
-    </div>
-  `);
-
-  bindFinalMenuEvents();
 }
-
-/* ============================================================
-   BOTONES DEL MENÚ FINAL
-============================================================ */
-function bindFinalMenuEvents() {
-  const b1 = document.getElementById("btnNueva");
-  const b2 = document.getElementById("btnFinalBeneficios");
-  const b3 = document.getElementById("btnFinalFAQ");
-
-  if (!b1 || !b2 || !b3) return setTimeout(bindFinalMenuEvents, 80);
-
-  b1.onclick = () => startSimulation();
-  b2.onclick = () => showBenefits();
-  b3.onclick = () => showFAQ();
-}
-
-/* ============================================================
-   INICIO
-============================================================ */
-window.onload = sendWelcome;
-
 </script>
-
 </body>
 </html>
