@@ -195,10 +195,63 @@ function sendMessage(){
 }
 
 function handleFlow(msg){
-  if(flow.step===1){flow.sexo=msg.toUpperCase();flow.step=2;return addMessage("¿Cuál es tu edad actual?");}
-  if(flow.step===2){flow.edad=Number(msg);flow.step=3;return addMessage("¿A qué edad te gustaría retirarte?");}
-  if(flow.step===3){flow.retiro=Number(msg);flow.step=4;return addMessage("¿Cuánto querés aportar por mes?");}
-  if(flow.step===4){flow.aporte=Number(msg);flow.step=0;runSimulation();}
+  if (flow.step === 1) {
+  const s = msg.trim().toUpperCase();
+
+  if (s !== "M" && s !== "F") {
+    addMessage("Para continuar necesito que ingreses **M** o **F** 😊");
+    return; // 🔴 NO AVANZA
+  }
+
+  flow.sexo = s;
+  flow.step = 2;
+  addMessage("Genial 👍 ¿Cuál es tu edad actual?");
+  return;
+}
+  if (flow.step === 2) {
+  const edad = Number(msg);
+
+  if (isNaN(edad) || edad < 18 || edad > 70) {
+    addMessage("Ingresá una edad válida entre **18 y 70 años** 😊");
+    return; // 🔴 NO AVANZA
+  }
+
+  flow.edad = edad;
+  flow.step = 3;
+  addMessage("¿A qué edad te gustaría retirarte?");
+  return;
+}
+  if (flow.step === 3) {
+  const retiro = Number(msg);
+  const minRetiro = flow.edad + 5;
+
+  if (isNaN(retiro) || retiro < minRetiro || retiro > 85) {
+    addMessage(
+      `Elegí una edad de retiro válida 😊<br>
+       👉 Mínimo: ${minRetiro} años<br>
+       👉 Máximo: 85 años`
+    );
+    return; // 🔴 NO AVANZA
+  }
+
+  flow.retiro = retiro;
+  flow.step = 4;
+  addMessage("Perfecto 🙌 ¿Cuánto querés aportar por mes?");
+  return;
+}
+  if (flow.step === 4) {
+  const aporte = Number(msg);
+
+  if (isNaN(aporte) || aporte < 30000) {
+    addMessage("El aporte mínimo del plan es **$30.000 por mes** 😊");
+    return; // 🔴 NO AVANZA
+  }
+
+  flow.aporte = aporte;
+  flow.step = 0;
+  runSimulation();
+  return;
+}
 }
 
 async function runSimulation(){
