@@ -217,7 +217,6 @@ function startSimulation(){
   flow={step:1};
   addMessage("Perfecto 😊 Para empezar, ¿cuál es tu sexo? (M/F)");
 }
-
 async function sendMessage() {
   const input = document.getElementById("userInput");
   const text = input.value.trim();
@@ -226,18 +225,18 @@ async function sendMessage() {
   addMessage(text, "user");
   input.value = "";
 
-  // 🔴 SI ESTAMOS EN FLUJO GUIADO → MANDA A handleFlow
+  // 🔴 Si estamos en flujo guiado → manda al flujo
   if (flow.step > 0) {
     handleFlow(text);
     return;
   }
 
-  // 🔹 RESPUESTAS FIJAS
-  const fixed = checkFixedResponses(text);
-  if (fixed) {
-    addMessage(fixed);
-    return;
-  }
+  // 🔵 Todo lo demás → OpenAI (fallback controlado)
+  addMessage("Dame un segundo...", "ai");
+  const aiReply = await callAI(text);
+  addMessage(aiReply);
+}
+
 
   // 🔵 FALLBACK IA (OpenAI)
   addMessage("Dame un segundo...", "ai");
