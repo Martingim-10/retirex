@@ -232,10 +232,15 @@ async function sendMessage() {
   }
 
   // 🔵 Todo lo demás → OpenAI (fallback controlado)
-  addMessage("Dame un segundo...", "ai");
-  const aiReply = await callAI(text);
-  addMessage(aiReply);
-}
+addMessage("Dame un segundo...", "ai");
+const aiReply = await callAI(text);
+addMessage(aiReply);
+
+// 🔹 Anclas de acción post-IA (UX firme)
+addMessage(`
+  <button class="option-button" onclick="startSimulation()">🧮 Simular mi plan</button>
+  <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
+`);
 
 
 function handleFlow(msg){
