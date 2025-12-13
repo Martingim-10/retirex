@@ -238,12 +238,6 @@ async function sendMessage() {
 }
 
 
-  // 🔵 FALLBACK IA (OpenAI)
-  addMessage("Dame un segundo...", "ai");
-  const aiReply = await callAI(text);
-  addMessage(aiReply);
-}
-
 function handleFlow(msg){
   if (flow.step === 1) {
   const s = msg.trim().toUpperCase();
