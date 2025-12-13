@@ -19,173 +19,168 @@
 
   <style>
     :root {
-      --magenta: #a0005a;
-      --blue: #004b9a;
-      --bg: #e5e5e5;
-      --chat-bg: #f2f2f7;
-      --bubble-user: #d40077;
-      --bubble-ai: #ffffff;
-      --radius: 16px;
+      --magenta:#a0005a;
+      --blue:#004b9a;
+      --bg:#e5e5e5;
+      --chat-bg:#f2f2f7;
+      --bubble-user:#d40077;
+      --bubble-ai:#ffffff;
+      --radius:16px;
     }
 
     body {
-      margin: 0;
-      font-family: "Montserrat", system-ui, sans-serif;
-      background: var(--bg);
-      display: flex;
-      justify-content: center;
+      margin:0;
+      font-family:Montserrat, system-ui, sans-serif;
+      background:var(--bg);
+      display:flex;
+      justify-content:center;
     }
 
     .chat-container {
-      width: 100%;
-      max-width: 480px;
-      height: 100vh;
-      background: var(--chat-bg);
-      display: flex;
-      flex-direction: column;
-      padding-bottom: 80px;
+      width:100%;
+      max-width:480px;
+      height:100vh;
+      background:var(--chat-bg);
+      display:flex;
+      flex-direction:column;
+      padding-bottom:80px;
     }
 
     .header {
-      background: linear-gradient(135deg, var(--magenta), var(--blue));
-      padding: 14px;
-      color: white;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-weight: 600;
+      background:linear-gradient(135deg,var(--magenta),var(--blue));
+      padding:14px;
+      color:white;
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:600;
     }
 
     .avatar {
-      width: 38px;
-      height: 38px;
-      background: white;
-      color: var(--magenta);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      font-weight: 700;
+      width:38px;
+      height:38px;
+      background:white;
+      color:var(--magenta);
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
     }
 
     .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
+      flex:1;
+      overflow-y:auto;
+      padding:16px;
+      display:flex;
+      flex-direction:column;
+      gap:14px;
     }
 
     .msg {
-      max-width: 78%;
-      padding: 10px 14px;
-      border-radius: var(--radius);
-      line-height: 1.45;
-      font-size: 14px;
+      max-width:78%;
+      padding:10px 14px;
+      border-radius:var(--radius);
+      font-size:14px;
+      line-height:1.45;
     }
 
     .ai {
-      background: var(--bubble-ai);
-      align-self: flex-start;
-      border: 1px solid rgba(0,0,0,0.06);
-      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+      background:var(--bubble-ai);
+      align-self:flex-start;
+      border:1px solid rgba(0,0,0,.06);
+      box-shadow:0 3px 10px rgba(0,0,0,.08);
     }
 
     .user {
-      background: var(--bubble-user);
-      color: white;
-      align-self: flex-end;
+      background:var(--bubble-user);
+      color:white;
+      align-self:flex-end;
     }
 
     .input-area {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      max-width: 480px;
-      background: white;
-      padding: 10px;
-      display: flex;
-      gap: 10px;
-      border-top: 1px solid #ccc;
+      position:fixed;
+      bottom:0;
+      width:100%;
+      max-width:480px;
+      background:white;
+      padding:10px;
+      display:flex;
+      gap:10px;
+      border-top:1px solid #ccc;
     }
 
     .input-area input {
-      flex: 1;
-      padding: 10px;
-      border-radius: var(--radius);
-      border: 1px solid #ddd;
-      font-size: 14px;
+      flex:1;
+      padding:10px;
+      border-radius:var(--radius);
+      border:1px solid #ddd;
     }
 
     .input-area button {
-      min-width: 70px;
-      background: var(--magenta);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      font-weight: 600;
-      cursor: pointer;
+      background:var(--magenta);
+      color:white;
+      border:none;
+      border-radius:var(--radius);
+      padding:0 16px;
+      font-weight:600;
+      cursor:pointer;
     }
 
     .option-button {
-      width: 100%;
-      padding: 12px;
-      background: white;
-      border-radius: 12px;
-      border: 1px solid #dcdcdc;
-      margin-top: 8px;
-      cursor: pointer;
-      text-align: left;
-      font-weight: 600;
+      width:100%;
+      padding:12px;
+      background:white;
+      border-radius:12px;
+      border:1px solid #dcdcdc;
+      margin-top:8px;
+      cursor:pointer;
+      text-align:left;
+      font-weight:600;
     }
 
     .info-block {
-      display: none;
-      background: #ffffff;
-      border: 1px solid #e5e5e5;
-      border-radius: 12px;
-      padding: 12px;
-      margin-top: 6px;
-      font-size: 13px;
-      line-height: 1.45;
+      display:none;
+      background:white;
+      border:1px solid #e5e5e5;
+      border-radius:12px;
+      padding:12px;
+      margin-top:6px;
+      font-size:13px;
+      line-height:1.45;
     }
 
     .chart-wrapper {
-      background: white;
-      padding: 14px;
-      border-radius: 16px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      border: 1px solid #e5e5e5;
-      margin-top: 6px;
+      background:white;
+      padding:14px;
+      border-radius:16px;
+      box-shadow:0 2px 12px rgba(0,0,0,.08);
+      border:1px solid #e5e5e5;
     }
 
     .cta-whatsapp {
-      margin-top: 18px;
-      padding: 16px;
-      background: #ffffff;
-      border-radius: 14px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-      border: 1px solid #e3e3e3;
+      margin-top:18px;
+      padding:16px;
+      background:white;
+      border-radius:14px;
+      border:1px solid #e3e3e3;
     }
 
     .whatsapp-btn {
-      display: inline-block;
-      margin-top: 8px;
-      background: #25D366;
-      color: white;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 14px;
-      text-decoration: none;
+      background:#25D366;
+      color:white;
+      padding:10px 14px;
+      border-radius:10px;
+      font-weight:600;
+      text-decoration:none;
+      display:inline-block;
+      margin-top:8px;
     }
 
     .privacidad {
-      font-size: 11px;
-      color: #6b6b6b;
-      margin-top: 10px;
+      font-size:11px;
+      color:#6b6b6b;
+      margin-top:8px;
     }
   </style>
 </head>
@@ -200,116 +195,200 @@
   <div class="messages" id="messages"></div>
 
   <div class="input-area">
-    <input id="userInput" type="text" placeholder="Escribí tu consulta..." />
+    <input id="userInput" placeholder="Escribí tu consulta…" />
     <button onclick="sendMessage()">Enviar</button>
   </div>
 </div>
 
 <script>
-/* ================= CHAT ================= */
-function addMessage(text, who = "ai") {
-  const box = document.createElement("div");
-  box.className = "msg " + who;
-  box.innerHTML = text;
-  document.getElementById("messages").appendChild(box);
-  box.scrollIntoView({ behavior: "smooth" });
+/* ================= UTIL ================= */
+function addMessage(text, who="ai"){
+  const d=document.createElement("div");
+  d.className="msg "+who;
+  d.innerHTML=text;
+  document.getElementById("messages").appendChild(d);
+  d.scrollIntoView({behavior:"smooth"});
 }
 
-function toggleBlock(id) {
-  const el = document.getElementById(id);
-  if (el) el.style.display = el.style.display === "block" ? "none" : "block";
+function toggleBlock(id){
+  const e=document.getElementById(id);
+  if(e) e.style.display=e.style.display==="block"?"none":"block";
 }
-
-document.getElementById("userInput").addEventListener("keydown", e => {
-  if (e.key === "Enter") sendMessage();
-});
 
 /* ================= BIENVENIDA ================= */
-window.onload = () => {
-  addMessage(`Hola 👋 soy <strong>Retirex</strong>. ¿Qué te gustaría hacer?`);
+window.onload=()=>{
+  addMessage(`Hola 👋 soy <strong>Retirex</strong>, tu asistente digital especializado en planes de retiro.<br><br>¿Qué te gustaría hacer hoy?`);
   addMessage(`
     <button class="option-button" onclick="startSimulation()">🧮 Simular mi plan</button>
     <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
   `);
 };
 
-/* ================= FAQ EDUCATIVAS ================= */
-function showFAQ() {
+/* ================= DUDAS FRECUENTES ================= */
+function showFAQ(){
   addMessage(`
-    <button class="option-button" onclick="toggleBlock('f1')">🧠 ¿Qué es un plan de retiro?</button>
-    <div id="f1" class="info-block">Ahorro de largo plazo regulado, pensado para aprovechar el tiempo.</div>
+    <strong>Dudas frecuentes</strong><br><br>
+    Elegí el tema que querés entender mejor 👇
 
-    <button class="option-button" onclick="toggleBlock('f2')">⏳ La importancia del tiempo</button>
-    <div id="f2" class="info-block">Empezar antes suele importar más que el monto inicial.</div>
+    <button class="option-button" onclick="toggleBlock('faq1')">🧠 ¿Qué es un plan de retiro y cómo funciona?</button>
+    <div id="faq1" class="info-block">
+      Un plan de retiro es un ahorro de largo plazo regulado por la <strong>Superintendencia de Seguros de la Nación</strong>.<br><br>
+      Funciona de forma simple y previsible:<br><br>
+      1️⃣ Vos aportás todos los meses un monto que elegís.<br>
+      2️⃣ Ese dinero se invierte y se capitaliza con el paso del tiempo.<br>
+      3️⃣ Al llegar a la edad de retiro, contás con un capital acumulado para complementar tu jubilación.<br><br>
+      No es un plazo fijo ni una inversión especulativa.<br>
+      Está pensado para aprovechar el <strong>tiempo</strong>, que es el factor más importante en este tipo de ahorro.
+    </div>
 
-    <button class="option-button" onclick="toggleBlock('f3')">🔄 Flexibilidad</button>
-    <div id="f3" class="info-block">Podés ajustar aportes, pausarlos o retomarlos.</div>
+    <button class="option-button" onclick="toggleBlock('faq2')">⏳ La importancia del tiempo (antes que el dinero)</button>
+    <div id="faq2" class="info-block">
+      En los planes de retiro, el <strong>tiempo</strong> es más importante que el monto inicial.<br><br>
+      Aportar un poco durante muchos años suele generar más capital que aportar mucho durante pocos años.<br><br>
+      Esto sucede porque:<br>
+      • El dinero se capitaliza mes a mes.<br>
+      • Los intereses se reinvierten.<br>
+      • Cada año adicional potencia al anterior.<br><br>
+      Por eso, empezar antes —aunque sea con un aporte moderado— suele marcar una gran diferencia en el resultado final.
+    </div>
+
+    <button class="option-button" onclick="toggleBlock('faq3')">🔄 Flexibilidad de aportes</button>
+    <div id="faq3" class="info-block">
+      Uno de los puntos más fuertes de los planes de retiro es la <strong>flexibilidad</strong>.<br><br>
+      A lo largo del tiempo podés:<br>
+      • Subir tu aporte cuando tus ingresos mejoran.<br>
+      • Bajarlo si atravesás un período más ajustado.<br>
+      • Pausar aportes por un tiempo sin perder lo ya acumulado.<br>
+      • Hacer aportes extraordinarios cuando te convenga.<br><br>
+      El plan se adapta a tu realidad, no al revés.
+    </div>
+
+    <button class="option-button" onclick="toggleBlock('faq4')">🧘‍♂️ ¿Qué pasa si no puedo pagar por un tiempo?</button>
+    <div id="faq4" class="info-block">
+      Es una situación común y está contemplada en este tipo de planes.<br><br>
+      Si en algún momento no podés pagar:<br>
+      • Podés reducir el aporte.<br>
+      • Podés pausar los aportes por un período.<br>
+      • El capital ya acumulado sigue siendo <strong>tuyo</strong>.<br><br>
+      No perdés el plan ni lo construido hasta ese momento.
+    </div>
+
+    <button class="option-button" onclick="toggleBlock('faq5')">💰 Rescates: ¿se puede retirar dinero antes?</button>
+    <div id="faq5" class="info-block">
+      Los planes de retiro permiten rescates anticipados, pero están pensados para el largo plazo.<br><br>
+      Por eso, los rescates pueden tener ajustes que dependen de:<br>
+      • El momento en que se realicen.<br>
+      • El tiempo que lleve el plan.<br>
+      • Las condiciones específicas de la póliza.<br><br>
+      No es una cuenta corriente: es un ahorro con objetivo.
+    </div>
   `);
 }
 
-/* ================= SIMULACIÓN ================= */
-let flow = { step: 0 };
+/* ================= SIMULADOR ================= */
+let flow={step:0};
 
-function startSimulation() {
-  flow = { step: 1 };
-  addMessage("¿Cuál es tu sexo? (M/F)");
+function startSimulation(){
+  flow={step:1};
+  addMessage("Perfecto 😊 Para empezar, ¿cuál es tu sexo? (M/F)");
 }
 
-async function sendMessage() {
-  const input = document.getElementById("userInput");
-  const msg = input.value.trim();
-  if (!msg) return;
-  addMessage(msg, "user");
-  input.value = "";
-  handleFlow(msg);
+async function sendMessage(){
+  const i=document.getElementById("userInput");
+  const t=i.value.trim();
+  if(!t) return;
+  addMessage(t,"user");
+  i.value="";
+  handleFlow(t);
 }
 
-async function handleFlow(msg) {
-  if (flow.step === 1) {
-    flow.sexo = msg.toUpperCase();
-    flow.step = 2;
-    return addMessage("¿Tu edad?");
-  }
-  if (flow.step === 2) {
-    flow.edad = Number(msg);
-    flow.step = 3;
-    return addMessage("¿Edad de retiro?");
-  }
-  if (flow.step === 3) {
-    flow.retiro = Number(msg);
-    flow.step = 4;
-    return addMessage("¿Aporte mensual?");
-  }
-  if (flow.step === 4) {
-    flow.aporte = Number(msg);
-    flow.step = 0;
-    runSimulation();
-  }
+async function handleFlow(msg){
+  if(flow.step===1){ flow.sexo=msg.toUpperCase(); flow.step=2; return addMessage("¿Cuál es tu edad actual?"); }
+  if(flow.step===2){ flow.edad=Number(msg); flow.step=3; return addMessage("¿A qué edad te gustaría retirarte?"); }
+  if(flow.step===3){ flow.retiro=Number(msg); flow.step=4; return addMessage("¿Cuánto querés aportar por mes?"); }
+  if(flow.step===4){ flow.aporte=Number(msg); flow.step=0; runSimulation(); }
 }
 
-async function runSimulation() {
-  const r = await fetch("https://retirex.onrender.com/cotizar", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      sexo: flow.sexo,
-      edad_actual: flow.edad,
-      edad_retiro: flow.retiro,
-      aporte_mensual: flow.aporte
+async function runSimulation(){
+  addMessage("Calculando tu simulación... ⏳");
+
+  const r=await fetch("https://retirex.onrender.com/cotizar",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({
+      sexo:flow.sexo,
+      edad_actual:flow.edad,
+      edad_retiro:flow.retiro,
+      aporte_mensual:flow.aporte
     })
   });
 
-  const data = await r.json();
-  const oficial = data.oficial.capital;
-  const realista = data.realista.capital;
+  const data=await r.json();
+  const oficial=data.oficial.capital;
+  const realista=data.realista.capital;
 
   addMessage(`
-    <strong>Resultado de tu simulación</strong><br><br>
-    Escenario oficial: $${oficial.toLocaleString("es-AR")}<br>
-    Escenario realista: $${realista.toLocaleString("es-AR")}
+    <strong>Resultados listos 🎉</strong><br><br>
+    <strong>Escenario oficial:</strong><br>$${oficial.toLocaleString("es-AR")}<br><br>
+    <strong>Escenario realista:</strong><br>$${realista.toLocaleString("es-AR")}<br><br>
+    No tenés que elegir uno u otro: sirven para entender el rango posible de evolución.
   `);
 
-  const wspMsg = encodeURIComponent(
+  const chartId="chart"+Date.now();
+  addMessage(`
+    <div class="chart-wrapper">
+      <strong>Comparación gráfica</strong><br><br>
+      <canvas id="${chartId}" height="160"></canvas>
+    </div>
+  `);
+
+  setTimeout(()=>{
+    new Chart(document.getElementById(chartId),{
+      type:"bar",
+      data:{
+        labels:["Oficial","Realista"],
+        datasets:[{
+          data:[oficial,realista],
+          backgroundColor:["#a0005a","#004b9a"],
+          borderRadius:10
+        }]
+      },
+      options:{plugins:{legend:{display:false}}}
+    });
+  },200);
+
+  addMessage(`
+    <div style="font-size:12px;color:#666;">
+      <strong>Importante:</strong> Esta es una simulación orientativa.
+      No constituye una oferta, contrato ni garantía de rendimiento futuro.
+    </div>
+  `);
+
+  <!-- BLOQUES POST-COTIZACIÓN -->
+  ${""}
+  addMessage(`
+    <strong>Antes de seguir, una breve guía para interpretar tu simulación 👇</strong>
+
+    <button class="option-button" onclick="toggleBlock('post1')">🧠 Cómo leer estos resultados</button>
+    <div id="post1" class="info-block">
+      Esta simulación muestra dos escenarios posibles porque un ahorro de largo plazo no se analiza con una sola cifra.
+      El escenario oficial utiliza supuestos conservadores, mientras que el realista refleja una dinámica más cercana al largo plazo argentino.
+    </div>
+
+    <button class="option-button" onclick="toggleBlock('post2')">🛡️ Qué tan seguro es este plan</button>
+    <div id="post2" class="info-block">
+      Es un plan de Prevención Retiro – Grupo Sancor Seguros, regulado por la Superintendencia de Seguros de la Nación,
+      con capitalización individual y rendimiento técnico garantizado del 4 % anual en pesos.
+    </div>
+
+    <button class="option-button" onclick="toggleBlock('post3')">🔄 Qué pasa si mi situación cambia</button>
+    <div id="post3" class="info-block">
+      Podés ajustar, pausar o retomar aportes sin perder el capital acumulado.
+      El plan se adapta a tu realidad.
+    </div>
+  `);
+
+  const wsp=encodeURIComponent(
 `Hola, quiero avanzar con mi plan de retiro.
 
 Datos de mi simulación:
@@ -318,16 +397,16 @@ Edad actual: ${flow.edad}
 Edad retiro: ${flow.retiro}
 Aporte mensual: $${flow.aporte.toLocaleString("es-AR")}
 
-Escenarios cotizados:
-• Escenario oficial: $${oficial.toLocaleString("es-AR")}
-• Escenario realista: $${realista.toLocaleString("es-AR")}
+Escenario oficial: $${oficial.toLocaleString("es-AR")}
+Escenario realista: $${realista.toLocaleString("es-AR")}
 `);
 
   addMessage(`
     <div class="cta-whatsapp">
-      <a class="whatsapp-btn" href="https://wa.me/5492804866612?text=${wspMsg}" target="_blank">
+      <a class="whatsapp-btn" href="https://wa.me/5492804866612?text=${wsp}" target="_blank">
         📲 Hablar con un asesor
       </a>
+      <p class="privacidad">Sin spam. Solo asesoramiento real.</p>
     </div>
   `);
 }
