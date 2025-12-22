@@ -1,20 +1,9 @@
 {
   "name": "retirex-api",
   "version": "1.0.0",
-  "description": "API para Retirex IA",
   "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "engines": {
-    "node": "20.x"
-  },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "openai": "^4.0.0",
-    "googleapis": "^131.0.0",
-    "axios": "^1.6.0"
+    "openai": "^4.24.1"
   }
 }
