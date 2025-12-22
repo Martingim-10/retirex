@@ -141,13 +141,127 @@ function sendWelcome(){
 }
 
 function showFAQ(){
-  addMessage(`<strong>Dudas frecuentes</strong><br><br>
-    <button class="option-button" onclick="toggleBlock('faq1')">🧠 ¿Qué es un plan de retiro?</button>
-    <div id="faq1" class="info-block">Es un ahorro de largo plazo regulado por la SSN. Aportás, capitalizás y al retirarte tenés un capital complementario. Podés pausar o subir aportes.</div>
-    <button class="option-button" onclick="toggleBlock('faq2')">🛡️ ¿Qué tan seguro es?</button>
-    <div id="faq2" class="info-block">Cuenta con respaldo del Grupo Sancor Seguros y rendimiento técnico garantizado del 4% anual en pesos por contrato.</div>
+  addMessage(`
+    <strong>Dudas frecuentes</strong><br><br>
+
+    <button class="option-button" onclick="toggleBlock('faq1')">
+      🧠 ¿Qué es un plan de retiro y para qué sirve?
+    </button>
+    <div id="faq1" class="info-block">
+      Un plan de retiro es un ahorro de largo plazo regulado por la
+      <strong>Superintendencia de Seguros de la Nación</strong>.<br><br>
+
+      Su objetivo es complementar tu jubilación futura con un capital propio.<br><br>
+
+      Funciona de forma simple:
+      <ul>
+        <li>Aportás un monto mensual que elegís</li>
+        <li>Ese dinero se capitaliza con el tiempo</li>
+        <li>Al retirarte, contás con un fondo acumulado</li>
+      </ul>
+
+      No reemplaza la jubilación estatal.
+      La refuerza.<br><br>
+
+      👉 La clave no es cuánto ponés hoy,
+      sino cuánto tiempo dejás trabajar al plan.
+    </div>
+
+    <button class="option-button" onclick="toggleBlock('faq2')">
+      🛡️ ¿Qué tan seguro es este plan?
+    </button>
+    <div id="faq2" class="info-block">
+      Este plan es un producto de <strong>Prevención Retiro</strong>,
+      compañía especializada en seguros de retiro,
+      parte del <strong>Grupo Sancor Seguros</strong>.<br><br>
+
+      Está regulado por la
+      <strong>Superintendencia de Seguros de la Nación</strong>
+      y funciona bajo capitalización individual.<br><br>
+
+      ✔️ Tu ahorro se registra a tu nombre<br>
+      ✔️ No se mezcla con otros fondos<br>
+      ✔️ Está sujeto a controles de solvencia estrictos<br><br>
+
+      Además, cuenta con un
+      <strong>rendimiento técnico garantizado del 4 % anual en pesos</strong>.<br><br>
+
+      👉 La simulación muestra escenarios posibles.
+      La garantía protege el capital que aportás.
+    </div>
+
+    <button class="option-button" onclick="toggleBlock('faq3')">
+      🔄 ¿Qué pasa si mi situación cambia?
+    </button>
+    <div id="faq3" class="info-block">
+      Cambiar de situación es lo normal.
+      Por eso este plan es flexible.<br><br>
+
+      A lo largo del tiempo podés:
+      <ul>
+        <li>Subir o bajar el aporte</li>
+        <li>Pausar pagos sin perder lo acumulado</li>
+        <li>Hacer aportes extraordinarios</li>
+        <li>Evaluar rescates según la etapa del plan</li>
+      </ul>
+
+      No es un compromiso rígido.
+      Es un ahorro que se adapta a tu vida.<br><br>
+
+      👉 El objetivo no es perfección,
+      sino constancia en el tiempo.
+    </div>
+
+    <button class="option-button" onclick="toggleBlock('faq4')">
+      💰 ¿Se puede retirar el dinero antes?
+    </button>
+    <div id="faq4" class="info-block">
+      Sí, existen rescates anticipados,
+      pero el plan está pensado para el largo plazo.<br><br>
+
+      Los rescates pueden tener ajustes según:
+      <ul>
+        <li>Antigüedad del plan</li>
+        <li>Momento del rescate</li>
+        <li>Condiciones de la póliza</li>
+      </ul>
+
+      No es una cuenta corriente.
+      Es un ahorro con objetivo.<br><br>
+
+      👉 Siempre conviene analizar cada caso
+      antes de decidir.
+    </div>
+
+    <button class="option-button" onclick="toggleBlock('faq5')">
+      🧾 ¿En qué se diferencia de una AFJP?
+    </button>
+    <div id="faq5" class="info-block">
+      Las AFJP fueron un sistema previsional obligatorio
+      que existió en Argentina hasta 2008.<br><br>
+
+      Un seguro de retiro es distinto:
+      <ul>
+        <li>Es voluntario</li>
+        <li>No reemplaza la jubilación estatal</li>
+        <li>Es un ahorro complementario y personal</li>
+      </ul>
+
+      Ambos usan capitalización individual,
+      pero este plan lo contratás
+      <strong>por decisión propia</strong>.<br><br>
+
+      👉 Hoy no se trata de elegir un sistema,
+      sino de construir respaldo propio.
+    </div>
+
+    <br>
+    <button class="option-button" onclick="startSimulation()">
+      🧮 Simular mi plan
+    </button>
   `);
 }
+
 
 function startSimulation(meta){
   flow={step:1, meta: meta};
