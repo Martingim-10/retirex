@@ -300,14 +300,21 @@ async function sendMessage() {
   if (flow.step > 0) { handleFlow(text); return; }
   addMessage("Dame un segundo...", "ai");
   try {
-    const r = await fetch("https://retirex.onrender.com/ia", {
+    const r = await fetch("https://retirex-api-v1-571092083944.us-east1.run.app/ia", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: [{ role: "system", content: "Asesor Retirex" }, { role: "user", content: text }] })
+      body: JSON.stringify({ 
+        messages: [
+          { role: "system", content: "Asesor Retirex" }, 
+          { role: "user", content: text }
+        ] 
+      })
     });
     const data = await r.json();
     addMessage(data?.reply || "Podemos iniciar una simulación si querés 😊");
-  } catch (e) { addMessage("Por ahora podemos seguir con la simulación."); }
+  } catch (e) { 
+    addMessage("Por ahora podemos seguir con la simulación."); 
+  }
 }
 
 function handleFlow(msg){
