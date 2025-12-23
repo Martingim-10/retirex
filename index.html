@@ -358,12 +358,16 @@ async function runSimulation() {
   }, 1500);
 
   try {
-    const r = await fetch("https://retirex.onrender.com/cotizar", {
+    // Cambiamos la URL a la de Google Cloud y agregamos /cotizar al final
+    const r = await fetch("https://retirex-api-v1-571092083944.us-east1.run.app/cotizar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sexo, edad_actual: edad, edad_retiro: retiro, aporte_mensual: aporte })
     });
+    
     const data = await r.json();
+    
+    // El resto queda igual porque mantuvimos la estructura de respuesta
     const oficial = data.oficial.capital;
     const realista = data.realista.capital;
 
