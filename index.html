@@ -358,11 +358,11 @@ async function runSimulation() {
   // ETAPA 1: Feedback inmediato (0s)
   addMessage("Calculando tu simulación... ⏳");
 
-  // ETAPA 2: Análisis Retirex (1.5s)
+  // ETAPA 2: Análisis Retirex (0.5s)
   setTimeout(() => {
     const analysisHTML = generateAnalysis(edad, retiro, aporte);
     addMessage(`<div class="analysis-card">${analysisHTML}</div>`);
-  }, 1500);
+  }, 500);
 
   try {
     // Cambiamos la URL a la de Google Cloud y agregamos /cotizar al final
@@ -378,7 +378,7 @@ async function runSimulation() {
     const oficial = data.oficial.capital;
     const realista = data.realista.capital;
 
-    // ETAPA 3: Resultados Numéricos (4s)
+    // ETAPA 3: Resultados Numéricos 
     setTimeout(() => {
       addMessage(`
         <strong>Resultados listos 🎉</strong><br><br>
@@ -386,7 +386,7 @@ async function runSimulation() {
         <strong>Escenario realista:</strong><br>$${realista.toLocaleString("es-AR")}
       `);
       gtag('event', 'cotizacion_completada', { event_category: 'Retirex', event_label: 'Simulación finalizada' });
-    }, 4000);
+    }, 0);
 
     // ETAPA 4: Explicación de la diferencia (7s) - TEXTO ORIGINAL
     setTimeout(() => {
@@ -397,7 +397,7 @@ async function runSimulation() {
        
         👉 No es una elección entre uno u otro. Es una forma de entender cómo el largo plazo potencia los resultados.
       `);
-    }, 7000);
+    }, 2000);
 
     // ETAPA 5: Gráfico y Guía Detallada (10s) - TEXTO ORIGINAL
     setTimeout(() => {
