@@ -391,8 +391,7 @@ async function runSimulation() {
       `);
     }, 1000);
 
-    // 6. El cierre: Gráfico, Guía y WhatsApp (Todo junto al final)
-    setTimeout(() => {
+   // ETAPA 6: Gráfico y Guía Detallada (Recuperada)
       const chartId = "chart" + Date.now();
       addMessage(`<div class="chart-wrapper"><strong>Comparación gráfica</strong><br><br><canvas id="${chartId}" height="160"></canvas></div>`);
       
@@ -401,22 +400,36 @@ async function runSimulation() {
         data: { labels: ["Oficial", "Realista"], datasets: [{ data: [oficial, realista], backgroundColor: ["#a0005a", "#004b9a"], borderRadius: 10 }] },
         options: { plugins: { legend: { display: false } } }
       });
-
+addMessage(`<div style="font-size:12px;color:#666;margin-top:10px;"><strong>Importante:</strong> Simulación orientativa. No constituye garantía de rendimiento futuro ni promesa de resultado exacto.</div>`);
       addMessage(`
         <strong>Antes de seguir, una breve guía 👇</strong>
+        
         <button class="option-button" onclick="toggleBlock('post1')">🧠 Cómo leer estos resultados</button>
-        <div id="post1" class="info-block">...</div>
-        <button class="option-button" onclick="toggleBlock('post2')">🛡️ Seguridad</button>
-        <div id="post2" class="info-block">...</div>
+        <div id="post1" class="info-block">
+          Esta simulación muestra <strong>dos escenarios distintos</strong> porque un ahorro de largo plazo no se puede analizar con una sola cifra.<br><br>
+          🔹 <strong>Escenario Oficial:</strong> Es una simulación estimada por la compañía, construida bajo criterios conservadores.<br><br>
+          🔹 <strong>Escenario Realista:</strong> Refleja un crecimiento más alineado con la lógica del largo plazo en Argentina.
+        </div>
+        
+        <button class="option-button" onclick="toggleBlock('post2')">🛡️ Qué tan seguro es este plan</button>
+        <div id="post2" class="info-block">
+          Producto de <strong>Prevención Retiro (Grupo Sancor Seguros)</strong>. Regulado por la SSN. Capitalización individual: tu ahorro se registra a tu nombre y cuenta con un <strong>rendimiento técnico garantizado del 4% anual en pesos</strong>.
+        </div>
+        
+        <button class="option-button" onclick="toggleBlock('post3')">🔄 Qué pasa si mi situación cambia</button>
+        <div id="post3" class="info-block">
+          Este plan no es rígido. Podés subir o bajar el aporte, pausarlo si lo necesitás o hacer aportes extraordinarios. Se adapta a tu realidad.
+        </div>
       `);
 
+      // ETAPA 7: WhatsApp final
       const wsp = encodeURIComponent(`Hola, quiero avanzar con mi plan. Datos: ${edad} años, aporte $${aporte}. Escenario realista: $${realista.toLocaleString("es-AR")}`);
       addMessage(`
         <div class="cta-whatsapp">
           <a class="whatsapp-btn" href="https://wa.me/5492804866612?text=${wsp}" target="_blank">📲 Hablar con un asesor</a>
+          <p class="privacidad">Sin spam. Solo asesoramiento real.</p>
         </div>
       `);
-    }, 2500);
 
   } catch (e) { 
     addMessage("Error de conexión. Por favor reintentá."); 
