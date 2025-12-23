@@ -339,7 +339,7 @@ function handleFlow(msg){
     if (isNaN(r) || r < flow.edad + 5 || r > 85) { addMessage(`Ingresá una edad superior a ${flow.edad+5}`); return; }
     flow.retiro = r; flow.step = 4;
     trackStep('paso_retiro', r);
-    addMessage("Perfecto. ¿Cuánto querés aportar por mes? (Mínimo $30.000)");
+    addMessage("Perfecto. ¿Cuánto querés aportar por mes? (Mínimo $40.000)");
     return;
   }
   if (flow.step === 4) {
