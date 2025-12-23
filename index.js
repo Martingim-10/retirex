@@ -1,5 +1,8 @@
 const OpenAI = require("openai");
 const cors = require('cors')({origin: true});
+const express = require('express'); // Agregamos express solo para el puerto
+const app = express();
+app.use(express.json());
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -7,7 +10,8 @@ const openai = new OpenAI({
 
 const SYSTEM_PROMPT = `Sos "Retirex IA", asesor de seguros de retiro. Garantía: 4% anual. Escenarios: 18% y 30%. Se breve y profesional.`;
 
-exports.retirexapi = (req, res) => {
+// Esta es la función que ya tenías
+const retirexapi = async (req, res) => {
   return cors(req, res, async () => {
     if (req.method === 'GET') return res.send("Retirex Engine Ready ✅");
 
@@ -37,5 +41,15 @@ exports.retirexapi = (req, res) => {
         return res.json({ reply: completion.choices[0].message.content });
       } catch (e) { return res.status(500).send("Error IA"); }
     }
+    res.status(404).send("Not Found");
   });
 };
+
+// --- ESTO SOLUCIONA EL ERROR DEL PUERTO 8080 ---
+app.all('*', retirexapi);
+const PORT = process.env.PORT || 8080;
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en puerto ${PORT}`);
+});
+
+exports.retirexapi = retirexapi;
