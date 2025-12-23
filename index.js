@@ -5,40 +5,60 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const SYSTEM_PROMPT = `Sos "Retirex IA", asesor de seguros de retiro. Garantía: 4% anual. Escenarios: 18% y 30%. Se breve y profesional.`;
+const SYSTEM_PROMPT = `Sos "Retirex IA", asesor de seguros de retiro. Garantía: 4% anual. Escenarios: 18% y 30%. El aporte mínimo es $40.000. Sé breve.`;
 
 exports.retirexapi = (req, res) => {
   return cors(req, res, async () => {
-    // Si es un simple chequeo
+    
     if (req.method === 'GET') return res.status(200).send("Retirex Engine Ready ✅");
 
-    const { messages, edad_actual, edad_retiro, aporte_mensual } = req.body;
+    const path = req.path;
 
-    // Lógica de Cotización (si vienen los datos numéricos)
-    if (edad_actual && edad_retiro && aporte_mensual) {
-      const n = (Number(edad_retiro) - Number(edad_actual)) * 12;
-      const primaPura = (Number(aporte_mensual) / 1.006) * 0.90;
-      const calc = (t) => {
-        const i = Math.pow(1 + t, 1/12) - 1;
-        const rfu = (Math.pow(1 + i, n) * (1 - Math.pow(1 + i, -n))) / (1 - Math.pow(1 + i, -1));
-        return Math.round(primaPura * rfu);
-      };
-      return res.json({ oficial: { capital: calc(0.18) }, realista: { capital: calc(0.30) } });
-    }
-
-    // Lógica de IA
-    if (messages) {
+    if (path === '/cotizar') {
       try {
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4o-mini", // El modelo más rápido
-          messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+        const { edad_actual, edad_retiro, aporte_mensual } = req.body;
+        const monto = Number(aporte_mensual);
+
+        // VALIDACIÓN DEL NUEVO MÍNIMO DE $40.000
+        if (monto < 40000) {
+          return res.status(400).json({ 
+            status: "error", 
+            message: "El aporte mínimo permitido es de $40.000." 
+          });
+        }
+
+        const n = (Number(edad_retiro) - Number(edad_actual)) * 12;
+        const primaPura = (monto / 1.006) * 0.90;
+        
+        const calcular = (t) => {
+          const i = Math.pow(1 + t, 1/12) - 1;
+          const rfu = (Math.pow(1 + i, n) * (1 - Math.pow(1 + i, -n))) / (1 - Math.pow(1 + i, -1));
+          return Math.round(primaPura * rfu);
+        };
+
+        return res.json({ 
+          status: "success",
+          oficial: { capital: calcular(0.18) }, 
+          realista: { capital: calcular(0.30) } 
         });
-        return res.json({ reply: completion.choices[0].message.content });
+
       } catch (e) {
-        return res.status(500).json({ error: "Error IA" });
+        return res.status(500).json({ status: "error" });
       }
     }
 
-    res.status(400).send("Petición inválida");
+    if (path === '/ia') {
+      try {
+        const { messages } = req.body;
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          messages: [{ role: "system", content: SYSTEM_PROMPT }, ...messages],
+          max_tokens: 150
+        });
+        return res.json({ status: "success", reply: completion.choices[0].message.content });
+      } catch (e) {
+        return res.status(500).json({ status: "error" });
+      }
+    }
   });
 };
