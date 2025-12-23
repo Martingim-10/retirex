@@ -342,13 +342,17 @@ function handleFlow(msg){
     addMessage("Perfecto. ¿Cuánto querés aportar por mes? (Mínimo $40.000)");
     return;
   }
-  if (flow.step === 4) {
-    const a = Number(msg);
-    if (isNaN(a) || a < 30000) { addMessage("El monto mínimo de aporte es $30.000."); return; }
-    flow.aporte = a; flow.step = 0;
-    trackStep('paso_aporte', a);
-    runSimulation();
-  }
+ if (flow.step === 4) {
+  const a = Number(msg);
+  // Cambiamos el límite de 30000 a 40000 para que coincida con la compañía
+  if (isNaN(a) || a < 40000) { 
+    addMessage("La compañía ha actualizado el aporte mínimo a $40.000. Por favor, ingresa un monto igual o superior."); 
+    return; 
+  } 
+  flow.aporte = a; 
+  flow.step = 0;
+  trackStep('paso_aporte', a);
+  runSimulation();
 }
 
 /* ================= SIMULACIÓN CON ENTREGA PROGRESIVA RECARGADA ================= */
