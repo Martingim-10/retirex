@@ -5,7 +5,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const SYSTEM_PROMPT = `Sos "Retirex IA", asesor de seguros de retiro. Garantía: 4% anual. Escenarios: 18% y 30%. El aporte mínimo es $40.000. Sé breve.`;
+const SYSTEM_PROMPT = `Sos "Retirex IA", asesor de seguros de retiro. Garantía: 4% anual. Escenarios: 18% y 30%. El aporte mínimo obligatorio es $40.000. Sé breve.`;
 
 exports.retirexapi = (req, res) => {
   return cors(req, res, async () => {
@@ -19,11 +19,11 @@ exports.retirexapi = (req, res) => {
         const { edad_actual, edad_retiro, aporte_mensual } = req.body;
         const monto = Number(aporte_mensual);
 
-        // VALIDACIÓN DEL NUEVO MÍNIMO DE $40.000
+        // BLOQUEO ESTRICTO: Si es menor a 40.000, no calcula nada.
         if (monto < 40000) {
           return res.status(400).json({ 
             status: "error", 
-            message: "El aporte mínimo permitido es de $40.000." 
+            message: "La compañía ha actualizado el aporte mínimo a $40.000. Por favor, ingresa un monto igual o superior." 
           });
         }
 
@@ -43,7 +43,7 @@ exports.retirexapi = (req, res) => {
         });
 
       } catch (e) {
-        return res.status(500).json({ status: "error" });
+        return res.status(500).json({ status: "error", message: "Error en el cálculo" });
       }
     }
 
