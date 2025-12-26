@@ -300,14 +300,21 @@ async function sendMessage() {
   if (flow.step > 0) { handleFlow(text); return; }
   addMessage("Dame un segundo...", "ai");
   try {
-    const r = await fetch("https://retirex.onrender.com/ia", {
+    const r = await fetch("https://retirex-api-v1-571092083944.us-east1.run.app/ia", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: [{ role: "system", content: "Asesor Retirex" }, { role: "user", content: text }] })
+      body: JSON.stringify({ 
+        messages: [
+          { role: "system", content: "Asesor Retirex" }, 
+          { role: "user", content: text }
+        ] 
+      })
     });
     const data = await r.json();
     addMessage(data?.reply || "Podemos iniciar una simulación si querés 😊");
-  } catch (e) { addMessage("Por ahora podemos seguir con la simulación."); }
+  } catch (e) { 
+    addMessage("Por ahora podemos seguir con la simulación."); 
+  }
 }
 
 function handleFlow(msg){
@@ -332,93 +339,94 @@ function handleFlow(msg){
     if (isNaN(r) || r < flow.edad + 5 || r > 85) { addMessage(`Ingresá una edad superior a ${flow.edad+5}`); return; }
     flow.retiro = r; flow.step = 4;
     trackStep('paso_retiro', r);
-    addMessage("Perfecto. ¿Cuánto querés aportar por mes? (Mínimo $30.000)");
+    addMessage("Perfecto. ¿Cuánto querés aportar por mes? (Mínimo $40.000)");
     return;
   }
-  if (flow.step === 4) {
-    const a = Number(msg);
-    if (isNaN(a) || a < 30000) { addMessage("El monto mínimo de aporte es $30.000."); return; }
-    flow.aporte = a; flow.step = 0;
-    trackStep('paso_aporte', a);
-    runSimulation();
-  }
+ if (flow.step === 4) {
+  const a = Number(msg);
+  // Cambiamos el límite de 30000 a 40000 para que coincida con la compañía
+  if (isNaN(a) || a < 40000) { 
+    addMessage("La compañía ha actualizado el aporte mínimo a $40.000. Por favor, ingresa un monto igual o superior."); 
+    return; 
+  } 
+  flow.aporte = a; 
+  flow.step = 0;
+  trackStep('paso_aporte', a);
+  runSimulation();
 }
-
-/* ================= SIMULACIÓN CON ENTREGA PROGRESIVA ================= */
+}
+/* ================= SIMULACIÓN CON ENTREGA PROGRESIVA RECARGADA ================= */
 async function runSimulation() {
   const { sexo, edad, retiro, aporte } = flow;
   
-  // ETAPA 1: Feedback inmediato (0s)
+  // 1. Feedback inmediato
   addMessage("Calculando tu simulación... ⏳");
 
-  // ETAPA 2: Análisis Retirex (1.5s)
-  setTimeout(() => {
-    const analysisHTML = generateAnalysis(edad, retiro, aporte);
-    addMessage(`<div class="analysis-card">${analysisHTML}</div>`);
-  }, 1500);
+  // 2. Mostrar Análisis Retirex de inmediato (Sin delay, para que sea lo primero)
+  const analysisHTML = generateAnalysis(edad, retiro, aporte);
+  addMessage(`<div class="analysis-card">${analysisHTML}</div>`);
 
   try {
-    const r = await fetch("https://retirex.onrender.com/cotizar", {
+    // 3. Llamada a Google Cloud (La autopista)
+    const r = await fetch("https://retirex-api-v1-571092083944.us-east1.run.app/cotizar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ sexo, edad_actual: edad, edad_retiro: retiro, aporte_mensual: aporte })
     });
+    
     const data = await r.json();
     const oficial = data.oficial.capital;
     const realista = data.realista.capital;
 
-    // ETAPA 3: Resultados Numéricos (4s)
+    // 4. Resultados Numéricos (Aparecen ni bien llega el dato)
+    addMessage(`
+      <strong>Resultados listos 🎉</strong><br><br>
+      <strong>Escenario oficial:</strong><br>$${oficial.toLocaleString("es-AR")}<br><br>
+      <strong>Escenario realista:</strong><br>$${realista.toLocaleString("es-AR")}
+    `);
+    gtag('event', 'cotizacion_completada', { event_category: 'Retirex', event_label: 'Simulación finalizada' });
+
+    // 5. Explicación y Gráfico con un pequeño delay para que el usuario pueda respirar
     setTimeout(() => {
       addMessage(`
-        <strong>Resultados listos 🎉</strong><br><br>
-        <strong>Escenario oficial:</strong><br>$${oficial.toLocaleString("es-AR")}<br><br>
-        <strong>Escenario realista:</strong><br>$${realista.toLocaleString("es-AR")}
+        🔎 <strong>Por qué la diferencia es tan grande</strong><br><br>
+        La diferencia no está en cuánto tiempo pasa, sino en cómo ese tiempo amplifica distintos supuestos de crecimiento.<br><br>
+        👉 Es una forma de entender cómo el largo plazo potencia los resultados.
       `);
-      gtag('event', 'cotizacion_completada', { event_category: 'Retirex', event_label: 'Simulación finalizada' });
-    }, 4000);
+    }, 1000);
 
-    // ETAPA 4: Explicación de la diferencia (7s) - TEXTO ORIGINAL
-    setTimeout(() => {
-      addMessage(`
-        🔎 Por qué la diferencia es tan grande<br><br>
-        Ambos escenarios usan el mismo período de tiempo y el mismo esfuerzo de ahorro.<br><br>
-        La diferencia no está en cuánto tiempo pasa, sino en cómo ese tiempo amplifica distintos supuestos de crecimiento a lo largo de los años.<br><br>
-       
-        👉 No es una elección entre uno u otro. Es una forma de entender cómo el largo plazo potencia los resultados.
-      `);
-    }, 7000);
-
-    // ETAPA 5: Gráfico y Guía Detallada (10s) - TEXTO ORIGINAL
-    setTimeout(() => {
+   // ETAPA 6: Gráfico y Guía Detallada (Recuperada)
       const chartId = "chart" + Date.now();
       addMessage(`<div class="chart-wrapper"><strong>Comparación gráfica</strong><br><br><canvas id="${chartId}" height="160"></canvas></div>`);
+      
       new Chart(document.getElementById(chartId), {
         type: "bar",
         data: { labels: ["Oficial", "Realista"], datasets: [{ data: [oficial, realista], backgroundColor: ["#a0005a", "#004b9a"], borderRadius: 10 }] },
         options: { plugins: { legend: { display: false } } }
       });
-
-      addMessage(`<div style="font-size:12px;color:#666;margin-top:10px;"><strong>Importante:</strong> Simulación orientativa. No constituye garantía de rendimiento futuro.</div>`);
-
+addMessage(`<div style="font-size:12px;color:#666;margin-top:10px;"><strong>Importante:</strong> Simulación orientativa. No constituye garantía de rendimiento futuro ni promesa de resultado exacto.</div>`);
       addMessage(`
         <strong>Antes de seguir, una breve guía 👇</strong>
+        
         <button class="option-button" onclick="toggleBlock('post1')">🧠 Cómo leer estos resultados</button>
         <div id="post1" class="info-block">
           Esta simulación muestra <strong>dos escenarios distintos</strong> porque un ahorro de largo plazo no se puede analizar con una sola cifra.<br><br>
-          🔹 <strong>Escenario Oficial:</strong> Es una simulación estimada por la compañía, construida bajo criterios conservadores. No es un piso, ni una promesa, ni un mínimo garantizado.<br><br>
-          🔹 <strong>Escenario Realista:</strong> Refleja un crecimiento más alineado con la lógica del largo plazo en Argentina, cercano a la dinámica histórica de los fondos en pesos.
+          🔹 <strong>Escenario Oficial:</strong> Es una simulación estimada por la compañía, construida bajo criterios conservadores.<br><br>
+          🔹 <strong>Escenario Realista:</strong> Refleja un crecimiento más alineado con la lógica del largo plazo en Argentina.
         </div>
+        
         <button class="option-button" onclick="toggleBlock('post2')">🛡️ Qué tan seguro es este plan</button>
         <div id="post2" class="info-block">
-          Producto de <strong>Prevención Retiro (Grupo Sancor Seguros)</strong>. Regulado por la SSN. Capitalización individual: tu ahorro se registra a tu nombre y no se mezcla. Cuenta con un <strong>rendimiento técnico garantizado del 4% anual en pesos</strong>.
+          Producto de <strong>Prevención Retiro (Grupo Sancor Seguros)</strong>. Regulado por la SSN. Capitalización individual: tu ahorro se registra a tu nombre y cuenta con un <strong>rendimiento técnico garantizado del 4% anual en pesos</strong>.
         </div>
+        
         <button class="option-button" onclick="toggleBlock('post3')">🔄 Qué pasa si mi situación cambia</button>
         <div id="post3" class="info-block">
           Este plan no es rígido. Podés subir o bajar el aporte, pausarlo si lo necesitás o hacer aportes extraordinarios. Se adapta a tu realidad.
         </div>
       `);
 
-      // ETAPA 6: WhatsApp final (12s)
+      // ETAPA 7: WhatsApp final
       const wsp = encodeURIComponent(`Hola, quiero avanzar con mi plan. Datos: ${edad} años, aporte $${aporte}. Escenario realista: $${realista.toLocaleString("es-AR")}`);
       addMessage(`
         <div class="cta-whatsapp">
@@ -426,9 +434,10 @@ async function runSimulation() {
           <p class="privacidad">Sin spam. Solo asesoramiento real.</p>
         </div>
       `);
-    }, 10000);
 
-  } catch (e) { addMessage("Error de conexión. Por favor reintentá."); }
+  } catch (e) { 
+    addMessage("Error de conexión. Por favor reintentá."); 
+  }
 }
 
 window.onload = sendWelcome;
