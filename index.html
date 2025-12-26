@@ -354,7 +354,7 @@ function handleFlow(msg){
   trackStep('paso_aporte', a);
   runSimulation();
 }
-}
+
 /* ================= SIMULACIÓN CON ENTREGA PROGRESIVA RECARGADA ================= */
 async function runSimulation() {
   const { sexo, edad, retiro, aporte } = flow;
@@ -379,25 +379,22 @@ async function runSimulation() {
     const realista = data.realista.capital;
 
     // 4. Resultados Numéricos (Aparecen ni bien llega el dato)
-   addMessage(`
-      <strong>Resultado de tu simulación</strong><br><br>
-
-      <strong>Escenario oficial:</strong><br>
-      $${oficial.toLocaleString("es-AR")}<br><br>
-
-      <strong style="font-size:18px;color:#004b9a;">
-        Escenario realista:
-      </strong><br>
-      <strong style="font-size:22px;color:#004b9a;">
-        $${realista.toLocaleString("es-AR")}
-      </strong>
+    addMessage(`
+      <strong>Resultados listos 🎉</strong><br><br>
+      <strong>Escenario oficial:</strong><br>$${oficial.toLocaleString("es-AR")}<br><br>
+      <strong>Escenario realista:</strong><br>$${realista.toLocaleString("es-AR")}
     `);
+    gtag('event', 'cotizacion_completada', { event_category: 'Retirex', event_label: 'Simulación finalizada' });
 
-    gtag('event', 'cotizacion_completada', {
-      event_category: 'Retirex',
-      event_label: 'Simulación finalizada'
-    });
-   
+    // 5. Explicación y Gráfico con un pequeño delay para que el usuario pueda respirar
+    setTimeout(() => {
+      addMessage(`
+        🔎 <strong>Por qué la diferencia es tan grande</strong><br><br>
+        La diferencia no está en cuánto tiempo pasa, sino en cómo ese tiempo amplifica distintos supuestos de crecimiento.<br><br>
+        👉 Es una forma de entender cómo el largo plazo potencia los resultados.
+      `);
+    }, 1000);
+
    // ETAPA 6: Gráfico y Guía Detallada (Recuperada)
       const chartId = "chart" + Date.now();
       addMessage(`<div class="chart-wrapper"><strong>Comparación gráfica</strong><br><br><canvas id="${chartId}" height="160"></canvas></div>`);
