@@ -729,22 +729,16 @@ function sendWelcome() {
   addMessage(`
     Hola 👋 soy <strong>Retirex</strong>, tu asesor digital de retiro.<br><br>
 
-    En menos de <strong>1 minuto</strong> podés ver una <strong>proyección orientativa</strong> de tu retiro.<br>
+    En menos de <strong>1 minuto</strong> podés ver una
+    <strong>proyección orientativa</strong> de tu retiro.<br>
     Sin compromiso. Sin datos personales.
   `);
 
   addMessage(`
     <div class="visual-options">
 
-      <!-- EJEMPLO REALISTA (NUEVO FOCO) -->
-      <div class="card-option primary" onclick="showEjemplo40()">
-        <span>📊</span>
-        <strong>Ejemplo realista de retiro</strong>
-        <p>Persona de 40 años aportando $40.000 por mes</p>
-      </div>
-
-      <!-- SIMULACIÓN PERSONAL -->
-      <div class="card-option" onclick="startSimulation('Retiro')">
+      <!-- SIMULACIÓN PERSONAL (CTA PRINCIPAL) -->
+      <div class="card-option primary" onclick="startSimulation('Retiro')">
         <span>🧮</span>
         <strong>Ver mi proyección de retiro</strong>
         <p>Rápido y sin compromiso</p>
@@ -753,11 +747,18 @@ function sendWelcome() {
         </p>
       </div>
 
+      <!-- EJEMPLO REALISTA (SECUNDARIO) -->
+      <div class="card-option" onclick="showEjemplo40()">
+        <span>📊</span>
+        <strong>Ejemplo realista de retiro</strong>
+        <p>Persona de 40 años aportando $40.000 por mes</p>
+      </div>
+
       <!-- DUDAS FRECUENTES -->
       <div class="card-option" onclick="showFAQ()">
         <span>💬</span>
         <strong>Dudas frecuentes</strong>
-        <p>Seguridad, rescates y cómo funciona el plan.</p>
+        <p>Seguridad, rescates y cómo funciona el plan</p>
       </div>
 
     </div>
@@ -767,10 +768,9 @@ function sendWelcome() {
 }
 
 
-
-
 /* ================= FAQ ================= */
-function showFAQ(){
+
+function showFAQ() {
 
   addMessage(`
     <strong>Dudas frecuentes</strong><br><br>
@@ -782,7 +782,7 @@ function showFAQ(){
       Un plan de retiro es un ahorro de largo plazo regulado por la
       <strong>Superintendencia de Seguros de la Nación</strong>.
       Su objetivo es complementar tu jubilación con un capital propio.<br><br>
-      Funciona así: aportás todos los meses, el dinero se capitaliza,
+      Funciona así: aportás todos los meses, el dinero se capitaliza
       y al retirarte contás con un fondo acumulado.
     </div>
 
@@ -820,6 +820,50 @@ function showFAQ(){
   `);
 
   trackStep('menu_click', 'faq');
+}
+
+
+/* ================= EJEMPLO REALISTA ================= */
+
+function showEjemplo40() {
+
+  addMessage(`
+    Veamos un ejemplo <strong>orientativo</strong> para tener una referencia concreta 👇<br><br>
+
+    Supongamos una persona de <strong>40 años</strong> que comienza hoy un plan de retiro.<br><br>
+
+    Aportando <strong>$40.000 por mes</strong> durante <strong>20 años</strong>,
+    el capital acumulado estimado al momento del retiro podría rondar:<br><br>
+
+    <strong style="font-size:22px;color:#004b9a;">
+      $312.821.017
+    </strong><br><br>
+
+    Este número surge de un <strong>escenario realista de largo plazo</strong>,
+    considerando constancia en los aportes y el efecto del tiempo.<br><br>
+
+    📌 Es un <strong>ejemplo orientativo</strong>.
+    No constituye garantía de resultado ni oferta comercial.
+  `);
+
+  trackStep('ejemplo_40_visto', 1);
+
+  addMessage(`
+    <div class="visual-options">
+
+      <div class="card-option primary" onclick="startSimulation('Retiro')">
+        <span>🧮</span>
+        <strong>Ver mi proyección personal</strong>
+        <p>Basada en mi edad y aporte</p>
+      </div>
+
+      <div class="card-option" onclick="showFAQ()">
+        <span>💬</span>
+        <strong>Dudas frecuentes</strong>
+      </div>
+
+    </div>
+  `);
 }
 
 
