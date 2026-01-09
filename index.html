@@ -727,24 +727,33 @@ Reglas estrictas:
 function sendWelcome() {
 
   addMessage(`
-  Hola 👋 soy <strong>Retirex</strong>, tu asesor digital de retiro.<br><br>
+    Hola 👋 soy <strong>Retirex</strong>, tu asesor digital de retiro.<br><br>
 
-En menos de <strong>1 minuto</strong> podés ver una <strong>proyección orientativa</strong> de tu retiro.<br>
-Sin compromiso. Sin datos personales.
+    En menos de <strong>1 minuto</strong> podés ver una <strong>proyección orientativa</strong> de tu retiro.<br>
+    Sin compromiso. Sin datos personales.
   `);
 
   addMessage(`
     <div class="visual-options">
 
-      <div class="card-option primary" onclick="startSimulation('Retiro')">
-        <span>🧮</span>
-        <strong><strong>Ver mi proyección de retiro</strong>
-<p>Rápido y sin compromiso</p>
-</strong>
-        <p>⏱ tarda menos de 1 minuto · no pedimos datos personales
-</p>
+      <!-- EJEMPLO REALISTA (NUEVO FOCO) -->
+      <div class="card-option primary" onclick="showEjemplo40()">
+        <span>📊</span>
+        <strong>Ejemplo realista de retiro</strong>
+        <p>Persona de 40 años aportando $40.000 por mes</p>
       </div>
 
+      <!-- SIMULACIÓN PERSONAL -->
+      <div class="card-option" onclick="startSimulation('Retiro')">
+        <span>🧮</span>
+        <strong>Ver mi proyección de retiro</strong>
+        <p>Rápido y sin compromiso</p>
+        <p style="font-size:12px;color:#666;">
+          ⏱ tarda menos de 1 minuto · no pedimos datos personales
+        </p>
+      </div>
+
+      <!-- DUDAS FRECUENTES -->
       <div class="card-option" onclick="showFAQ()">
         <span>💬</span>
         <strong>Dudas frecuentes</strong>
@@ -759,76 +768,59 @@ Sin compromiso. Sin datos personales.
 
 
 
-/* ================= FAQ ================= */
 
+/* ================= FAQ ================= */
 function showFAQ(){
 
   addMessage(`
-
     <strong>Dudas frecuentes</strong><br><br>
 
-
-
-    <button class="option-button" onclick="toggleBlock('faq1')">🧠 ¿Qué es un plan de retiro y para qué sirve?</button>
-
+    <button class="option-button" onclick="toggleBlock('faq1')">
+      🧠 ¿Qué es un plan de retiro y para qué sirve?
+    </button>
     <div id="faq1" class="info-block">
-
-      Un plan de retiro es un ahorro de largo plazo regulado por la <strong>Superintendencia de Seguros de la Nación</strong>.
-
-      Su objetivo es complementar tu jubilación con un capital propio.
-
-      <br><br>
-
-      Funciona así: aportás todos los meses, el dinero se capitaliza, y al retirarte contás con un fondo acumulado.
-
+      Un plan de retiro es un ahorro de largo plazo regulado por la
+      <strong>Superintendencia de Seguros de la Nación</strong>.
+      Su objetivo es complementar tu jubilación con un capital propio.<br><br>
+      Funciona así: aportás todos los meses, el dinero se capitaliza,
+      y al retirarte contás con un fondo acumulado.
     </div>
 
-
-
-    <button class="option-button" onclick="toggleBlock('faq2')">🛡️ ¿Qué tan seguro es este plan?</button>
-
+    <button class="option-button" onclick="toggleBlock('faq2')">
+      🛡️ ¿Qué tan seguro es este plan?
+    </button>
     <div id="faq2" class="info-block">
-
-      Producto de <strong>Prevención Retiro</strong> (Grupo Sancor Seguros), regulado por la SSN y con capitalización individual.
-
-      Además, cuenta con <strong>rendimiento técnico garantizado</strong> según condiciones de póliza.
-
+      Producto de <strong>Prevención Retiro</strong> (Grupo Sancor Seguros),
+      regulado por la SSN y con capitalización individual.
+      Además, cuenta con <strong>rendimiento técnico garantizado</strong>
+      según condiciones de póliza.
     </div>
 
-
-
-    <button class="option-button" onclick="toggleBlock('faq3')">🔄 ¿Qué pasa si mi situación cambia?</button>
-
+    <button class="option-button" onclick="toggleBlock('faq3')">
+      🔄 ¿Qué pasa si mi situación cambia?
+    </button>
     <div id="faq3" class="info-block">
-
-      Podés ajustar el aporte, pausarlo o reforzarlo con aportes extraordinarios. El plan se adapta a tu vida.
-
+      Podés ajustar el aporte, pausarlo o reforzarlo con aportes extraordinarios.
+      El plan se adapta a tu vida.
     </div>
 
-
-
-    <button class="option-button" onclick="toggleBlock('faq4')">💰 ¿Se puede retirar el dinero antes?</button>
-
+    <button class="option-button" onclick="toggleBlock('faq4')">
+      💰 ¿Se puede retirar el dinero antes?
+    </button>
     <div id="faq4" class="info-block">
-
-      Puede haber opciones de rescate anticipado según etapa del plan y condiciones de póliza. Conviene analizar cada caso.
-
+      Puede haber opciones de rescate anticipado según etapa del plan
+      y condiciones de póliza. Conviene analizar cada caso.
     </div>
-
-
 
     <br>
 
-    <button class="option-button" onclick="startSimulation('Independencia')">🧮 Simular mi plan</button>
-
+    <button class="option-button" onclick="startSimulation('Retiro')">
+      🧮 Ver mi proyección personal
+    </button>
   `);
 
-
-
   trackStep('menu_click', 'faq');
-
 }
-
 
 
 /* ================= INICIO SIMULACIÓN ================= */
