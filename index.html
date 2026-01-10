@@ -1012,16 +1012,45 @@ function handleFlow(msg){
 
   }
 
-
-
 if (flow.step === 4) {
 
-  // Limpia formato: $, puntos y comas
+  const texto = msg.toLowerCase().trim();
+
+  // Respuestas semánticas que implican aceptar el mínimo
+  const aceptaMinimo = [
+    "ok",
+    "okay",
+    "dale",
+    "si",
+    "sí",
+    "minimo",
+    "mínimo",
+    "el minimo",
+    "el mínimo",
+    "lo minimo",
+    "lo mínimo",
+    "eso",
+    "el minimo esta bien",
+    "el mínimo está bien"
+  ];
+
+  if (aceptaMinimo.includes(texto)) {
+    flow.aporte = 40000;
+    flow.step = 0;
+
+    trackStep('paso_aporte', 40000);
+
+    addMessage("Perfecto 👍 tomamos el aporte mínimo de **$40.000**.");
+    runSimulation();
+    return;
+  }
+
+  // Limpia formato ($, puntos, comas, texto)
   const limpio = msg.replace(/[^0-9]/g, "");
   const a = Number(limpio);
 
   if (isNaN(a) || a < 40000) {
-    addMessage("El monto mínimo de aporte es **$40.000** 😊");
+    addMessage("El monto mínimo de aporte es **$40.000** 😊\nPodés escribir *mínimo* si querés usar ese valor.");
     return;
   }
 
@@ -1033,6 +1062,9 @@ if (flow.step === 4) {
   runSimulation();
   return;
 }
+
+
+
 
 
 }
