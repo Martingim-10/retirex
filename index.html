@@ -1014,23 +1014,26 @@ function handleFlow(msg){
 
 
 
-  if (flow.step === 4) {
+if (flow.step === 4) {
 
-    const a = Number(msg);
+  // Limpia formato: $, puntos y comas
+  const limpio = msg.replace(/[^0-9]/g, "");
+  const a = Number(limpio);
 
-    if (isNaN(a) || a < 30000) { addMessage("El monto mínimo de aporte es **$30.000** 😊"); return; }
-
-    flow.aporte = a;
-
-    flow.step = 0;
-
-    trackStep('paso_aporte', a);
-
-    runSimulation();
-
+  if (isNaN(a) || a < 40000) {
+    addMessage("El monto mínimo de aporte es **$40.000** 😊");
     return;
-
   }
+
+  flow.aporte = a;
+  flow.step = 0;
+
+  trackStep('paso_aporte', a);
+
+  runSimulation();
+  return;
+}
+
 
 }
 
