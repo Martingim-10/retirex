@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html lang="es">
@@ -570,7 +571,7 @@ function trackStep(name, val = null) {
 
   try {
 
-    console.log([TRACKING]: ${name} | ${val});
+    console.log(`[TRACKING]: ${name} | ${val}`);
 
     gtag('event', name, { event_category: 'Simulador_Retirex', value: val });
 
@@ -618,11 +619,11 @@ function generateAnalysis(edad, retiro, aporte) {
 
   if (añosAhorro >= 25) {
 
-    return <strong>Análisis Retirex: El poder del tiempo</strong><br>
+    return `<strong>Análisis Retirex: El poder del tiempo</strong><br>
 
       Tenés una ventaja estratégica: <strong>${añosAhorro} años</strong> de capitalización.
 
-      A este ritmo, el interés compuesto hará el mayor esfuerzo por vos.;
+      A este ritmo, el interés compuesto hará el mayor esfuerzo por vos.`;
 
   }
 
@@ -630,9 +631,9 @@ function generateAnalysis(edad, retiro, aporte) {
 
   if (añosAhorro < 20 && aporte >= 80000) {
 
-    return <strong>Análisis Retirex: Intensidad de capital</strong><br>
+    return `<strong>Análisis Retirex: Intensidad de capital</strong><br>
 
-      Tu capacidad de aporte compensa el factor tiempo. Estás construyendo un blindaje fuerte.;
+      Tu capacidad de aporte compensa el factor tiempo. Estás construyendo un blindaje fuerte.`;
 
   }
 
@@ -640,17 +641,17 @@ function generateAnalysis(edad, retiro, aporte) {
 
   if (añosAhorro < 15) {
 
-    return <strong>Análisis Retirex: Optimización estratégica</strong><br>
+    return `<strong>Análisis Retirex: Optimización estratégica</strong><br>
 
-      Con <strong>${añosAhorro} años</strong>, el foco es constancia. Podés potenciar con aportes extraordinarios cuando puedas.;
+      Con <strong>${añosAhorro} años</strong>, el foco es constancia. Podés potenciar con aportes extraordinarios cuando puedas.`;
 
   }
 
 
 
-  return <strong>Análisis Retirex: Plan equilibrado</strong><br>
+  return `<strong>Análisis Retirex: Plan equilibrado</strong><br>
 
-    Tu simulación muestra una relación saludable entre edad y esfuerzo de ahorro.;
+    Tu simulación muestra una relación saludable entre edad y esfuerzo de ahorro.`;
 
 }
 
@@ -660,7 +661,7 @@ function generateAnalysis(edad, retiro, aporte) {
 
 async function callAI(userMessage) {
 
-  const systemPrompt = 
+  const systemPrompt = `
 
 Sos Retirex, un asesor digital especializado en planes de retiro en Argentina, en particular en planes de Prevención Retiro.
 
@@ -680,7 +681,7 @@ Reglas estrictas:
 
 - Cerrá invitando a simular o continuar el análisis.
 
-;
+`;
 
 
 
@@ -726,15 +727,15 @@ Reglas estrictas:
 
 function sendWelcome() {
 
-  addMessage(
+  addMessage(`
     Hola 👋 soy <strong>Retirex</strong>, tu asesor digital de retiro.<br><br>
 
     En menos de <strong>1 minuto</strong> podés ver una
     <strong>proyección orientativa</strong> de tu retiro.<br>
     Sin compromiso. Sin datos personales.
-  );
+  `);
 
-  addMessage(
+  addMessage(`
     <div class="visual-options">
 
       <!-- SIMULACIÓN PERSONAL (CTA PRINCIPAL) -->
@@ -767,7 +768,7 @@ function sendWelcome() {
       </div>
 
     </div>
-  );
+  `);
 
   trackStep('chat_inicio', 1);
 }
@@ -777,7 +778,7 @@ function sendWelcome() {
 
 function showFAQ() {
 
-  addMessage(
+  addMessage(`
     <strong>Dudas frecuentes</strong><br><br>
 
     <button class="option-button" onclick="toggleBlock('faq1')">
@@ -822,7 +823,7 @@ function showFAQ() {
     <button class="option-button" onclick="startSimulation('Retiro')">
       🧮 Ver mi proyección personal
     </button>
-  );
+  `);
 
   trackStep('menu_click', 'faq');
 }
@@ -832,7 +833,7 @@ function showFAQ() {
 
 function showEjemplo40() {
 
-  addMessage(
+  addMessage(`
     Veamos un ejemplo <strong>orientativo</strong> para tener una referencia concreta 👇<br><br>
 
     Supongamos una persona de <strong>40 años</strong> que comienza hoy un plan de retiro.<br><br>
@@ -849,11 +850,11 @@ function showEjemplo40() {
 
     📌 Es un <strong>ejemplo orientativo</strong>.
     No constituye garantía de resultado ni oferta comercial.
-  );
+  `);
 
   trackStep('ejemplo_40_visto', 1);
 
-  addMessage(
+  addMessage(`
     <div class="visual-options">
 
       <div class="card-option primary" onclick="startSimulation('Retiro')">
@@ -868,7 +869,7 @@ function showEjemplo40() {
       </div>
 
     </div>
-  );
+  `);
 }
 
 
@@ -880,7 +881,7 @@ function startSimulation(meta){
 
   trackStep('simulacion_inicio', meta);
 
-  addMessage(Excelente elección: <strong>${meta}</strong>. Vamos a calcularlo.<br><br>¿Cuál es tu sexo? (M/F));
+  addMessage(`Excelente elección: <strong>${meta}</strong>. Vamos a calcularlo.<br><br>¿Cuál es tu sexo? (M/F)`);
 
 }
 
@@ -930,13 +931,13 @@ async function sendMessage() {
 
   // Anclas firmes post-IA (para volver al camino)
 
-  addMessage(
+  addMessage(`
 
     <button class="option-button" onclick="startSimulation('Independencia')">🧮 Simular mi plan</button>
 
     <button class="option-button" onclick="showFAQ()">💬 Dudas frecuentes</button>
 
-  );
+  `);
 
 }
 
@@ -994,7 +995,7 @@ function handleFlow(msg){
 
     if (isNaN(r) || r < minRetiro || r > 85) {
 
-      addMessage(Elegí una edad de retiro válida 😊<br>👉 Mínimo: ${minRetiro}<br>👉 Máximo: 85);
+      addMessage(`Elegí una edad de retiro válida 😊<br>👉 Mínimo: ${minRetiro}<br>👉 Máximo: 85`);
 
       return;
 
@@ -1075,7 +1076,7 @@ if (flow.step === 4) {
 
 function showPostInfoBlocks() {
 
-  addMessage(
+  addMessage(`
 
     <strong>Antes de seguir, una breve guía 👇</strong>
 
@@ -1111,7 +1112,7 @@ function showPostInfoBlocks() {
 
     </div>
 
-  );
+  `);
 
 }
 
@@ -1127,7 +1128,7 @@ async function runSimulation() {
 
   // 2️⃣ MOSTRAR ANÁLISIS INMEDIATAMENTE (antes del backend)
   const analysisHTML = generateAnalysis(edad, retiro, aporte);
-  addMessage(<div class="analysis-card">${analysisHTML}</div>);
+  addMessage(`<div class="analysis-card">${analysisHTML}</div>`);
 
   try {
     // 3️⃣ Llamada al backend (Cloud Run)
@@ -1148,7 +1149,7 @@ async function runSimulation() {
     const realista = data.realista.capital;
 
     // 4️⃣ Resultado principal
-    addMessage(
+    addMessage(`
       <strong>Resultado de tu simulación</strong><br><br>
 
       <strong>Escenario oficial:</strong><br>
@@ -1160,7 +1161,7 @@ async function runSimulation() {
       <strong style="font-size:22px;color:#004b9a;">
         $${realista.toLocaleString("es-AR")}
       </strong>
-    );
+    `);
 
     gtag('event', 'cotizacion_completada', {
       event_category: 'Retirex',
@@ -1168,31 +1169,31 @@ async function runSimulation() {
     });
 
     // 5️⃣ Disclaimer
-    addMessage(
+    addMessage(`
       <div style="font-size:12px;color:#666;margin-top:6px;">
         Simulación orientativa. No constituye garantía de rendimiento futuro.
       </div>
-    );
+    `);
 
     // 6️⃣ Bloques explicativos
     showPostInfoBlocks();
 
     // 7️⃣ CTA final
     const wsp = encodeURIComponent(
-      Hola! Acabo de usar el cotizador de Retirex,vi mi proyección realista y quiero saber cómo alcanzarla.
+      `Hola! Acabo de usar el cotizador de Retirex,vi mi proyección realista y quiero saber cómo alcanzarla.
 Edad: ${edad}
 Aporte: $${aporte}
-Escenario realista: $${realista.toLocaleString("es-AR")}
+Escenario realista: $${realista.toLocaleString("es-AR")}`
     );
 
-    addMessage(
+    addMessage(`
       <div class="cta-whatsapp">
         <a class="whatsapp-btn" href="https://wa.me/5492804866612?text=${wsp}" target="_blank">
           📲 Quiero saber cómo alcanzar este objetivo
         </a>
         <p class="privacidad">Sin spam. Solo asesoramiento real.</p>
       </div>
-    );
+    `);
 
   } catch (e) {
     addMessage("Hubo un problema al calcular la simulación. Por favor, intentá nuevamente.");
