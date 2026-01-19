@@ -374,22 +374,35 @@ Reglas estrictas:
 }
 
 /* ================= BIENVENIDA MODIFICADA ================= */
+/* ================= BIENVENIDA (ARRANQUE DIRECTO) ================= */
+
 function sendWelcome() {
+
   addMessage(`
-    Hola 👋 soy <strong>Retirex</strong>, tu asesor digital de retiro.<br><br><br><br>
-    En menos de <strong>1 minuto</strong> podés ver una<br>
-    <strong>proyección orientativa</strong> de tu retiro.<br><br>
-    Sin compromiso. Sin datos personales.<br>
+    Hola 👋 soy <strong>Retirex</strong>, tu asesor digital de retiro.<br><br>
+
+    Para que tengas una referencia rápida 👇<br><br>
+
+    Una persona de <strong>40 años</strong>, aportando <strong>$40.000 por mes</strong> durante 20 años,
+    podría acumular alrededor de:<br><br>
+
+    <strong style="font-size:22px;color:#004b9a;">
+      $300.000.000
+    </strong><br><br>
+
+    Es un <strong>ejemplo orientativo</strong>, pero muestra el poder del largo plazo.<br><br>
+
+    👉 Si querés ver <strong>tu caso</strong>, decime:
+    <br><br>
+    <strong>¿qué edad tenés hoy?</strong>
   `);
-  
-  // Cambio 1: Inicia conversando y pide la edad directamente
-  addMessage(`Si querés realizar una cotización personalizada, primero decime: <strong>¿Cuál es tu edad actual?</strong>`);
-  
-  // Seteamos el flujo directamente en el paso 2 (Edad) y definimos sexo por defecto para la API
-  flow = { step: 2, meta: 'Retiro', sexo: 'M' };
-  
-  trackStep('chat_inicio', 1);
+
+  // arrancamos el flujo directamente en edad
+  flow = { step: 2 };
+
+  trackStep('chat_inicio_directo', 1);
 }
+
 
 /* ================= FAQ ================= */
 function showFAQ() {
